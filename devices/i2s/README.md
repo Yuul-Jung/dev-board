@@ -1,5 +1,7 @@
 # I2S 소자와 SoC 연결
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
+
 구분: **확인** = 문서를 열어 확인, **계산**, **설계안**, **미확인**.
 
 ## AMD IP: I2S Transmitter / Receiver (PG308 v1.0, 2025-08-12) — 확인 (문서 본문 열람)
@@ -33,3 +35,5 @@ Basys3 는 클럭 관리 타일 5개(RM, 확인). 오디오 클럭 aud_mclk 를 
 
 ## 핀 (설계안)
 소자당 3선(BCLK, LRCLK, 데이터) + 선택 핀(INMP441 L/R, MAX98357A SD_MODE·GAIN_SLOT). Pmod 한 포트(8신호)에 마이크 1 + 앰프 1 가능.
+
+<!-- nav-foot -->← [uart](../uart/README.md) · [devices 목차](../README.md) · [can](../can/README.md) →

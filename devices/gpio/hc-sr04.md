@@ -1,4 +1,6 @@
 # HC-SR04 초음파 거리 센서
+
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [gpio](README.md)
 - 분류: 거리 · 인터페이스: GPIO(Trig 입력, Echo 출력) · 근거: D1 (제조사 데이터시트 사본)
 
 ## 전기 사양 (확인)

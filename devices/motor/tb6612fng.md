@@ -1,4 +1,6 @@
 # TB6612FNG 듀얼 DC 모터 드라이버
+
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [motor](README.md)
 - 분류: DC 모터 구동 · 인터페이스: GPIO(IN1, IN2, STBY) + PWM · 근거: D1 (Toshiba 데이터시트)
 
 ## 전기 사양 (확인)

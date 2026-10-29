@@ -1,5 +1,7 @@
 # PS/2 (키보드·마우스) 수신
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
+
 AMD IP 없음(열람한 문서 범위) → 전용 RTL. 구분: 확인 / 계산 / 설계안 / 미확인. 시뮬레이터가 없어 **Verilog 는 실행하지 못했습니다**.
 
 ## 확인된 프로토콜 (Digilent Pmod PS2 문서, D3 수준의 2차 자료)
@@ -31,3 +33,5 @@ AMD IP 없음(열람한 문서 범위) → 전용 RTL. 구분: 확인 / 계산 /
 - `tb/tb_ps2_rx_engine.v`: 같은 시나리오의 자체 검사 테스트벤치, 미실행.
 - `tb/test_ps2_sw.c` + `sw/ps2.*`: 누름/뗌/확장 키 분리 (호스트 테스트 ALL PASS). 스캔 코드 -> 문자 변환은 표가 없어 미작성.
 - AXI 레지스터와 FIFO 는 눈으로만 검토했습니다.
+
+<!-- nav-foot -->← [bluetooth](../bluetooth/README.md) · [devices 목차](../README.md) · [motor](../motor/README.md) →

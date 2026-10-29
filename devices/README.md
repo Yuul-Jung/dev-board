@@ -1,27 +1,34 @@
 # devices — 인터페이스별 주변장치 자료
 
+<!-- nav -->[저장소 홈](../README.md)
+
 Basys3 + MicroBlaze V SoC에 붙일 외부 소자(센서·모듈)를 통신 인터페이스별로 정리합니다.
 SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니다.
 
 ## 폴더
 | 폴더 | 인터페이스 | 소자 문서 |
 |---|---|---|
-| `gpio/` | GPIO (트리거/에코, 단일선, 엔코더, PWM 부하 포함) | HC-SR04, DHT22, HC-SR501, 릴레이, 로터리 엔코더, TTP223, 팬, 부저 |
-| `1-wire/` | 1-Wire | DS18B20 |
-| `i2c/` | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 본문 확인, 드라이버 `sw/`) |
-| `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
-| `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (PG153 본문 확인, QSPI·ILI9341 드라이버, ILI9341 전용 RTL; 일부 미확인) |
-| `uart/` | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 본문 확인, 드라이버·NMEA RMC) |
-| `i2s/` | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
-| `can/` | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(명령 코드 미확인), SN65HVD230 |
-| `ps2/` | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
-| `ethernet/` | 이더넷 3경로 비교 | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
-| `bluetooth/` | Bluetooth | HC-05 는 `uart/` 에 있음 |
-| `data/devices.json` | 위 소자의 구조화 데이터 | |
+| [`gpio/`](gpio/README.md) | GPIO (트리거/에코, 단일선, 엔코더, PWM 부하 포함) | HC-SR04, DHT22, HC-SR501, 릴레이, 로터리 엔코더, TTP223, 팬, 부저 |
+| [`1-wire/`](1-wire/README.md) | 1-Wire | DS18B20 |
+| [`i2c/`](i2c/README.md) | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 본문 확인, 드라이버 `sw/`) |
+| [`motor/`](motor/README.md) | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
+| [`spi/`](spi/README.md) | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (PG153 본문 확인, QSPI·ILI9341 드라이버, ILI9341 전용 RTL; 일부 미확인) |
+| [`uart/`](uart/README.md) | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 본문 확인, 드라이버·NMEA RMC) |
+| [`i2s/`](i2s/README.md) | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
+| [`can/`](can/README.md) | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(명령 코드 미확인), SN65HVD230 |
+| [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
+| [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교 | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
+| [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05 는 `uart/` 에 있음 |
+| [`data/`](data/README.md) | 위 소자의 구조화 데이터 ([devices.json](data/devices.json)) | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.
 
-전체 범주 목록과 상태는 `CATEGORIES.md`.
+전체 범주 목록과 상태는 [CATEGORIES.md](CATEGORIES.md), 남은 일은 [TODO.md](TODO.md), 문서 형식은 [TEMPLATE.md](TEMPLATE.md).
+
+## 검증 자료
+- [VERIFICATION.md](VERIFICATION.md): 적대적 검증 결과와 재현 방법 (원문 대조, 새니타이저, 퍼징, 링크 검사).
+- `./run_host_tests.sh`: 호스트 테스트 일괄 실행(`SAN=1` 이면 ASan/UBSan, `FUZZ=1` 이면 퍼저 포함). `python3 tools/check_links.py`: 문서 링크 검사. `tools/crosscheck_pdf.py`: 코드 값과 AMD 문서 대조.
+- 저장소 홈: [../README.md](../README.md)
 
 ## 근거 수준
 - **D1 데이터시트 열람**: 제조사 또는 제조사 문서 사본을 열어 값을 확인함. 사본 출처를 소자 문서에 적음.

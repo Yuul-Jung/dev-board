@@ -1,4 +1,6 @@
 # 4선 PWM 팬 (Intel 4-Wire PWM Controlled Fans 규격)
+
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [gpio](README.md)
 근거: 규격 PDF(mikrocontroller.net 사본, D3~D1). 구분: 확인 / 설계안 / 미확인.
 
 | 항목 | 값 | 구분 |

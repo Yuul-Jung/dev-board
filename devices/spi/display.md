@@ -1,5 +1,7 @@
 # SPI 표시장치: ILI9341, SSD1306, MAX7219
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [spi](README.md)
+
 구분 표기는 [README.md](README.md) 와 같습니다.
 
 ## ILI9341 (TFT 컨트롤러) — D1 일부
@@ -15,7 +17,7 @@
 
 사용자 노션 (ILI9341 TFT, SPI 이론 페이지): Mode 0, MSB first, 컨트롤러 구조 `ili9341 startup banner`. 기준 값은 노션이며 데이터시트에서 재확인하지 않았습니다.
 SoC: AXI Quad SPI(SPI1, 빠른 버스) + GPIO 3선(D/C, RESET, 백라이트). 한 프레임 시간은 SCK를 모르면 계산 불가 — 예: SCK 25 MHz 가정이면 약 49 ms (계산, 클럭 한계 미확인).
-초기화 순서는 데이터시트의 파워 시퀀스를 열어 확인하기 전에는 작성하지 않습니다.
+초기화 순서는 데이터시트의 파워 시퀀스를 열어 확인하기 전에는 작성하지 않습니다. 드라이버([`rtl/README.md`](rtl/README.md) 하단)는 이 값을 호출자가 채우는 표로 받도록 만들어 두었습니다.
 
 ## SSD1306 (OLED, 128×64) — D1 일부
 | 항목 | 값 | 구분 |

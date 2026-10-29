@@ -1,5 +1,7 @@
 # UART 소자와 SoC 연결
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
+
 구분: **확인** = 이번 작업에서 문서를 열어 확인, **설계안**, **미확인**. 소자: [modules.md](modules.md).
 
 ## AXI UART Lite (PG142 v2.0, 2017-04-05) — 확인 (문서 본문 열람)
@@ -37,3 +39,5 @@ UART Lite 가 있으므로 소자 접근은 IP. 전용 RTL 후보는 RS-485 방�
 
 미확인: 체크섬 XOR 범위에 `$`·`*` 포함 여부(문서가 명시 안 함, 관례대로 둘 사이로 계산). GGA 필드 순서(문서에서 확인하지 못해 GGA 파서 없음). RMC 위도 표기가 문서 안에서 ddmm/dddmm 으로 상충해 두 형식 모두 처리. NavSpark 문서이므로 NEO-6M 의 NMEA 2.3 출력과 같다는 보장은 없음. HC-05 의 AT 모드 보레이트·응답 형식.
 테스트: `cd devices && gcc -Wall -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/*.c -o t && ./t` → ALL PASS (모의 레지스터 기준이며 보드 동작 검증 아님).
+
+<!-- nav-foot -->← [spi](../spi/README.md) · [devices 목차](../README.md) · [i2s](../i2s/README.md) →

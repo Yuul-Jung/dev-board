@@ -1,5 +1,7 @@
 # SPI 통신·저장·I/O 확장
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [spi](README.md)
+
 ## MCP2515 (CAN 컨트롤러) — D1 일부
 | 항목 | 값 |
 |---|---|
@@ -39,7 +41,7 @@ CAN 버스에는 트랜시버가 별도로 필요합니다 (`../CATEGORIES.md`).
 | 전원 | 3.3 V (2.97~3.63 V), 5 V 입력 허용 |
 | 레지스터 | MR 0x0000 (리셋 0x00), VERSIONR 0x0039 = 0x04 |
 
-연결 테스트: VERSIONR(0x0039)을 읽어 0x04 확인. SoC: 빠른 버스(SPI1) + CS + INT/RST GPIO. 이더넷 경로로는 AXI Ethernet Lite 와 대안 관계 (IP 문서는 `../ethernet/` 에서 다룰 예정).
+연결 테스트: VERSIONR(0x0039)을 읽어 0x04 확인. SoC: 빠른 버스(SPI1) + CS + INT/RST GPIO. 이더넷 경로로는 AXI Ethernet Lite 와 대안 관계 (IP 문서는 [`../ethernet/`](../ethernet/README.md)).
 
 ## W25Q64JV (SPI NOR 플래시 64 Mbit) — D1 일부
 | 항목 | 값 |

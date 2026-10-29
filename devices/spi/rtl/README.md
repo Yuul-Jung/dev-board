@@ -1,5 +1,7 @@
 # ILI9341 전용 RTL (설계안, 시뮬레이션·합성 전)
 
+<!-- nav -->[저장소 홈](../../../README.md) › [devices](../../README.md) › [spi](../README.md)
+
 AXI Quad SPI 로는 D/CX 선과 화면 채우기를 CPU 없이 처리할 수 없어서 만든 작은 전용 엔진입니다.
 구조: `ili9341_axil_top.v`(배선만) + `ili9341_axil_regs.v`(AXI4-Lite) + `ili9341_engine.v`(SPI 모드 0, MSB 먼저).
 

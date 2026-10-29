@@ -1,0 +1,249 @@
+<title>Basys3 SoC 주변장치 구현 맵</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 상단 요약 띠 → Pmod 핀 예산 계산기(고정) → 주변장치 16종 카드 그리드. 한 카드 = 한 주변장치의 SoC 구현 경로 */
+:root{
+  --bg:#f3f5f4; --panel:#ffffff; --fg:#1b2624; --mute:#5b6967; --line:#d5dcda;
+  --accent:#0b6e63; --accent-soft:#d9efeb;
+  --r-onboard:#2f6f3e; --r-ip:#1f5fa8; --r-rtl:#8a5a00; --r-ext:#9a3a2e;
+  --r-onboard-bg:#e0f0e3; --r-ip-bg:#dce9f8; --r-rtl-bg:#f6e8c8; --r-ext-bg:#f6dcd8;
+  --warn:#9a3a2e; --warn-bg:#f9e6e2;
+  --sans:"IBM Plex Sans KR",system-ui,"Noto Sans KR",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1716; --panel:#172221; --fg:#e3ebe9; --mute:#9bacaa; --line:#2b3b39;
+  --accent:#5fcabb; --accent-soft:#183a36;
+  --r-onboard:#8fd29d; --r-ip:#8dbbf0; --r-rtl:#e3b866; --r-ext:#f0a196;
+  --r-onboard-bg:#1b3523; --r-ip-bg:#1a2e49; --r-rtl-bg:#40320f; --r-ext-bg:#471f1a;
+  --warn:#f0a196; --warn-bg:#3d1f1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1716; --panel:#172221; --fg:#e3ebe9; --mute:#9bacaa; --line:#2b3b39;
+  --accent:#5fcabb; --accent-soft:#183a36;
+  --r-onboard:#8fd29d; --r-ip:#8dbbf0; --r-rtl:#e3b866; --r-ext:#f0a196;
+  --r-onboard-bg:#1b3523; --r-ip-bg:#1a2e49; --r-rtl-bg:#40320f; --r-ext-bg:#471f1a;
+  --warn:#f0a196; --warn-bg:#3d1f1b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--sans);word-break:keep-all;line-break:strict;padding-block:24px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1{font-size:clamp(24px,4vw,34px);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:17px;margin:0 0 8px}
+.lead{color:var(--fg);margin:14px 0 0;max-width:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:14px}
+.note,dd,.ev{text-wrap:pretty}
+.mono{font-family:var(--mono)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.strip div{background:var(--panel);padding:10px 12px;min-width:0}
+.strip b{display:block;font:600 18px var(--mono);font-variant-numeric:tabular-nums}
+.strip span{font-size:12px;color:var(--mute)}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:14px}
+.note.warn{background:var(--warn-bg);border-color:var(--warn)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.meter{display:flex;align-items:center;gap:8px;min-width:0}
+.meter .t{height:10px;width:140px;background:var(--line);border-radius:5px;overflow:hidden}
+.meter .t i{display:block;height:100%;background:var(--accent);width:0}
+.meter.over .t i{background:var(--warn)}
+.meter.over b{color:var(--warn)}
+.meter b{font:600 14px var(--mono);font-variant-numeric:tabular-nums}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.chip:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card header{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.card h3{margin:0;font-size:16px}
+.badges{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.b{font:600 11px var(--mono);padding:2px 7px;border-radius:3px;white-space:nowrap}
+.b.onboard{color:var(--r-onboard);background:var(--r-onboard-bg)}
+.b.ip{color:var(--r-ip);background:var(--r-ip-bg)}
+.b.rtl{color:var(--r-rtl);background:var(--r-rtl-bg)}
+.b.ext{color:var(--r-ext);background:var(--r-ext-bg)}
+dl{margin:0;display:grid;grid-template-columns:76px 1fr;gap:6px 10px;font-size:13.5px}
+dt{color:var(--mute);font-size:12px;padding-top:2px}
+dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.ev{font-size:12.5px;border-top:1px dashed var(--line);padding-top:8px;color:var(--mute)}
+.ev b{color:var(--fg)}
+.ev.low b{color:var(--warn)}
+.pins{display:flex;align-items:center;gap:8px;font-size:13px;border-top:1px dashed var(--line);padding-top:8px;flex-wrap:wrap}
+.pins input{width:56px;font:600 13px var(--mono);padding:3px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg)}
+code{font:12.5px var(--mono);background:var(--accent-soft);padding:0 4px;border-radius:3px}
+a{color:var(--accent)}
+footer{font-size:13px;color:var(--mute)}
+@media(max-width:520px){.meter .t{width:90px}dl{grid-template-columns:62px 1fr}}
+</style>
+
+<div class="wrap">
+<div>
+  <h1>Basys3 SoC 주변장치 구현 맵</h1>
+  <p class="lead">카탈로그의 주변장치 16종과 모터·표시·시계·절연 4종을 Basys3(XC7A35T) + MicroBlaze V SoC에서 어떻게 만들지 정리했습니다. 구현 경로, AMD IP, 신호와 핀 예산, 인터럽트를 항목별로 적었고, 문서로 확인한 부분과 설계안인 부분은 구분해 표시합니다.</p>
+</div>
+
+<div class="strip" aria-label="Basys3 자원">
+  <div><b>33,280</b><span>로직 셀</span></div>
+  <div><b>5,200</b><span>슬라이스</span></div>
+  <div><b>1,800 Kb</b><span>블록 RAM</span></div>
+  <div><b>90</b><span>DSP 슬라이스</span></div>
+  <div><b>5</b><span>클럭 관리 타일(PLL)</span></div>
+  <div><b>24 + 8</b><span>Pmod 신호 (JA·JB·JC / JXADC)</span></div>
+</div>
+<div class="note">수치 출처: Basys3 Reference Manual(AMD 호스팅 사본). Pmod는 커넥터당 신호 8개, VCC/GND 핀은 최대 1 A. MicroBlaze V는 주변장치를 AXI4로 접근하고 코드·데이터 메모리는 LMB, 스트리밍은 AXI4-Stream, 디버그는 MDM V를 쓴다고 UG1629에 적혀 있습니다. 모든 AXI IP는 AXI4-Lite 슬레이브 레지스터로 붙이는 것을 기본 경로로 봅니다.</div>
+<div class="note warn"><b>읽는 법.</b> 근거 줄이 "확인"이면 이번 작업에서 AMD 문서나 그 사본을 열어 본 내용입니다. "설계안·미확인"은 일반 지식으로 세운 후보이며, Vivado에서 IP를 실제로 추가해 확인하기 전에는 사실로 쓰지 마세요. 오래된 Digilent Pmod 드라이버 IP가 MicroBlaze V와 호환되는지도 확인하지 못했습니다.</div>
+
+<div class="bar" role="region" aria-label="Pmod 핀 예산">
+  <div class="meter" id="m1"><span>Pmod JA·JB·JC</span><span class="t"><i></i></span><b></b></div>
+  <div class="meter" id="m2"><span>JXADC</span><span class="t"><i></i></span><b></b></div>
+  <div class="filters" id="filters" role="group" aria-label="구현 경로 필터"></div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  출처: <a href="https://www.amd.com/content/dam/amd/en/documents/university/aup-boards/XUPBasys3/documentation/Basys3_rm_8_22_2014.pdf">Basys3 Reference Manual</a>(AMD), AXI GPIO PG144(텍사스대 사본), AXI UART Lite PG142(재게시 사본), AXI IIC(Xilinx 위키), AXI Timer PG079(목차·요약만), AXI Quad SPI PG153, XADC Wizard PG091, MicroBlaze V UG1629. 보드 간 비교는 <a href="https://claude.ai/artifact/FSjnHHF4eHG2BudPwwZMPv">보드 카탈로그</a>의 요약표를 보세요. 확인일 2026-10-29.
+</footer>
+</div>
+
+<script>
+const ROUTES={onboard:'온보드',ip:'AMD AXI IP',rtl:'커스텀 RTL',ext:'외부 하드웨어'};
+// pool: 'pmod' | 'xadc' | null, per: 인스턴스당 핀 수, unit: 수량 단위, n: 예시 수량
+const P=[
+ {k:'GPIO',r:['onboard','ip'],ip:'AXI GPIO (PG144)',
+  sig:'채널당 1–32비트, 단일/이중 채널, 비트별 입력·출력 지정(TRI 레지스터). 스위치·LED·버튼은 온보드 핀을 그대로 연결.',
+  mb:'레지스터 오프셋 DATA 0x0000 / TRI 0x0004 / 채널2 0x0008·0x000C. 인터럽트는 선택 사항이며 기본은 꺼짐. 기본 TRI 값은 전부 입력.',
+  pool:'pmod',per:1,unit:'비트',n:0,
+  ev:'확인',evn:'PG144 사본 열람. 온보드 스위치·LED 개수는 이번에 매뉴얼에서 인용하지 않음.',low:0},
+ {k:'UART',r:['onboard','ip'],ip:'AXI UART Lite (PG142)',
+  sig:'온보드 USB-UART 브리지(FT2232HQ): TXD=B18, RXD=A18. 추가 포트는 Pmod 2핀(TX, RX).',
+  mb:'수신·송신 FIFO 각 16문자, 데이터 5–8비트, 정지 1비트, 패리티 홀/짝/없음. 인터럽트는 상승 에지(수신 데이터 있음 또는 송신 FIFO 비어짐). 레지스터 Rx 0x00, Tx 0x04, STAT 0x08, CTRL 0x0C. 빈 Rx 읽기는 SLVERR.',
+  pool:'pmod',per:2,unit:'추가 포트',n:0,
+  ev:'확인',evn:'PG142 v2.0 본문 열람. 보레이트는 Vivado 설계 시점 파라미터(110~921,600 baud), 런타임 변경 레지스터 없음 → 소자별 보레이트가 다르면 인스턴스를 나눔.',low:0},
+ {k:'SPI',r:['ip'],ip:'AXI Quad SPI (PG153)',
+  sig:'SCLK, MOSI, MISO + CS(슬레이브당 1, 최대 32). Pmod 한 포트(8신호)에 버스 3 + CS 5.',
+  mb:'확인된 모드로 ADXL345·DS3234·MCP3008·MCP2515·W5500·W25Q64JV는 모드 3 한 버스에 공유 가능. 느린 센서 버스(SCK 비율 128, 100 MHz 가정 시 781 kHz; 비율은 런타임 변경 불가 — PG153 확인)와 빠른 버스(디스플레이·플래시)는 인스턴스를 나눔. 소자 14종은 저장소 devices/spi.',
+  pool:'pmod',per:4,unit:'버스',n:1,
+  ev:'확인',evn:'PG153 v3.2 PDF 열람: 레지스터 오프셋, SPICR/SPISR 비트, 수동 SS 전송 절차(p.77), SCK 비율은 런타임 변경 불가, FIFO 0/16/256 확인. SCK 비율 선택지는 본문이 둘로 갈려(2의 거듭제곱 2~2048 / 2·4·16·32 이후 16의 배수) Vivado 창에서 확인 필요.',low:0},
+ {k:'I2C',r:['ip'],ip:'AXI IIC (PG090)',
+  sig:'SCL, SDA (오픈 드레인, 외부 풀업 필요). 2핀.',
+  mb:'100 kHz / 400 kHz / 1 MHz, 마스터·슬레이브·멀티 마스터, 7·10비트 주소, 송수신 FIFO 각 16바이트. 중재 손실과 호출 주소 인터럽트에서 마스터→슬레이브 자동 전환.',
+  pool:'pmod',per:2,unit:'버스',n:1,
+  ev:'확인',evn:'PG090 v2.1 본문 열람. 100k/400k/1M, 3상태 포트 sda/scl_i/o/t, THIGH 식 (AXI Hz / (2×IIC Hz)) − 7 − 지연, 동적 START(bit8)/STOP(bit9) 절차 확인. 400 kHz·100 MHz 기준 THIGH 기본값 118(계산).',low:0},
+ {k:'I2S',r:['ip','ext'],ip:'I2S Transmitter/Receiver (PG308)',
+  sig:'BCLK, LRCLK, SDATA. 3핀. 보드에 오디오 코덱이 없어 INMP441 마이크나 MAX98357A 앰프 같은 외부 소자가 필요.',
+  mb:'PG308: AXI4-Stream, 16·24비트, 마스터 모드, I2S·좌/우 정렬, 최대 4선 8채널. 마스터라서 INMP441·MAX98357A(슬레이브)와 맞음. 소자 문서 devices/i2s.',
+  pool:'pmod',per:4,unit:'포트',n:0,
+  ev:'확인',evn:'PG308 v1.0 본문 열람. 7 series 지원, 추가 비용 없음, 마스터 전용(슬레이브 미지원), SCLK는 aud_mclk를 divider로 나눠 생성(MCLK/SCLK = divider×2). aud_mclk(예: 48 kHz에서 12.288 MHz)는 MMCM으로 공급 — 정확한 생성 가능 여부는 미계산.',low:1},
+ {k:'ADC',r:['onboard','ip'],ip:'XADC Wizard (PG091)',
+  sig:'JXADC 커넥터의 신호 8개를 4개 차동 쌍으로 사용. 2핀 = 1채널.',
+  mb:'온칩 12비트 2채널 1 MSPS. Pmod 쪽 필터 때문에 디지털 신호로 쓰면 속도가 제한될 수 있음.',
+  pool:'xadc',per:2,unit:'채널',n:1,
+  ev:'확인',evn:'매뉴얼과 PG091 열람. 입력 허용 전압은 UG480에서 확인 전까지 외부 전압을 넣지 말 것(일반적으로 1 V 범위).',low:0},
+ {k:'DAC',r:['ext'],ip:'AXI Quad SPI 재사용',
+  sig:'SPI DAC Pmod: SCLK, MOSI, CS(+LDAC). 3–4핀.',
+  mb:'온보드 DAC 없음. SPI IP로 레지스터를 써서 출력. PWM+저역통과 필터로 저속 근사도 가능.',
+  pool:'pmod',per:4,unit:'모듈',n:0,
+  ev:'설계안·미확인',evn:'특정 DAC 모듈과 타이밍은 확인하지 못함.',low:1},
+ {k:'PWM·타이머',r:['ip'],ip:'AXI Timer (PG079)',
+  sig:'PWM 출력 채널당 1핀, 캡처 입력 1핀.',
+  mb:'32/64비트 타이머, 모드: Generate, Capture, PWM, Cascade. 레지스터: TCSR0/1, TLR0/1, TCR0/1. 인터럽트 지원. MicroBlaze V의 주기 틱 소스로도 사용.',
+  pool:'pmod',per:1,unit:'채널',n:2,
+  ev:'확인',evn:'PG079 v2.0 PDF 열람: 오프셋(TCSR0 0x00, TLR0 0x04, TCR0 0x08, TCSR1 0x10…), TCSR 비트, PWM 공식(카운트다운: 주기=(TLR0+2)·T, 하이=(TLR1+2)·T), 캡처 모드, 7 series 지원. PWM은 타이머 0·1을 모두 쓰므로 캡처(팬 타코)는 별도 인스턴스. PWM 0 %/100 % 처리는 문서에 없음.',low:0},
+ {k:'USB',r:['onboard','rtl'],ip:'AMD IP 없음. PS/2 수신기를 RTL로',
+  sig:'온보드 USB-HID 호스트: PIC24FJ128이 PS/2로 변환해 PS2_CLK, PS2_DAT 두 신호를 FPGA에 전달.',
+  mb:'키보드 또는 마우스 한 대만 가능(허브 미지원). 일반 USB 장치·호스트 프로토콜은 PHY가 없어 FPGA 단독 구현 불가. PS/2 수신기는 RTL + AXI4-Lite 상태·데이터 레지스터 — 수신 전용 RTL을 저장소 devices/ps2 에 작성(미시뮬레이션, 송신·핀 번호 미확인).',
+  pool:null,per:0,unit:'',n:0,
+  ev:'확인',evn:'매뉴얼 6절 기준. PS2 핀 번호는 그림 해독이 모호해 제약 파일로 확인 필요.',low:0},
+ {k:'CAN',r:['ip','ext'],ip:'AXI CAN (PG096)',
+  sig:'TX, RX 2핀 + 외부 CAN 트랜시버 Pmod.',
+  mb:'온보드 CAN 없음. PG096 v5.1: 7 series 지원, AXI4-Lite, CAN 2.0A/2.0B, 최대 1 Mbps, 송수신 FIFO 각 최대 64, 수락 필터 최대 4. can_clk는 24 MHz(문서 표기)라 MMCM 필요. 대안은 SPI의 MCP2515. 소자 문서 devices/can.',
+  pool:'pmod',per:2,unit:'포트',n:0,
+  ev:'확인',evn:'PG096 본문 열람: 레지스터 맵, 초기화 절차(BRPR·BTR → CEN), 비트 타이밍 식. 라이선스 포함 여부는 Vivado 카탈로그 License 열에서 확인 필요(미확인).',low:1},
+ {k:'무선',r:['ext'],ip:'UART Lite 또는 Quad SPI로 모듈 제어',
+  sig:'모듈에 따라 UART 2핀 또는 SPI 4핀 + 리셋·인터럽트 GPIO.',
+  mb:'무선 칩이 없으므로 Wi-Fi·BLE 모듈을 Pmod로 붙이고 시리얼 AT 명령 방식으로 제어하는 구성이 현실적.',
+  pool:'pmod',per:3,unit:'모듈',n:0,
+  ev:'설계안·미확인',evn:'호환 모듈 제품은 선정하지 않음.',low:1},
+ {k:'이더넷',r:['ext','ip'],ip:'AXI Ethernet Lite (PG135) — 후보',
+  sig:'외부 PHY 필요. IP의 MII 신호 18개: tx_clk, rx_clk, tx_data×4, rx_data×4, dv, rx_er, tx_en, crs, col, rst_n, mdc, mdio.',
+  mb:'Basys3에는 이더넷 PHY가 없음(RM). AXI Ethernet Lite(PG135 v3.0)는 10/100 MAC, MII, 2 KB TX·RX 버퍼(옵션 핑퐁), MDIO이며 무료. MII 18신호는 Pmod 3개 24신호의 대부분이라 비현실적. 핀을 아끼려면 SPI 방식(W5500, Pmod NIC100)이 현실적. 소자 문서 devices/ethernet.',
+  pool:'pmod',per:18,unit:'포트',n:0,
+  ev:'확인',evn:'PG135 본문 열람: 레지스터 맵(07E4h~1FFCh), MII 신호 18개, Artix-7 최대 주파수 표. 사용할 PHY 제품과 MicroBlaze V 에서의 emaclite 동작은 미확인.',low:1},
+ {k:'영상·카메라',r:['onboard','rtl'],ip:'VGA 타이밍 생성기를 RTL로 (AMD 비디오 IP는 미확인)',
+  sig:'온보드 VGA: 적·녹·청 각 4비트와 HS, VS 총 14신호. R=G19,H19,J19,N19 / G=J17,H17,G17,D17 / B=N18,L18,K18,J18. HS·VS 핀은 제약 파일로 확인.',
+  mb:'640×480×12비트 프레임 버퍼는 3,600 Kb로 블록 RAM 1,800 Kb를 넘음. 320×240×12비트는 900 Kb, 640×480×4비트는 1,200 Kb로 들어감. 대안은 텍스트 모드·타일맵·라인 버퍼. 병렬 카메라(데이터 8 + 클럭 + 동기)는 Pmod 한 개로 부족.',
+  pool:null,per:0,unit:'',n:0,
+  ev:'확인(핀) · 계산(메모리)',evn:'핀은 매뉴얼에서, 메모리는 위 해상도로 직접 계산. 외부 RAM 유무는 이번에 확인하지 않음.',low:0},
+ {k:'저장장치',r:['ext','ip'],ip:'AXI Quad SPI 재사용',
+  sig:'microSD Pmod를 SPI 모드로: SCLK, MOSI, MISO, CS. 4핀.',
+  mb:'파일 시스템은 소프트웨어(FatFs 등)에서 처리. SPI 모드라 속도는 낮음. 설정 비트스트림용 플래시가 보드에 있는지는 이번에 확인하지 않음.',
+  pool:'pmod',per:4,unit:'카드',n:0,
+  ev:'설계안·미확인',evn:'SD Pmod 제품과 동작은 확인하지 못함.',low:1},
+ {k:'특수 블록',r:['onboard'],ip:'Clocking Wizard, 블록 메모리, DSP 슬라이스',
+  sig:'핀 소모 없음. 블록 RAM 1,800 Kb, DSP 90개, 클럭 타일 5개.',
+  mb:'FFT 같은 연산 가속기를 AXI4-Stream으로 MicroBlaze V에 붙이는 용도. 메모리 예산은 LMB 코드·데이터와 가속기 버퍼가 나눠 씀.',
+  pool:null,per:0,unit:'',n:0,
+  ev:'확인(자원 수치)',evn:'매뉴얼의 자원 수치 확인. FFT IP 사양은 열람하지 못함.',low:0},
+ {k:'모터·액추에이터',r:['ip','rtl','ext'],ip:'전용 PWM·방향 RTL (AXI4-Lite), 서보는 AXI Timer PWM 후보(PG079)',
+  sig:'DC 모터: PWM 1 + 방향 2핀(L298은 ENA, IN1, IN2). 서보: 신호 1핀, 주기 약 20 ms에 펄스 1–2 ms. 스테퍼(28BYJ-48+ULN2003): IN1–IN4 4핀.',
+  mb:'L298 진리표: Ven High에서 정방향(C=H, D=L), 역방향(C=L, D=H), 빠른 정지(C=D), Ven Low는 자유 정지. 입력 High 하한 2.3 V라 3.3 V로 직접 구동 가능(계산). 모터 전원은 외부, GND 공통, 노션 자료는 포토커플러로 분리.',
+  pool:'pmod',per:3,unit:'DC 채널',n:0,
+  ev:'부분 확인',evn:'L298·TB6612FNG는 데이터시트 열람, SG90·28BYJ-48은 2차 자료. 전용 RTL은 저장소 devices/motor/rtl, 시뮬레이션 전.',low:1},
+ {k:'표시장치',r:['onboard','ip','rtl','ext'],ip:'AXI GPIO, AXI IIC, AXI Quad SPI 재사용 또는 전용 RTL',
+  sig:'온보드 7세그먼트와 VGA. 외부 SPI: ILI9341(240×320), SSD1306(128×64), MAX7219(8자리, V+ 4.0–5.5 V). SPI 표시는 SCLK, MOSI, CS + DC·리셋 GPIO.',
+  mb:'ILI9341 한 프레임 = 240×320×16비트 = 1,228,800비트(계산). 노션에 ILI9341 컨트롤러 자료가 있음. MAX7219는 3.3 V 불가라 레벨 확인 필요.',
+  pool:'pmod',per:6,unit:'SPI 패널',n:0,
+  ev:'부분 확인',evn:'ILI9341·SSD1306·MAX7219 데이터시트 열람. ILI9341 타이밍·초기화 순서, SSD1306 SCLK 주기는 문서에서 값을 못 얻어 미확인.',low:1},
+ {k:'시계·RTC',r:['ip','rtl','ext'],ip:'AXI Quad SPI (DS3234), AXI IIC (I2C RTC) 또는 3선 RTC용 전용 RTL',
+  sig:'DS3234는 SPI(모드 1·3, 4 MHz 이하, ±2 ppm). DS1307·DS3231은 I2C 2핀, DS1302는 3선(CE, IO, SCLK) 3핀.',
+  mb:'시간 값은 읽기 주기가 길어 폴링으로 충분. 배터리 백업 유지는 모듈 쪽 몫.',
+  pool:'pmod',per:2,unit:'RTC',n:0,
+  ev:'부분 확인',evn:'DS3234만 데이터시트 열람. DS1302·DS1307·DS3231의 인터페이스 구분은 일반 지식(미확인).',low:1},
+ {k:'절연·레벨·전원',r:['ext'],ip:'해당 없음 (하드웨어 설계)',
+  sig:'5 V 출력(예: HC-SR04 에코)은 분압 또는 레벨 시프터. 모터 측은 포토커플러로 전원·GND까지 분리. 풀업·풀다운으로 리셋 중 입력을 안전 상태로 고정.',
+  mb:'FPGA 핀을 직접 5 V에 연결하지 말 것. 모터·릴레이는 외부 전원, GND만 공통.',
+  pool:null,per:0,unit:'',n:0,
+  ev:'부분 확인',evn:'L298 논리 레벨은 데이터시트 확인. 포토커플러·풀업 설계는 사용자 노션 자료, 5 V 비허용은 일반 지식.',low:1},
+ {k:'동작 전압',r:['onboard'],ip:'해당 없음',
+  sig:'Pmod는 3.3 V. VCC 6·12번, GND 5·11번 핀에서 최대 1 A. 3.3 V 레일 전체는 최대 2 A.',
+  mb:'5 V 부하를 FPGA 핀에 직접 연결하면 안 됩니다(일반 지식, 레벨 시프터 필요). XADC 입력은 별도 범위를 확인한 뒤 사용.',
+  pool:null,per:0,unit:'',n:0,
+  ev:'확인(전류)',evn:'전류 한도는 매뉴얼 인용. 5 V 비허용은 일반 지식.',low:0}
+];
+const state={route:'all',cnt:{}};
+P.forEach(p=>state.cnt[p.k]=p.n);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+function meters(){
+  let a=0,b=0;
+  P.forEach(p=>{const v=state.cnt[p.k]*p.per; if(p.pool==='pmod')a+=v; if(p.pool==='xadc')b+=v;});
+  [[ 'm1',a,24],['m2',b,8]].forEach(([id,u,max])=>{
+    const m=document.getElementById(id);
+    m.querySelector('i').style.width=Math.min(100,u/max*100)+'%';
+    m.querySelector('b').textContent=u+' / '+max;
+    m.classList.toggle('over',u>max);
+  });
+}
+function render(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  P.filter(p=>state.route==='all'||p.r.includes(state.route)).forEach(p=>{
+    const c=el('article','card');
+    c.innerHTML='<header><h3>'+p.k+'</h3><div class="badges">'+p.r.map(r=>'<span class="b '+r+'">'+ROUTES[r]+'</span>').join('')+'</div></header>'+
+      '<dl><dt>IP</dt><dd>'+p.ip+'</dd><dt>신호</dt><dd>'+p.sig+'</dd><dt>MicroBlaze V</dt><dd>'+p.mb+'</dd></dl>';
+    if(p.pool){
+      const d=el('div','pins');
+      d.innerHTML='<label for="n-'+p.k+'">'+p.unit+' 수</label><input id="n-'+p.k+'" type="number" min="0" max="32" value="'+state.cnt[p.k]+'"><span class="mono">× '+p.per+'핀 → '+(p.pool==='pmod'?'Pmod':'JXADC')+'</span>';
+      d.querySelector('input').addEventListener('input',e=>{state.cnt[p.k]=Math.max(0,parseInt(e.target.value)||0);meters();});
+      c.appendChild(d);
+    }
+    c.appendChild(el('div','ev'+(p.low?' low':''),'<b>근거: '+p.ev+'.</b> '+p.evn));
+    g.appendChild(c);
+  });
+  meters();
+}
+const f=document.getElementById('filters');
+[['all','전체'],...Object.entries(ROUTES)].forEach(([k,l])=>{
+  const b=el('button','chip',l);b.type='button';b.setAttribute('aria-pressed',k==='all');
+  b.onclick=()=>{state.route=k;[...f.children].forEach(x=>x.setAttribute('aria-pressed',x===b));render();};
+  f.appendChild(b);
+});
+render();
+</script>

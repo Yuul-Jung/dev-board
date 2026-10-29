@@ -1,5 +1,7 @@
 # 이더넷과 SoC 연결
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
+
 구분: **확인** = 문서를 열어 확인, **계산**, **설계안**, **미확인**.
 
 ## 보드 사실 (Basys3 RM, 확인)
@@ -36,3 +38,5 @@ W5500(경로 A). 이유: 핀이 SPI 하나로 충분하고(`../spi/README.md` �
 
 ## Bluetooth
 별도 IP 없이 UART 모듈(HC-05)로 처리합니다. `../uart/modules.md` 참고. `bluetooth/` 폴더는 HC-05 외 BLE 모듈이 정해질 때 채웁니다.
+
+<!-- nav-foot -->← [can](../can/README.md) · [devices 목차](../README.md) · [bluetooth](../bluetooth/README.md) →

@@ -1,5 +1,7 @@
 # I2S 소자: INMP441, MAX98357A
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [i2s](README.md)
+
 ## INMP441 (I2S MEMS 마이크) — D1
 | 항목 | 값 |
 |---|---|

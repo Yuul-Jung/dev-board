@@ -1,5 +1,7 @@
 # 1-Wire 마스터 (전용 RTL)
 
+<!-- nav -->[저장소 홈](../../../README.md) › [devices](../../README.md) › [1-wire](../README.md)
+
 AMD 쪽에서 열람한 1-Wire IP가 없어서 직접 설계합니다. AXI4-Lite 슬레이브로 MicroBlaze V에 붙고, 소프트웨어가 비트 단위로 명령을 내립니다.
 
 ## 모듈

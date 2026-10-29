@@ -1,4 +1,6 @@
 # 릴레이 (Songle SRD-05VDC-SL-C 기준)
+
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [gpio](README.md)
 - 분류: 부하 스위칭 · 인터페이스: GPIO 출력 1선(드라이버 경유) · 근거: D3 (부품 판매 페이지)
 
 ## 사양 (확인: 해당 페이지 기준)

@@ -1,5 +1,7 @@
 # DC 모터 구동 (전용 RTL)
 
+<!-- nav -->[저장소 홈](../../../README.md) › [devices](../../README.md) › [motor](../README.md)
+
 L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RTL로 맞춥니다.
 
 | 파일 | 역할 |

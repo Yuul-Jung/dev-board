@@ -1,5 +1,7 @@
 # UART 모듈: NEO-6M, HC-05, MAX485
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [uart](README.md)
+
 ## NEO-6M (u-blox NEO-6 GPS) — D1
 | 항목 | 값 |
 |---|---|

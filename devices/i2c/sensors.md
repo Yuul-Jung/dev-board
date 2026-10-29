@@ -1,5 +1,7 @@
 # I2C 센서: MPU-6050, SHT31, BH1750
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [i2c](README.md)
+
 ## MPU-6050 (6축 IMU) — D1
 | 항목 | 값 |
 |---|---|

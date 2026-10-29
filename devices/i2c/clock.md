@@ -1,4 +1,6 @@
 # I2C 시계: DS3231 — D1
+
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [i2c](README.md)
 | 항목 | 값 |
 |---|---|
 | 주소 | 1101000 (0x68), 쓰기 D0h / 읽기 D1h |

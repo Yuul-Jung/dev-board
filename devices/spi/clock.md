@@ -1,5 +1,7 @@
 # SPI 시계: DS3234
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [spi](README.md)
+
 ## DS3234 (RTC + TCXO) — D1
 | 항목 | 값 | 구분 |
 |---|---|---|
@@ -20,4 +22,4 @@ SoC (설계안): 센서 버스(SPI0, 모드 3, 781.25 kHz(비율 128) — 한계
 |---|---|---|
 | DS3234 | SPI | 이 문서 |
 | DS1302 | 3선(CE, I/O, SCLK) | SPI 가 아님 — 전용 RTL 필요 (이번에 데이터시트 열지 않음, 미확인) |
-| DS1307, DS3231 | I2C | AXI IIC 경로, `../i2c/` 에서 다룰 예정 |
+| DS1307, DS3231 | I2C | AXI IIC 경로, [`../i2c/`](../i2c/README.md) 에서 다룸(DS3231 문서 [clock.md](../i2c/clock.md)) |

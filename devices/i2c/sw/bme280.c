@@ -1,5 +1,8 @@
 #include "bme280.h"
 
+/* 음수 값의 좌측 시프트는 C 에서 미정의 동작이라 곱셈으로 쓴다(우측 시프트는 gcc 에서 산술 시프트로 동작, Bosch 식이 이에 의존). */
+#define MUL2N64(x, n) ((int64_t)(x) * ((int64_t)1 << (n)))
+
 static int16_t s16(uint8_t lo, uint8_t hi) { return (int16_t)((uint16_t)hi << 8 | lo); }
 static uint16_t u16(uint8_t lo, uint8_t hi) { return (uint16_t)((uint16_t)hi << 8 | lo); }
 
@@ -12,8 +15,8 @@ void bme280_parse_calib(const uint8_t a[26], const uint8_t b[7], bme280_calib_t 
     c->H1 = a[25];                                   /* 0xA1 (a[24] 는 0xA0 예약) */
     c->H2 = s16(b[0], b[1]); c->H3 = b[2];
     /* H4: 0xE4 → [11:4], 0xE5 하위 니블 → [3:0]. H5: 0xE5 상위 니블 → [3:0], 0xE6 → [11:4] */
-    c->H4 = (int16_t)(((int16_t)(int8_t)b[3] << 4) | (b[4] & 0x0F));
-    c->H5 = (int16_t)(((int16_t)(int8_t)b[5] << 4) | (b[4] >> 4));
+    c->H4 = (int16_t)(((int16_t)(int8_t)b[3] * 16) | (b[4] & 0x0F));
+    c->H5 = (int16_t)(((int16_t)(int8_t)b[5] * 16) | (b[4] >> 4));
     c->H6 = (int8_t)b[6];
 }
 
@@ -30,26 +33,28 @@ uint32_t bme280_comp_P(const bme280_calib_t *c, int32_t adc_P, int32_t t_fine)
 {
     int64_t v1 = (int64_t)t_fine - 128000;
     int64_t v2 = v1 * v1 * (int64_t)c->P6;
-    v2 += (v1 * (int64_t)c->P5) << 17;
-    v2 += (int64_t)c->P4 << 35;
-    v1 = ((v1 * v1 * (int64_t)c->P3) >> 8) + ((v1 * (int64_t)c->P2) << 12);
-    v1 = (((int64_t)1 << 47) + v1) * (int64_t)c->P1 >> 33;
+    v2 += MUL2N64(v1 * (int64_t)c->P5, 17);
+    v2 += MUL2N64(c->P4, 35);
+    v1 = ((v1 * v1 * (int64_t)c->P3) >> 8) + MUL2N64(v1 * (int64_t)c->P2, 12);
+    v1 = ((((int64_t)1 << 47) + v1) * (int64_t)c->P1) >> 33;
     if (v1 == 0) return 0;
     int64_t p = 1048576 - adc_P;
-    p = (((p << 31) - v2) * 3125) / v1;
+    p = (MUL2N64(p, 31) - v2) * 3125 / v1;
     v1 = ((int64_t)c->P9 * (p >> 13) * (p >> 13)) >> 25;
     v2 = ((int64_t)c->P8 * p) >> 19;
-    p = ((p + v1 + v2) >> 8) + ((int64_t)c->P7 << 4);
+    p = ((p + v1 + v2) >> 8) + MUL2N64(c->P7, 4);
     return (uint32_t)p;
 }
 
+/* Bosch 식을 int64 로 계산한다. 정상 범위에서는 32비트 식과 결과가 같고(tb/fuzz_bme280.c 가 비교),
+ * 극단적인 원시값에서 32비트 중간값이 넘쳐 미정의 동작/엉뚱한 값이 되는 것을 막는다. */
 uint32_t bme280_comp_H(const bme280_calib_t *c, int32_t adc_H, int32_t t_fine)
 {
-    int32_t x = t_fine - 76800;
-    x = (((((adc_H << 14) - ((int32_t)c->H4 << 20) - ((int32_t)c->H5 * x)) + 16384) >> 15) *
-         (((((((x * (int32_t)c->H6) >> 10) * (((x * (int32_t)c->H3) >> 11) + 32768)) >> 10) + 2097152) *
-           (int32_t)c->H2 + 8192) >> 14));
-    x = x - (((((x >> 15) * (x >> 15)) >> 7) * (int32_t)c->H1) >> 4);
+    int64_t x = (int64_t)t_fine - 76800;
+    x = ((((((int64_t)adc_H * 16384) - ((int64_t)c->H4 * 1048576) - ((int64_t)c->H5 * x)) + 16384) >> 15) *
+         (((((((x * (int64_t)c->H6) >> 10) * (((x * (int64_t)c->H3) >> 11) + 32768)) >> 10) + 2097152) *
+           (int64_t)c->H2 + 8192) >> 14));
+    x = x - (((((x >> 15) * (x >> 15)) >> 7) * (int64_t)c->H1) >> 4);
     x = x < 0 ? 0 : x;
     x = x > 419430400 ? 419430400 : x;
     return (uint32_t)(x >> 12);

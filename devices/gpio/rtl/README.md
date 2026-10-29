@@ -1,5 +1,7 @@
 # HC-SR04 거리계 (AXI4-Lite 래퍼)
 
+<!-- nav -->[저장소 홈](../../../README.md) › [devices](../../README.md) › [gpio](../README.md)
+
 거리 측정 로직은 사용자 노션의 `ultrasonic_distance_meter`를 **수정 없이** 가져왔고, 그 둘레에 AXI4-Lite 레지스터를 새로 붙였습니다.
 
 | 파일 | 역할 |

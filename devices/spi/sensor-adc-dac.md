@@ -1,5 +1,7 @@
 # SPI 센서·ADC·DAC: MAX31855, ADXL345, MCP3008, MCP4921
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [spi](README.md)
+
 ## MAX31855 (K형 열전대 → 디지털) — D1
 | 항목 | 값 |
 |---|---|

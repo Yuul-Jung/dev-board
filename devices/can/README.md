@@ -1,5 +1,7 @@
 # CAN 소자와 SoC 연결
 
+<!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
+
 구분: **확인** = 문서를 열어 확인, **계산**, **설계안**, **미확인**.
 
 ## 경로 A: AMD CAN (PG096 v5.1, 2023-05-16) — 확인 (문서 본문 열람)
@@ -60,3 +62,5 @@ SRR 비트: 0 SRST, 1 CEN. 전원 인가 시 CEN=0, SR의 CONFIG=1.
 
 미확인/설계안: RXNEMP 가 ICR 로 지운 뒤 FIFO 에 메시지가 남아 있으면 다시 세트되는지(테스트 모의는 그렇다고 가정). 샘플 포인트 87.5% 목표는 PG096 이 아닌 일반 관례. CONFIG 해제 확인 대기 로직은 호출자 몫. 인터럽트, 수락 필터, 오류/버스오프 복구 코드는 미작성. can_clk 24 MHz 는 문서 기재 값이며 Basys3 에서 만드는 방법(MMCM)은 미확인.
 테스트: `cd devices && gcc -Wall -include can/tb/mock_can.h -I can/sw can/tb/test_can_mock.c can/sw/axi_can.c -o t && ./t` → ALL PASS.
+
+<!-- nav-foot -->← [i2s](../i2s/README.md) · [devices 목차](../README.md) · [ethernet](../ethernet/README.md) →

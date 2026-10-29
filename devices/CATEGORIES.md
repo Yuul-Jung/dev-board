@@ -1,5 +1,7 @@
 # 주변장치 전체 분류 (필수 항목 목록)
 
+<!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
+
 사용자가 직접 든 예(온도, 습도, 초음파)에 한정하지 않고, Basys3 SoC에서 실제로 필요한 외부 장치 범주를 모두 적었습니다.
 "문서" 열은 이 저장소에 확인된 자료가 있는지입니다. 소자 이름은 후보이며, 사양은 데이터시트를 열람한 뒤에 적습니다.
 "SoC 경로"의 AMD IP는 문서를 열어 확인한 것(GPIO, UART Lite, IIC, Quad SPI, Timer, CAN, I2S, Ethernet Lite, XADC)만 적었습니다.

@@ -57,6 +57,20 @@ int main(void)
     e.id = 0x20000000; CHK(can_send(0, &e) == CAN_ERR_ARGS);
     m.dlc = 9; CHK(can_send(0, &m) == CAN_ERR_ARGS);
     reg[CAN_SR / 4] = CAN_SR_TXFLL; m.dlc = 1; CHK(can_send(0, &m) == CAN_ERR_FULL);
+    /* 속성 시험: 임의 메시지 왕복(표준/확장, RTR, DLC 0~8) */
+    reg[CAN_SR / 4] = 0; uint32_t rs = 99; long rt_fail = 0;
+    for (int it = 0; it < 200000; it++) {
+        rs = rs * 1664525u + 1013904223u; uint32_t a = rs >> 4;
+        rs = rs * 1664525u + 1013904223u; uint32_t b = rs >> 4;
+        can_msg_t s2 = { .ext = a & 1, .rtr = (a >> 1) & 1, .dlc = (uint8_t)((a >> 2) % 9) }, g;
+        s2.id = s2.ext ? (b & 0x1FFFFFFFu) : (b & 0x7FFu);
+        for (int i = 0; i < 8; i++) s2.data[i] = (uint8_t)((a * 31 + b * (i + 7)) >> (i % 5));
+        rq_h = rq_t = 0;
+        if (can_send(0, &s2) != CAN_OK || can_recv(0, &g) != CAN_OK) { rt_fail++; continue; }
+        if (g.ext != s2.ext || g.id != s2.id || g.rtr != s2.rtr || g.dlc != s2.dlc) { rt_fail++; continue; }
+        for (int i = 0; i < s2.dlc; i++) if (g.data[i] != s2.data[i]) { rt_fail++; break; }
+    }
+    CHK(rt_fail == 0);
     printf(fails ? "FAILED %d\n" : "ALL PASS\n", fails);
     return fails != 0;
 }
