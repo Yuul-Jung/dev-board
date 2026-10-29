@@ -1,0 +1,2 @@
+# basic_io.h 사실표 — 자유 실행 시계가 읽는 AXI Timer 레지스터. DS = AMD PG079 v2.0 (PDF 텍스트를 직접 확인, crosscheck_pdf.py 의 PG079 블록이 pg079.txt 에서도 같은 값을 찾는다).
+def|TMR_TCR0|0x08|-|Timer 0 Counter Register, 오프셋 08h

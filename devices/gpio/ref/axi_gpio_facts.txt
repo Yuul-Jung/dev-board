@@ -1,0 +1,18 @@
+# AXI GPIO 사실표 — 드라이버 헤더(gpio/sw/axi_gpio.h)의 상수를 대조하는 근거.
+# 출처 DS = AMD PG144 AXI GPIO v2.0 (users.ece.utexas.edu 의 PDF 사본). 이 환경에서는 PDF 를 직접 열지 못해 웹 가져오기(WebFetch)가 돌려준 본문 요약에서 옮겨 적음(D1 요약 경유). 표 번호는 요약이 말한 것.
+# 출처 LX = Linux drivers/gpio/gpio-xilinx.c (D3, 독립 소스 코드). '-' 는 그 출처에 없음(채널 2 의 오프셋은 CHANNEL1_OFFSET 0x8 + DATA/TRI 로 계산).
+# 줄 형식은 w5500_facts.txt 와 같다: def|헤더 매크로 이름|DS 값|LX 값|메모
+def|GPIO_REG_DATA|0x0000|0x0000|Table 2-4 GPIO_DATA, 채널 1
+def|GPIO_REG_TRI|0x0004|0x0004|GPIO_TRI, 비트 1 = 입력 (LX: dir_in 이 비트를 세움)
+def|GPIO_REG_DATA2|0x0008|0x0008|GPIO2_DATA (LX: CHANNEL1_OFFSET 0x8 + DATA 0x0)
+def|GPIO_REG_TRI2|0x000C|0x000C|GPIO2_TRI (LX: 0x8 + TRI 0x4)
+def|GPIO_REG_GIER|0x011C|0x011C|Global Interrupt Enable
+def|GPIO_REG_ISR|0x0120|0x0120|IP ISR, 접근 R/TOW
+def|GPIO_REG_IER|0x0128|0x0128|IP IER
+def|GPIO_GIER_ENABLE|0x80000000|0x80000000|GIER 비트 31 (LX: BIT(31))
+def|GPIO_IRQ_CH1|0x1|0x1|IER/ISR 비트 0 = 채널 1 (LX: BIT(bit/32))
+def|GPIO_IRQ_CH2|0x2|0x2|IER/ISR 비트 1 = 채널 2
+val|C_TRI_DEFAULT 기본값|0xFFFFFFFF|0xFFFFFFFF|요약: 모든 비트 기본 입력 (LX: dir 그림자 기본 전부 1)
+val|C_DOUT_DEFAULT 기본값|0|-|요약
+# 알려진 어긋남 (실패로 세지 않음, 드라이버는 init 에서 직접 써서 우회)
+!val|리셋 직후 GPIOx_DATA/TRI: 레지스터 표는 0x0, 동작 절은 C_TRI_DEFAULT 로 적음|0x0|0xFFFFFFFF|PG144 요약 자체의 불일치, 문서가 해결하지 않음

@@ -130,31 +130,37 @@ if os.path.exists(NP):
             res.append(('nRF24',lab,not any('ACTIVATE' in l for l in L)))
         else: chk('nRF24',L,lab,num,k,0)
 
-# ---- W5500 (PDF 텍스트 대신 spi/ref/w5500_facts.txt: 데이터시트 v1.0.5 본문 요약과 NuttX 소스에서 옮긴 사실표) ----
-# 이 환경에서는 W5500 PDF 를 직접 내려받지 못해 다른 블록처럼 "원문 텍스트 검색"이 아니다. 헤더의 상수를 사실표와 대조하고, 사실표의 두 출처(DS, NuttX)가 서로 같은지 본다.
-HERE=os.path.dirname(os.path.abspath(__file__))
-WH=os.path.join(HERE,'..','spi','sw','w5500.h'); WF=os.path.join(HERE,'..','spi','ref','w5500_facts.txt')
-if os.path.exists(WH) and os.path.exists(WF):
+def facts_check(tag,hdr,facts,prefix):
+    """사실표(def|이름|근거1 값|근거2 값|메모)와 헤더 #define 을 대조한다. 근거2 가 '-' 가 아니면 두 근거가 같은지도 본다.
+    val|설명|값1|값2 은 헤더에 매크로가 없는 항목(두 근거끼리만 비교), !val 은 알려진 불일치(실패로 세지 않음)."""
     defs={}
-    for l in open(WH,encoding='utf-8'):
-        m=re.match(r'#define\s+(W5500_\w+)\s+(.*)$',l)
+    for l in open(hdr,encoding='utf-8'):
+        m=re.match(r'#define\s+(%s\w+)\s+(.*)$'%prefix,l)
         if not m: continue
         expr=re.sub(r'/\*.*?\*/','',m.group(2)).strip()
         expr=re.sub(r'(\b0[xX][0-9A-Fa-f]+|\b\d+)[uU]\b',r'\1',expr)
         try: defs[m.group(1)]=eval(expr,{'__builtins__':{}},{})
         except Exception: pass
-    for l in open(WF,encoding='utf-8'):
+    for l in open(facts,encoding='utf-8'):
         l=l.rstrip('\n')
         if not l.strip() or l.startswith('#'): continue
         parts=l.split('|'); kind=parts[0]
         if kind=='def':
             name,ds,nt=parts[1],int(parts[2],0),parts[3]
-            res.append(('W5500',f'{name} = {parts[2]} (헤더 = 사실표)',defs.get(name)==ds))
-            if nt!='-': res.append(('W5500',f'{name}: DS 와 NuttX 일치',int(nt,0)==ds))
+            res.append((tag,f'{name} = {parts[2]} (헤더 = 사실표)',defs.get(name)==ds))
+            if nt!='-': res.append((tag,f'{name}: 근거 둘이 일치',int(nt,0)==ds))
         elif kind=='val':
-            if parts[3]!='-': res.append(('W5500',f'{parts[1]}: DS 와 NuttX 일치',int(parts[2],0)==int(parts[3],0)))
+            if parts[3]!='-': res.append((tag,f'{parts[1]}: 근거 둘이 일치',int(parts[2],0)==int(parts[3],0)))
         elif kind=='!val':
-            res.append(('W5500(알려진 불일치, 실패로 세지 않음)',f'{parts[1]}: DS {parts[2]} / NuttX {parts[3]}',True))
+            res.append((tag+'(알려진 불일치, 실패로 세지 않음)',f'{parts[1]}: {parts[2]} / {parts[3]}',True))
+
+
+# ---- W5500 (PDF 텍스트 대신 spi/ref/w5500_facts.txt: 데이터시트 v1.0.5 본문 요약과 NuttX 소스에서 옮긴 사실표) ----
+# 이 환경에서는 W5500 PDF 를 직접 내려받지 못해 다른 블록처럼 "원문 텍스트 검색"이 아니다. 헤더의 상수를 사실표와 대조하고, 사실표의 두 출처(DS, NuttX)가 서로 같은지 본다.
+HERE=os.path.dirname(os.path.abspath(__file__))
+WH=os.path.join(HERE,'..','spi','sw','w5500.h'); WF=os.path.join(HERE,'..','spi','ref','w5500_facts.txt')
+if os.path.exists(WH) and os.path.exists(WF):
+    facts_check('W5500',WH,WF,'W5500_')
     import subprocess,tempfile
     csrc=('#include <stdio.h>\n#include "w5500.h"\nint main(void){for(int n=0;n<8;n++)printf("%d %d %d %d %d\\n",'
           'W5500_CTRL(W5500_BSB_SOCK_REG(n),W5500_RWB_READ,W5500_OM_VDM),W5500_CTRL(W5500_BSB_SOCK_REG(n),W5500_RWB_WRITE,W5500_OM_VDM),'
@@ -169,6 +175,14 @@ if os.path.exists(WH) and os.path.exists(WF):
         res.append(('W5500','제어 바이트 8소켓 (DS 의 BSB 식)',rows==ds)); res.append(('W5500','제어 바이트 8소켓 (NuttX 의 식)',rows==nt))
     except Exception as e:
         res.append(('W5500','제어 바이트 대조(cc 실행 실패: %s)'%type(e).__name__,False))
+# ---- 그 밖의 소자: 저장소 안의 사실표(spi/ref, gpio/ref, ...)와 헤더를 대조 ----
+for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','max7219_facts.txt'),'MAX7219_'),
+                             ('AXI GPIO',('gpio','sw','axi_gpio.h'),('gpio','ref','axi_gpio_facts.txt'),'GPIO_'),
+                             ('HD44780',('lcd','sw','hd44780.h'),('lcd','ref','hd44780_facts.txt'),'HD44780_'),
+                             ('시계(AXI Timer)',('gpio','sw','basic_io.h'),('gpio','ref','basic_io_facts.txt'),'TMR_'),
+                             ('아날로그',('gpio','sw','analog_sensors.h'),('gpio','ref','analog_sensors_facts.txt'),'AN_')]:
+    hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
+    if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 bad=[r for r in res if not r[2]]
 for r in res: print('OK  ' if r[2] else 'MISS', r[0], r[1])
 print(len(res),'항목 중 자동 대조 실패',len(bad))

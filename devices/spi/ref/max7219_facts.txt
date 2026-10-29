@@ -1,0 +1,34 @@
+# MAX7219 사실표 — 드라이버 헤더(spi/sw/max7219.h)의 상수를 대조하는 근거.
+# 출처 DS = Maxim/ADI MAX7219-MAX7221 데이터시트. 이 환경에서는 PDF 를 직접 열지 못해 웹 가져오기(WebFetch)가 돌려준 본문 요약에서 옮겨 적음(D1 요약 경유). 쪽수는 요약이 말한 것.
+# 두 번째 독립 출처는 확보하지 못했다('-'). 따라서 이 표의 대조는 "헤더 = 요약에서 옮긴 값" 한 방향뿐이며, 요약 자체의 오류는 잡지 못한다.
+# 줄 형식은 w5500_facts.txt 와 같다: def|헤더 매크로 이름|DS 값|두 번째 출처 값|메모
+# ---- 레지스터 지도 (Table 2, p.7) ----
+def|MAX7219_REG_NOOP|0x00|-|No-Op, 체인에서 다른 칩 건너뛰기 (p.10)
+def|MAX7219_REG_DIGIT0|0x01|-|DIGIT n = 0x01 + n, n = 0..7 (DIGIT7 = 0x08)
+def|MAX7219_REG_DECODE|0x09|-|Table 4, 비트 n = DIGIT n 의 코드 B 사용
+def|MAX7219_REG_INTENSITY|0x0A|-|Table 7, D3~D0 = 0..15
+def|MAX7219_REG_SCANLIMIT|0x0B|-|Table 8, D2~D0 = 표시 자릿수-1
+def|MAX7219_REG_SHUTDOWN|0x0C|-|Table 3, D0 = 0 셧다운 / 1 정상
+def|MAX7219_REG_TEST|0x0F|-|Table 10, D0 = 1 전체 점등
+# ---- 코드 B 폰트 (Table 5, p.8) ----
+def|MAX7219_CODEB_DASH|0x0A|-|'-'
+def|MAX7219_CODEB_E|0x0B|-|'E'
+def|MAX7219_CODEB_H|0x0C|-|'H'
+def|MAX7219_CODEB_L|0x0D|-|'L'
+def|MAX7219_CODEB_P|0x0E|-|'P'
+def|MAX7219_CODEB_BLANK|0x0F|-|공백
+def|MAX7219_DP|0x80|-|D7 = 소수점
+# ---- 디코드 안 할 때 세그먼트 비트 (Table 6, p.8): D6..D0 = A..G ----
+def|MAX7219_SEG_A|0x40|-|D6
+def|MAX7219_SEG_B|0x20|-|D5
+def|MAX7219_SEG_C|0x10|-|D4
+def|MAX7219_SEG_D|0x08|-|D3
+def|MAX7219_SEG_E|0x04|-|D2
+def|MAX7219_SEG_F|0x02|-|D1
+def|MAX7219_SEG_G|0x01|-|D0
+# ---- 헤더에 매크로가 없는 사실 (기록용) ----
+val|코드 B 숫자 0~9 는 코드 0x0~0x9|0|-|p.8
+val|SPI 워드 16비트 = D15~D12 무관, D11~D8 주소, D7~D0 데이터|16|-|p.7
+val|CLK 최대 주파수 MHz|10|-|p.4 (요약)
+val|전원 V+ 최소 mV|4000|-|p.3 (요약)
+val|입력 VIH 최소 mV (3.3 V 직결 불가의 근거)|3500|-|p.3 (요약)
