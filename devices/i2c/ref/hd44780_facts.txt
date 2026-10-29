@@ -1,0 +1,42 @@
+# HD44780 사실표 — 드라이버 헤더(i2c/sw/hd44780.h)의 상수를 대조하는 근거.
+# 출처 DS = Hitachi HD44780U 데이터시트 (soldered.com 사본). 이 환경에서는 PDF 를 직접 열지 못해 웹 가져오기(WebFetch)가 돌려준 본문 요약에서 옮겨 적음(D1 요약 경유).
+#   요약은 표 머리글이 깨져 있다고 밝혔고(전압 열은 표 순서로 추정, Table 6 의 fOSC 조건 머리글 잘림) 쪽수는 근사값이라고 했다 → 아래 값은 그 한계를 포함한다.
+# 출처 WP = Wikipedia "Hitachi HD44780 LCD controller" (D3, 독립 2차 자료): 명령 코드·실행 시간·DDRAM 범위·CGRAM 만 있고 초기화 대기 시간과 버스 타이밍은 없음('-').
+# 줄 형식: def|헤더 매크로 이름|DS 값|WP 값|메모  /  min|헤더 매크로 이름|최소값|-|메모 (헤더 값이 최소값 이상이어야 함)  /  val|설명|DS 값|WP 값|메모 (기록용)
+# ---- 명령 코드 (Table 6) ----
+def|HD44780_CMD_CLEAR|0x01|0x01|0000 0001
+def|HD44780_CMD_HOME|0x02|0x02|0000 001*
+def|HD44780_CMD_ENTRY|0x04|0x04|0000 01 I/D S
+def|HD44780_ENTRY_ID|0x02|0x02|
+def|HD44780_ENTRY_S|0x01|0x01|
+def|HD44780_CMD_DISPLAY|0x08|0x08|0000 1 D C B
+def|HD44780_DISP_D|0x04|0x04|
+def|HD44780_DISP_C|0x02|0x02|
+def|HD44780_DISP_B|0x01|0x01|
+def|HD44780_CMD_SHIFT|0x10|0x10|0001 S/C R/L * *
+def|HD44780_SHIFT_SC|0x08|0x08|
+def|HD44780_SHIFT_RL|0x04|0x04|
+def|HD44780_CMD_FUNCTION|0x20|0x20|001 DL N F * *
+def|HD44780_FN_DL|0x10|0x10|DL = 1 8비트, 0 4비트
+def|HD44780_FN_N|0x08|0x08|N = 1 2행, 0 1행
+def|HD44780_FN_F|0x04|0x04|F = 1 5×10, 0 5×8
+def|HD44780_CMD_SETCGRAM|0x40|0x40|01 AAAAAA
+def|HD44780_CMD_SETDDRAM|0x80|0x80|1 AAAAAAA
+# ---- 대기 시간 (µs). 헤더 상수는 데이터시트 최소값 이상이어야 한다 ----
+min|HD44780_WAIT_POWERON_US|40000|-|Figure 24: Vcc 2.7 V 도달 후 >40 ms (4.5 V 도달 후는 >15 ms)
+min|HD44780_WAIT_INIT1_US|4100|-|Figure 24: 첫 0011 뒤 >4.1 ms
+min|HD44780_WAIT_INIT2_US|100|-|Figure 24: 두 번째 0011 뒤 >100 µs
+min|HD44780_WAIT_CMD_US|53|-|37 µs × 270/190 = 52.6 µs 를 올림 (계산: fOSC 190 kHz 최악, Table 6 은 270 kHz 기준 37 µs)
+min|HD44780_WAIT_CLEAR_US|2160|-|1.52 ms × 270/190 = 2.16 ms (계산)
+min|HD44780_PULSE_US|1|-|3 V 쪽 E 하이 ≥ 450 ns, E 주기 ≥ 1000 ns, 데이터 셋업 ≥ 195 ns → 1 µs 단위 지연으로 충족
+# ---- 헤더에 매크로가 없는 사실 (기록용, 시험 모델의 상수와 같다) ----
+val|clock fOSC 최소/전형/최대 kHz (Rf = 75 kΩ, Vcc = 3 V)|190|-|전형 270, 최대 350
+val|tcycE 최소 ns, 2.7~4.5 V (4.5~5.5 V 는 500)|1000|-|표 머리글이 깨져 전압 열은 표 순서로 추정
+val|PWEH 최소 ns, 2.7~4.5 V (4.5~5.5 V 는 230)|450|-|
+val|tAS 최소 ns (4.5~5.5 V 는 40)|60|-|
+val|tDSW 최소 ns (4.5~5.5 V 는 80)|195|-|
+val|tH 최소 ns|10|-|
+val|tAH 최소 ns (4.5~5.5 V 는 10)|20|-|
+val|DDRAM 2행 첫 행 끝 주소|0x27|0x27|둘째 행 40H~67H (WP: 0x40~0x67)
+val|DDRAM 1행 끝 주소|0x4F|-|
+val|CGRAM 바이트|64|64|5×8 글자 8개, 5×10 글자 4개

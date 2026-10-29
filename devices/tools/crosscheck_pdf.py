@@ -132,6 +132,7 @@ if os.path.exists(NP):
 
 def facts_check(tag,hdr,facts,prefix):
     """사실표(def|이름|근거1 값|근거2 값|메모)와 헤더 #define 을 대조한다. 근거2 가 '-' 가 아니면 두 근거가 같은지도 본다.
+    min|이름|최소값 은 헤더의 대기 시간 상수가 데이터시트 최소값 이상인지,
     val|설명|값1|값2 은 헤더에 매크로가 없는 항목(두 근거끼리만 비교), !val 은 알려진 불일치(실패로 세지 않음)."""
     defs={}
     for l in open(hdr,encoding='utf-8'):
@@ -149,6 +150,8 @@ def facts_check(tag,hdr,facts,prefix):
             name,ds,nt=parts[1],int(parts[2],0),parts[3]
             res.append((tag,f'{name} = {parts[2]} (헤더 = 사실표)',defs.get(name)==ds))
             if nt!='-': res.append((tag,f'{name}: 근거 둘이 일치',int(nt,0)==ds))
+        elif kind=='min':
+            res.append((tag,f'{parts[1]} >= {parts[2]} (헤더 대기 상수가 데이터시트 최소값 이상)',defs.get(parts[1],-1)>=int(parts[2],0)))
         elif kind=='val':
             if parts[3]!='-': res.append((tag,f'{parts[1]}: 근거 둘이 일치',int(parts[2],0)==int(parts[3],0)))
         elif kind=='!val':
@@ -178,7 +181,7 @@ if os.path.exists(WH) and os.path.exists(WF):
 # ---- 그 밖의 소자: 저장소 안의 사실표(spi/ref, gpio/ref, ...)와 헤더를 대조 ----
 for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','max7219_facts.txt'),'MAX7219_'),
                              ('AXI GPIO',('gpio','sw','axi_gpio.h'),('gpio','ref','axi_gpio_facts.txt'),'GPIO_'),
-                             ('HD44780',('lcd','sw','hd44780.h'),('lcd','ref','hd44780_facts.txt'),'HD44780_'),
+                             ('HD44780',('i2c','sw','hd44780.h'),('i2c','ref','hd44780_facts.txt'),'HD44780_'),
                              ('시계(AXI Timer)',('gpio','sw','basic_io.h'),('gpio','ref','basic_io_facts.txt'),'TMR_'),
                              ('아날로그',('gpio','sw','analog_sensors.h'),('gpio','ref','analog_sensors_facts.txt'),'AN_')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)

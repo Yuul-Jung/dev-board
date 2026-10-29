@@ -16,8 +16,11 @@ cc -I i2c/sw i2c/tb/test_rtc_eeprom.c i2c/sw/rtc_eeprom.c -o "$T/rtce" && run rt
 cc -I i2c/sw i2c/tb/test_io_expander.c i2c/sw/io_expander.c -o "$T/ioe" && run io-expander "$T/ioe"
 cc -I i2c/sw i2c/tb/test_ads1115.c i2c/sw/ads1115.c -o "$T/ads" && run ads1115 "$T/ads"
 cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"
+cc -I i2c/sw i2c/tb/test_hd44780.c i2c/sw/hd44780.c i2c/sw/hd44780_pcf8574.c -o "$T/hd44780" && run hd44780-model "$T/hd44780"
 cc -I spi/sw spi/tb/test_mcp2515_model.c spi/sw/mcp2515.c -o "$T/mcm" && run mcp2515-model "$T/mcm"
 cc -I spi/sw spi/tb/test_nrf24_model.c spi/sw/nrf24l01.c -o "$T/nrf" && run nrf24-model "$T/nrf"
+cc -I spi/sw spi/tb/test_w5500_model.c spi/sw/w5500.c -o "$T/w55" && run w5500-model "$T/w55"
+cc -I spi/sw spi/tb/test_max7219_model.c spi/sw/max7219.c -o "$T/m72" && run max7219-model "$T/m72"
 cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp2515 "$T/mcp2515"
 cc -I spi/sw spi/tb/test_hc595.c spi/sw/spi_devices.c -o "$T/hc595" && run hc595 "$T/hc595"
 cc -I spi/sw spi/tb/test_spi_sensors.c spi/sw/spi_sensors.c -o "$T/spisen" && run spi-sensors "$T/spisen"
@@ -27,6 +30,9 @@ cc -include spi/tb/mock_qspi.h -I spi/sw spi/tb/test_qspi_mock.c spi/sw/axi_qspi
 cc -include spi/tb/mock_lcd.h -I spi/sw spi/tb/test_ili9341_sw.c spi/sw/ili9341.c -o "$T/lcd" && run ili9341 "$T/lcd"
 cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_gpio_sw.c gpio/sw/axi_timer_pwm.c -o "$T/pwm" && run timer-pwm "$T/pwm"
 cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_tach.c gpio/sw/axi_timer_tach.c -o "$T/tach" && run timer-tach "$T/tach"
+cc -include gpio/tb/mock_gpio.h -I gpio/sw gpio/tb/test_axi_gpio.c gpio/sw/axi_gpio.c -o "$T/agpio" && run axi-gpio-model "$T/agpio"
+cc -include gpio/tb/mock_timer_b.h -I gpio/sw gpio/tb/test_basic_io.c gpio/sw/basic_io.c gpio/sw/axi_timer_pwm.c -o "$T/bio" -lm && run basic-io-model "$T/bio"
+cc -I gpio/sw gpio/tb/test_analog_sensors.c gpio/sw/analog_sensors.c -o "$T/anl" -lm && run analog-sensors "$T/anl"
 cc -I ps2/sw ps2/tb/test_ps2_sw.c ps2/sw/ps2.c -o "$T/ps2" && run ps2-sw "$T/ps2"
 run ps2-model python3 ps2/tb/model_ps2_rx.py
 run quad-model python3 gpio/tb/model_quad.py
