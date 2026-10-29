@@ -35,6 +35,7 @@
 | BH1750FVI | 0x23 (ADDR=Low), 0x5C (ADDR=High) | 400 kHz | 2.4~3.6 V (절대 최대 4.5 V) | sensors.md |
 | DS3231 | 0x68 (고정) | 400 kHz | VCC 2.3~5.5 V, VBAT 2.3~5.5 V | clock.md |
 | BME280 | 0x76, 0x77 | (bme280.md) | 1.71~3.6 V | bme280.md |
+| ADS1115 (ADC) | 0x48~0x4B (ADDR=GND/VDD/SDA/SCL) | 400 kHz (고속 3.4 MHz) | 2.0~5.5 V | [ads1115.md](ads1115.md) |
 | SSD1306 (OLED) | 0x3C, 0x3D | 미확인 | 로직 1.65~3.3 V | [ssd1306.md](ssd1306.md) (2차 자료 기반) |
 
 ## 버스 계획 (설계안)

@@ -515,5 +515,26 @@
    50
   ],
   "evidence": "D3 (Digilent Pmod PS2 문서)"
+ },
+ {
+  "id": "ads1115",
+  "interface": [
+   "i2c"
+  ],
+  "category": "adc",
+  "vdd_v": [
+   2.0,
+   5.5
+  ],
+  "i2c_addr": [
+   "0x48",
+   "0x49",
+   "0x4A",
+   "0x4B"
+  ],
+  "channels": "4 단일 종단 또는 2 차동",
+  "resolution_bits": 16,
+  "max_sps": 860,
+  "evidence": "D1 (TI 데이터시트 웹 문서, 비교기·ALERT 미사용)"
  }
 ]
