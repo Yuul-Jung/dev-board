@@ -17,12 +17,12 @@
 | 8 | 링크 검사 | 저장소에 문서 간 링크가 거의 없고 폴더 4곳에 README 없음 | README 추가, 모든 문서에 상·하위 이동 링크 |
 
 ## 2. 원문 대조 (코드의 레지스터·비트 ↔ AMD PDF)
-`tools/crosscheck_pdf.py`: PG079·PG090·PG096·PG142·PG153(AMD)과 MCP2515 데이터시트(DS20001801K) 텍스트에서 코드 헤더의 오프셋·비트 이름·옵코드를 찾는다 — **119항목 전부 일치**(AMD 86 + MCP2515 33; MCP2515 는 `mcp2515.txt` 가 있을 때만 검사).
+`tools/crosscheck_pdf.py`: PG079·PG090·PG096·PG142·PG153(AMD)과 MCP2515(DS20001801K)·nRF24L01+(Product Specification v1.0) 텍스트에서 코드 헤더의 오프셋·비트 이름·옵코드를 찾는다 — **208항목 전부 일치**(AMD 86 + MCP2515 33 + nRF24L01+ 89; MCP2515·nRF24L01+ 는 `mcp2515.txt`·`nrf24.txt` 가 있을 때만 검사).
 - 음성 대조: 오프셋을 틀리게(0x68→0x6A) 또는 비트를 어긋나게(CPOL 3→5, inhibit 8→9) 바꾼 사본은 실패로 잡힘.
 - 한계: "숫자와 이름이 같은 줄/가까운 줄에 있다"만 본다. 비트의 의미(방향, 리셋값)는 사람이 PDF 를 읽어 확인한 것이고 자동 검사가 아님. PG135(Ethernet Lite)·PG308(I2S)는 코드가 없어 대조 대상 아님.
 
 ## 3. 코드 시험
-- 호스트 테스트 19개(+링크 검사) 전부 통과, ASan+UBSan 빌드에서도 통과(수정 후).
+- 호스트 테스트 20개(+링크 검사) 전부 통과, ASan+UBSan 빌드에서도 통과(수정 후).
 - CAN: 임의 메시지 20만 개 왕복(표준/확장, RTR, DLC 0~8) 일치. 비트 타이밍은 클럭 8종 × 속도 10종에서 모든 해가 정확한 비트레이트·필드 범위를 지키고, 해가 없다고 한 11개는 독립 전수 탐색(파이썬)과 일치.
 - BME280 온도 25.08 °C 는 BMP280 데이터시트 예제와 일치. 압력은 0.02 Pa 차이(기억에 의존한 기준값이라 ±8 LSB 허용).
 
@@ -37,9 +37,9 @@
 ## 5. 재현
 ```
 cd devices
-./run_host_tests.sh                    # 기본 19개 + 링크
+./run_host_tests.sh                    # 기본 20개 + 링크
 SAN=1 FUZZ=1 ./run_host_tests.sh       # ASan/UBSan + 퍼저·전수
 python3 tools/check_links.py           # 문서 링크
-pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt (그리고 MCP2515 는 mcp2515.txt) 로 변환해 한 폴더에 두고
+pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt (그리고 mcp2515.txt, nrf24.txt) 로 변환해 한 폴더에 두고
 python3 tools/crosscheck_pdf.py <폴더>
 ```

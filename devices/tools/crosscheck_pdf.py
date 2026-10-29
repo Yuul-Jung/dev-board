@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """코드 헤더에 적은 레지스터 오프셋·비트 이름을 AMD PG 문서 텍스트(pdftotext -layout 결과)와 자동 대조한다.
-사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt, 선택으로 mcp2515.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
+사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt, 선택으로 mcp2515.txt, nrf24.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
 한계: 이름과 숫자가 같은 줄/근처에 있는지만 본다. 비트 의미의 세부는 사람이 읽어 확인한 것이다."""
 import re,sys
 def load(p): return open(p,errors='ignore').read().splitlines()
@@ -93,6 +93,41 @@ if os.path.exists(MP):
     chk('MCP2515',L,'OST 128 OSC1 클럭',r'128 OSC1',['reset'],1)
     chk('MCP2515',L,'READ RX BUFFER 가 RXnIF 해제',r'automatically clearing',['rxnif'],2)
     chk('MCP2515',L,'5.5절 PropSeg+PS1 ≥ PS2',r'PropSeg \+ PS1',['ps2'],0)
+
+# ---- nRF24L01+ (선택: nrf24.txt = Product Specification v1.0 의 pdftotext -layout 결과). Table 20 명령, Table 28 레지스터, Table 16 타이밍, Table 22 SPI ----
+NP=os.path.join(D,'nrf24.txt')
+if os.path.exists(NP):
+    L=load(NP)
+    for lab,num,k in [('R_REGISTER 000A AAAA',r'R_REGISTER\s+000A AAAA',[]),('W_REGISTER 001A AAAA',r'W_REGISTER\s+001A AAAA',[]),
+        ('R_RX_PAYLOAD 61h',r'R_RX_PAYLOAD\s+0110 0001',[]),('W_TX_PAYLOAD A0h',r'W_TX_PAYLOAD\s+1010 0000',[]),('FLUSH_TX E1h',r'FLUSH_TX\s+1110 0001',[]),
+        ('FLUSH_RX E2h',r'FLUSH_RX\s+1110 0010',[]),('REUSE_TX_PL E3h',r'REUSE_TX_PL\s+1110 0011',[]),('R_RX_PL_WID 60h',r'R_RX_PL_WID\w*\s+0110 0000',[]),
+        ('W_ACK_PAYLOAD 1010 1PPP',r'W_ACK_PAYLOAD\w*\s+1010 1PPP',[]),('W_TX_PAYLOAD_NOACK B0h',r'1011 0000',[]),('NOP FFh',r'NOP\s+1111 1111',[])]:
+        chk('nRF24',L,lab,num,k,0)
+    for addr,name in [('00','CONFIG'),('01','EN_AA'),('02','EN_RXADDR'),('03','SETUP_AW'),('04','SETUP_RETR'),('05','RF_CH'),('06','RF_SETUP'),('07','STATUS'),
+        ('08','OBSERVE_TX'),('09','RPD'),('0A','RX_ADDR_P0'),('0B','RX_ADDR_P1'),('0C','RX_ADDR_P2'),('0F','RX_ADDR_P5'),('10','TX_ADDR'),('11','RX_PW_P0'),('16','RX_PW_P5'),
+        ('17','FIFO_STATUS'),('1C','DYNPD'),('1D','FEATURE')]:
+        chk('nRF24',L,f'주소 {addr}h = {name}',r'^\s*'+addr+r'\s+'+name+r'\b',[],0)
+    def bit(name,b,reset=None,label=None):
+        pat=r'^\s*'+name+r'[a-z]?\s+'+b+r'\s+'+(reset if reset is not None else r'\S+')+r'\s'
+        chk('nRF24',L,label or f'{name} 비트 {b}'+(f' 리셋 {reset}' if reset else ''),pat,[],0)
+    for nm,b,r in [('MASK_RX_DR','6','0'),('MASK_TX_DS','5','0'),('MASK_MAX_RT','4','0'),('EN_CRC','3','1'),('CRCO','2','0'),('PWR_UP','1','0'),('PRIM_RX','0','0'),
+        ('ENAA_P5','5','1'),('ENAA_P0','0','1'),('ERX_P5','5','0'),('ERX_P1','1','1'),('ERX_P0','0','1'),('AW','1:0','11'),('ARD','7:4','0000'),('ARC','3:0','0011'),
+        ('RF_CH','6:0','0000010'),('CONT_WAVE','7','0'),('RF_DR_LOW','5','0'),('RF_DR_HIGH','3','1'),('RF_PWR','2:1','11'),
+        ('RX_DR','6','0'),('TX_DS','5','0'),('MAX_RT','4','0'),('RX_P_NO','3:1','111'),('PLOS_CNT','7:4','0'),('ARC_CNT','3:0','0'),
+        ('TX_REUSE','6','0'),('TX_EMPTY','4','1'),('RX_FULL','1','0'),('RX_EMPTY','0','1'),
+        ('DPL_P5','5','0'),('DPL_P0','0','0'),('EN_DPL','2','0'),('EN_ACK_PAY','1','0'),('EN_DYN_ACK','0','0')]:
+        bit(nm,b,r)
+    chk('nRF24',L,'STATUS TX_FULL 비트 0',r'^\s*TX_FULL\s+0\s',[],0); chk('nRF24',L,'FIFO_STATUS TX_FULL 비트 5',r'^\s*TX_FULL\s+5\s',[],0)
+    for lab,num,k in [('RF_DR 인코딩 10=250kbps',r"[‘'’]10[’']\s+\S\s*250kbps",[]),('RF_DR 인코딩 01=2Mbps',r"[‘'’]01[’']\s+\S\s*2Mbps",[]),('RF_DR 인코딩 00=1Mbps',r"[‘'’]00[’']\s+\S\s*1Mbps",[]),
+        ('RF_PWR 11=0dBm',r"'11'\s+.\s*0dBm",[]),('RF_PWR 00=-18dBm',r"'00'\s+.\s*-18dBm",[]),('AW 01=3바이트',r"'01'\s+.\s*3 bytes",[]),('AW 11=5바이트',r"'11'\s+.\s*5 bytes",[]),
+        ('ARD 0000=250µs',r'[‘\'’]0000[’\']\s+\S\s*Wait 250',[]),('ARD 1111=4000µs',r'[‘\'’]1111[’\']\s+\S\s*Wait 4000',[]),('RF_CH 식 f=2400+RF_CH',r'F0\s*=\s*2400\s*\+\s*RF_CH',[]),
+        ('Tstby2a 130µs',r'Tstby2a.*130',[]),('Thce 10µs',r'Thce.*10',[]),('Tpece2csn 4µs',r'Tpece2csn.*4',[]),('Tpd2stby 1.5 ms',r'Tpd2stby.*1\.5ms',[]),('Tpd2stby 4.5 ms',r'^\s*4\.5ms\s',[]),
+        ('SPI Fsck 10 MHz (Cload 5 pF 표)',r'Fsck\s+SCK Frequency\s+0\s+10\s+MHz',[]),('SPI Tcwh 50 ns',r'Tcwh\s+CSN Inactive time\s+50',[]),
+        ('SPI 데이터 바이트 순서',r'LSByte to MSByte, MSBit in each byte first',[]),('W_REGISTER 대기/전원차단 모드에서만',r'Executable in power down or standby modes',[]),
+        ('각주: FEATURE 비트 필요',r'bits in the FEATURE register',[]),('ACTIVATE 명령이 문서에 없음(음성 대조)',r'^$',[])]:
+        if lab.startswith('ACTIVATE'):
+            res.append(('nRF24',lab,not any('ACTIVATE' in l for l in L)))
+        else: chk('nRF24',L,lab,num,k,0)
 bad=[r for r in res if not r[2]]
 for r in res: print('OK  ' if r[2] else 'MISS', r[0], r[1])
 print(len(res),'항목 중 자동 대조 실패',len(bad))

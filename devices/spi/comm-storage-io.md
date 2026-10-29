@@ -76,16 +76,58 @@ CAN 버스에는 트랜시버가 별도로 필요합니다 (`../CATEGORIES.md`).
 연결 테스트: 9Fh → EF 40 17. 쓰기 순서(설계안): Write Enable → Page Program → BUSY 폴링.
 참고: Basys3 는 Artix-7 구성용 QSPI 플래시가 따로 있으나(이 문서에서 확인하지 않음, 미확인) 이 칩은 외부 Pmod 용 별도 소자입니다.
 
-## nRF24L01+ (2.4 GHz 무선) — D1 일부
+## nRF24L01+ (2.4 GHz 무선) — D1
+출처: Nordic nRF24L01+ Product Specification v1.0 (78쪽 PDF 를 직접 읽음). 6.1절 모드·타이밍, 8.3절 SPI, 9.1절 레지스터 맵(Table 28), 부록 A 송수신 절차.
+
 | 항목 | 값 |
 |---|---|
-| 전송 속도 | 250 kbps / 1 Mbps / 2 Mbps |
+| 전송 속도 | 250 kbps / 1 Mbps / 2 Mbps (RF_DR_LOW, RF_DR_HIGH) |
 | 전원 | 1.9~3.6 V, 입력 5 V 허용 (3.6 V 초과 입력이면 VDD 2.7~3.3 V) |
-| SPI | 4선, 최대 10 Mbps. CPOL/CPHA 는 문서에 없음 (미확인) |
-| 페이로드·FIFO | 1~32바이트, TX/RX 각 3단계 FIFO |
-| 핀 | CE(RX/TX 활성), IRQ(active-low: TX_DS, RX_DR, MAX_RT) |
-| 명령 | R_REGISTER 000A AAAA · W_REGISTER 001A AAAA · R_RX_PAYLOAD 61h · W_TX_PAYLOAD A0h · FLUSH_TX E1h · FLUSH_RX E2h · NOP FFh |
-| 규칙 | 새 명령은 CSN 의 High→Low 에서 시작 |
+| SPI | 4선, SCK ≤ 10 MHz (Cload 5 pF) / 8 MHz (10 pF). CSN 비활성 ≥ 50 ns, CSN→SCK·SCK→CSN 2 ns. **모드 0,0** — 본문에 모드 이름은 없고 그림 26~28(SCK 가 Low 로 대기, 첫 상승 에지에서 데이터 표본)에서 읽은 값 |
+| 바이트 순서 | 명령은 MSBit 먼저. 다중 바이트 레지스터·페이로드는 **LSByte 먼저**(각 바이트는 MSBit 먼저). 주소 쓰기는 중간에 끊어도 됨(나머지 바이트 유지) |
+| STATUS | 모든 명령에서 첫 바이트가 MISO 로 나온다. NOP 로 읽을 수 있다. 새 명령은 CSN High→Low 에서 시작 |
+| 페이로드·FIFO | 1~32바이트, TX/RX 각 3단계 FIFO(RX 는 전 파이프 공유) |
+| 핀 | CE(RX/TX 활성), IRQ(active-low: RX_DR, TX_DS, MAX_RT) |
+
+**명령 (Table 20)**: R_REGISTER 000A AAAA · W_REGISTER 001A AAAA(대기/전원차단에서만) · R_RX_PAYLOAD 61h · W_TX_PAYLOAD A0h · FLUSH_TX E1h · FLUSH_RX E2h · REUSE_TX_PL E3h · R_RX_PL_WID 60h · W_ACK_PAYLOAD 1010 1PPP · W_TX_PAYLOAD_NOACK B0h · NOP FFh. 뒤 세 개(R_RX_PL_WID, W_ACK_PAYLOAD, W_TX_PAYLOAD_NOACK)는 FEATURE 비트가 켜져 있어야 한다.
+
+**레지스터 (Table 28)**
+
+| 주소 | 이름 | 리셋 | 내용 |
+|---|---|---|---|
+| 00 | CONFIG | 08h | 6 MASK_RX_DR · 5 MASK_TX_DS · 4 MASK_MAX_RT · 3 EN_CRC(EN_AA 가 하나라도 켜지면 1 강제) · 2 CRCO(0 = 1바이트, 1 = 2바이트) · 1 PWR_UP · 0 PRIM_RX(1 = PRX). 7 은 0 만 |
+| 01 | EN_AA | 3Fh | 파이프별 자동 ACK |
+| 02 | EN_RXADDR | 03h | 파이프 0·1 만 기본 켜짐 |
+| 03 | SETUP_AW | 03h | 1 = 3바이트, 2 = 4바이트, 3 = 5바이트, 0 불가. 폭보다 짧은 주소는 LSByte 사용 |
+| 04 | SETUP_RETR | 03h | ARD[7:4]: (값+1)×250 µs, ARC[3:0]: 재전송 횟수(0 = 끔) |
+| 05 | RF_CH | 02h | f = 2400 + RF_CH MHz. 동작 범위 2400~2525 MHz(RF_CH 0~125). 쓰면 PLOS_CNT 초기화 |
+| 06 | RF_SETUP | 0Eh | 5 RF_DR_LOW · 3 RF_DR_HIGH · 2:1 RF_PWR(00 −18, 01 −12, 10 −6, 11 0 dBm) · 7 CONT_WAVE. [LOW,HIGH] = 00 1 Mbps · 01 2 Mbps · 10 250 kbps |
+| 07 | STATUS | 0Eh | 6 RX_DR · 5 TX_DS · 4 MAX_RT (1 을 쓰면 해제) · 3:1 RX_P_NO(0~5, 7 = 비어 있음) · 0 TX_FULL |
+| 08 | OBSERVE_TX | 00h | PLOS_CNT[7:4](15 에서 멈춤), ARC_CNT[3:0] |
+| 09 | RPD | 00h | bit0, −64 dBm 초과 신호. 구형 nRF24L01 의 CD 와 이름·문턱이 다름 |
+| 0A~0F | RX_ADDR_P0~P5 | E7E7E7E7E7 · C2C2C2C2C2 · C3 · C4 · C5 · C6 | P0·P1 은 5바이트, P2~P5 는 LSByte 만(상위는 P1 과 같음) |
+| 10 | TX_ADDR | E7E7E7E7E7 | 자동 ACK 를 받으려면 RX_ADDR_P0 를 같은 값으로 |
+| 11~16 | RX_PW_P0~P5 | 0 | 1~32, 0 = 파이프 미사용 |
+| 17 | FIFO_STATUS | 11h | 6 TX_REUSE · 5 TX_FULL · 4 TX_EMPTY · 1 RX_FULL · 0 RX_EMPTY |
+| 1C | DYNPD | 00h | DPL_P0~P5. EN_DPL 과 해당 ENAA 필요 |
+| 1D | FEATURE | 00h | 2 EN_DPL · 1 EN_ACK_PAY · 0 EN_DYN_ACK |
+
+주소 18~1B 는 시험용으로 예약, 건드리면 오동작.
+
+**타이밍 (Table 16)**: 전원차단→대기 Tpd2stby = 1.5 ms(외부 수정, Ls<30 mH) / 3 ms(60 mH) / 4.5 ms(90 mH), 이 시간이 지나기 전에 CE 를 올리면 안 된다. 대기→TX/RX Tstby2a = 130 µs. CE High 최소 10 µs. CE 상승 후 CSN 하강까지 ≥ 4 µs(Tpece2csn). 한 번의 CE 펄스는 한 패킷(TX FIFO 한 단)을 보낸다. TX 모드를 4 ms 넘게 유지하지 말 것(PLL 개루프).
+
+**송신 절차(부록 A)**: PRIM_RX = 0 → W_TX_PAYLOAD → CE 10 µs 이상 → TX_DS(ACK 수신 시) 또는 MAX_RT 대기. 자동 ACK 를 쓰면 RX_ADDR_P0 = TX_ADDR. MAX_RT 가 서면 해제해야 다음 송신이 가능하고 페이로드는 FIFO 에 남는다(FLUSH_TX 필요). **수신 절차**: PRIM_RX = 1, 파이프 활성·폭 설정, CE = 1, 130 µs 뒤 수신. 인터럽트 처리 순서(각주 c): 페이로드 읽기 → RX_DR 해제 → FIFO_STATUS 로 더 있는지 확인 → 있으면 반복. DPL 이면 R_RX_PL_WID 로 폭을 읽고 32 초과면 오류 패킷이므로 FLUSH_RX.
+
+**드라이버**: [`sw/nrf24l01.h`](sw/nrf24l01.h), [`sw/nrf24l01.c`](sw/nrf24l01.c) — `init`(옵션 조합 검사 → 레지스터를 쓰고 읽어 검증 → CONFIG 마지막 → Tpd2stby 대기 → FIFO 비움·IRQ 해제), `set_tx_addr`(TX_ADDR 와 RX_ADDR_P0 동시), `set_rx_pipe`, `rx_start/rx_stop`, `send`(PTX 전환 → TX_FULL 확인 → 적재 → CE 15 µs → TX_DS/MAX_RT 폴링, MAX_RT 이면 해제·FLUSH_TX), `recv`(FIFO_STATUS → 폭 → 읽기 → RX_DR 해제), `write_ack_payload`, `read_rpd`. CE 와 마이크로초 지연은 콜백으로 받는다(GPIO·타이머는 이 파일 밖).
+옵션 검사는 문서 규칙에서 나온다: 자동 ACK 는 CRC 필요, DPL 은 자동 ACK 필요, ACK 페이로드는 DPL 필요, 250 kbps 는 ARD ≥ 500 µs. "ACK 페이로드를 쓰면 ARD ≥ 500 µs"는 문서의 조건부 규칙(2 Mbps 15바이트 초과·1 Mbps 5바이트 초과)을 길이를 모르는 상태에서 보수적으로 적용한 **설계 선택**이다.
+시험: [`tb/test_nrf24_model.c`](tb/test_nrf24_model.c) — 위 규칙을 구현한 모델(예약 비트 쓰기, 읽기 전용, FEATURE 없이 쓴 명령, DPL 선행 조건, 수신 모드 중 STATUS 외 쓰기, Tpd2stby·10 µs·4 µs·130 µs 위반, FIFO 3단, MAX_RT 중 송신 금지)을 상대로 초기화 바이트열을 손으로 계산한 값과 한 바이트씩 비교, RF_SETUP 조합 표, 잘못된 옵션 13종(SPI 트래픽 0), 송수신·MAX_RT·TX_FULL·타임아웃, DPL 1~32바이트, 비정상 폭(0, 33), ACK 페이로드, 칩이 없을 때(읽기 0xFF) 검증 실패. 변이 30종 모두 검출. 레지스터·비트·명령·타이밍 89항목은 `tools/crosscheck_pdf.py` 로 PDF 텍스트와 자동 대조.
+
+**미확인·한계**
+- SPI 모드 0,0 은 그림에서 읽은 것이다(글로 된 문장 없음).
+- `W_TX_PAYLOAD_NOACK` 패킷에서 TX_DS 가 언제 서는지는 문서에 없다. 모델은 "전송 직후"로 가정했고 실제 칩은 확인하지 못했다. 그래서 `send(noack=1)` 는 실제 칩에서 타임아웃을 낼 수 있다.
+- 수신 모드(CE=1)에서 RX_DR 을 해제하려고 STATUS 를 쓴다. 문서는 W_REGISTER 를 "대기·전원차단에서만"이라 쓰면서 각주 c 에서는 이 해제를 안내한다. 모델은 STATUS 쓰기만 허용했다 — 이것이 문서 의도라는 보장은 없다.
+- 구형 칩·복제품에 필요한 ACTIVATE(73h) 명령은 이 문서에 없다(자동 대조로 부재 확인). 복제품이면 FEATURE 쓰기가 무시될 수 있다 — 쓰고 읽어 비교하는 init 검증이 이를 잡는다.
+- 공중(RF) 구간·주소 매칭·실제 재전송 시간은 모델링하지 않았다. 보드·무선 실행 없음. 모듈 전원은 3.3 V 로 안정적이어야 한다(PA/LNA 모듈은 전류가 커 디커플링 필요 — 이 문서에서 확인한 값은 아님).
 
 ## 74HC595 (직렬→병렬 시프트 레지스터) — D1
 | 항목 | 값 |

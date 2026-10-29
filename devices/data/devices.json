@@ -259,7 +259,10 @@
    3.6
   ],
   "sck_max_mbps": 10,
-  "evidence": "D1 partial"
+  "evidence": "D1",
+  "spi_modes": [
+   0
+  ]
  },
  {
   "id": "74hc595",

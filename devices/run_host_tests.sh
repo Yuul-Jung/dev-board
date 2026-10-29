@@ -17,6 +17,7 @@ cc -I i2c/sw i2c/tb/test_io_expander.c i2c/sw/io_expander.c -o "$T/ioe" && run i
 cc -I i2c/sw i2c/tb/test_ads1115.c i2c/sw/ads1115.c -o "$T/ads" && run ads1115 "$T/ads"
 cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"
 cc -I spi/sw spi/tb/test_mcp2515_model.c spi/sw/mcp2515.c -o "$T/mcm" && run mcp2515-model "$T/mcm"
+cc -I spi/sw spi/tb/test_nrf24_model.c spi/sw/nrf24l01.c -o "$T/nrf" && run nrf24-model "$T/nrf"
 cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp2515 "$T/mcp2515"
 cc -I spi/sw spi/tb/test_hc595.c spi/sw/spi_devices.c -o "$T/hc595" && run hc595 "$T/hc595"
 cc -I spi/sw spi/tb/test_spi_sensors.c spi/sw/spi_sensors.c -o "$T/spisen" && run spi-sensors "$T/spisen"
