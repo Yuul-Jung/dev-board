@@ -12,6 +12,7 @@ printf 'void iic_delay_ms(unsigned ms){(void)ms;}\n' > "$T/stub.c"
 
 cc -include i2c/tb/mock_iic.h -I i2c/sw i2c/tb/test_axi_iic_mock.c i2c/sw/axi_iic.c i2c/sw/i2c_sensors.c -o "$T/i2c" && run i2c "$T/i2c"
 cc -I i2c/sw i2c/tb/test_bme280.c i2c/sw/bme280.c i2c/sw/axi_iic.c "$T/stub.c" -o "$T/bme" && run bme280 "$T/bme"
+cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"
 cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/uartlite.c uart/sw/nmea.c uart/sw/hc05.c -o "$T/uart" && run uart "$T/uart"
 cc -include can/tb/mock_can.h -I can/sw can/tb/test_can_mock.c can/sw/axi_can.c -o "$T/can" && run can "$T/can"
 cc -include spi/tb/mock_qspi.h -I spi/sw spi/tb/test_qspi_mock.c spi/sw/axi_qspi.c spi/sw/spi_devices.c -o "$T/qspi" && run qspi "$T/qspi"
