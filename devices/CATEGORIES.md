@@ -27,7 +27,7 @@
 | 저장 | microSD, SPI 플래시(W25Q64JV), I2C EEPROM | SPI, I2C | Quad SPI, IIC | W25Q64JV (microSD 미확인) |
 | ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | MCP3008, MCP4921(일부) |
 | I/O 확장 | PCF8574, MCP23017, 74HC595 | I2C, SPI | IIC, Quad SPI | 74HC595 |
-| 오디오 | I2S 마이크(INMP441), I2S 앰프(MAX98357) | I2S | 전용 RTL | 없음 |
+| 오디오 | I2S 마이크(INMP441), I2S 앰프(MAX98357A) | I2S | AMD I2S IP(PG308, 일부 확인) | INMP441, MAX98357A |
 | 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), nRF24L01+, IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | HC-05, MAX485, MCP2515, MFRC522, W5500, nRF24L01+ |
 | **절연·레벨·전원** | 포토커플러(PC817, 사용자 노션), 레벨 시프터, 풀업·풀다운 | 하드웨어 | 해당 없음 | L298 문서에 일부 |
 

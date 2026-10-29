@@ -361,5 +361,38 @@
   ],
   "max_mbps": 2.5,
   "evidence": "D1"
+ },
+ {
+  "id": "inmp441",
+  "interface": "i2s",
+  "category": "audio",
+  "vdd_v": [
+   1.8,
+   3.3
+  ],
+  "bits": 24,
+  "fsck_mhz": [
+   0.5,
+   3.2
+  ],
+  "fws_khz": [
+   7.8,
+   50
+  ],
+  "evidence": "D1"
+ },
+ {
+  "id": "max98357a",
+  "interface": "i2s",
+  "category": "audio",
+  "vdd_v": [
+   2.5,
+   5.5
+  ],
+  "fs_khz": [
+   8,
+   96
+  ],
+  "evidence": "D1"
  }
 ]
