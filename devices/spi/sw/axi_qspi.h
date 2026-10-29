@@ -1,8 +1,8 @@
-/* AXI Quad SPI (PG153) 마스터 드라이버, 표준 SPI 모드, 바이트 단위 전송.
- * 레지스터·비트는 PG153 표에서 확인. 전송 순서는 FreeBSD axi_quad_spi.c(D3, 2차 자료)를 따랐다:
- *   SRR=0xA → SPICR 로 FIFO 리셋 → DGIER=0 → SPICR=MASTER|MSS|SPE (inhibit 0) ;
- *   CS 는 SPISSR 비트를 0 으로(active-low) ; 바이트마다 DTR 쓰기 → 완료 대기 → DRR 읽기.
- * PG153 본문의 절차는 열지 못했다(미확인). 보드 미실행, 호스트 모의 테스트만. */
+/* AXI Quad SPI (PG153 v3.2) 마스터 드라이버, 표준 SPI 모드.
+ * 절차 출처: PG153 「Standard SPI Mode Transactions」(p.77) — 수동 SS 흐름:
+ *   SPISSR 전부 1 → SPICR(수동 SS, SPE, inhibit 설정) → DTR 채움 → SPISSR 로 SS 선택 → inhibit 해제(전송 시작)
+ *   → 완료 대기 → inhibit 설정 → 다음 데이터. 완료 후 DRR 읽기.
+ * 전제: IP 를 Transaction Width = 8, Master 모드로 생성. 보드 미실행, 호스트 모의 테스트만. */
 #ifndef AXI_QSPI_H
 #define AXI_QSPI_H
 #include <stdint.h>
@@ -38,10 +38,11 @@
 #define QSPI_ERR_TIMEOUT -1
 #define QSPI_ERR_ARGS -2
 
-typedef struct { uintptr_t base; uint32_t cr; uint32_t ssr_idle; unsigned timeout; } qspi_t;
+typedef struct { uintptr_t base; uint32_t cr; uint32_t ssr_idle; unsigned timeout; unsigned chunk; } qspi_t;
 
 /* mode: 0~3 (bit1 = CPOL, bit0 = CPHA). 모드는 인스턴스마다 하나로 고정하는 것을 가정(실행 중 변경은 미확인) */
-int  qspi_init(qspi_t *s, uintptr_t base, unsigned mode, int lsb_first, unsigned num_ss);
+/* fifo_depth: IP 의 FIFO Depth 파라미터(0, 16, 256). 한 번에 DTR 로 밀어 넣는 바이트 수를 이 값으로 제한 */
+int  qspi_init(qspi_t *s, uintptr_t base, unsigned mode, int lsb_first, unsigned num_ss, unsigned fifo_depth);
 void qspi_cs(qspi_t *s, unsigned idx, int assert_cs);
 int  qspi_xfer(qspi_t *s, const uint8_t *tx, uint8_t *rx, size_t len);   /* tx 또는 rx 는 NULL 가능(tx NULL 이면 0x00 송신) */
 #endif
