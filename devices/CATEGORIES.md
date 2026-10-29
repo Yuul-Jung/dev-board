@@ -8,12 +8,12 @@
 
 | 범주 | 소자(후보) | 인터페이스 | SoC 경로 | 문서 |
 |---|---|---|---|---|
-| 온도 | DS18B20, DHT22, MAX31855(열전대), 서미스터 | 1-Wire, 단일선, SPI, 아날로그 | 전용 RTL, SPI IP, XADC | DS18B20, DHT22, MAX31855 |
+| 온도 | DS18B20, DHT22, MAX31855(열전대), LM35, 서미스터 | 1-Wire, 단일선, SPI, 아날로그 | 전용 RTL, SPI IP, XADC(또는 외부 ADC) | DS18B20, DHT22, MAX31855, LM35([변환 함수](gpio/analog-sensors.md), 요약 경유 D1) |
 | 습도·기압 | BME280, SHT31 | I2C/SPI | AXI IIC, Quad SPI | BME280, SHT31 |
 | 거리 | HC-SR04, ToF(VL53L0X 등), 적외선 | GPIO, I2C, 아날로그 | 전용 RTL, IIC | HC-SR04 |
-| 조도 | CdS(사용자 노션), BH1750 | 아날로그 또는 I2C | XADC, IIC | BH1750 |
+| 조도 | CdS(사용자 노션), BH1750 | 아날로그 또는 I2C | XADC, IIC | BH1750, CdS 분압 변환([설계안](gpio/analog-sensors.md), 조도 환산은 셀 자료 필요) |
 | 모션 | MPU-6050, ADXL345, 자이로 | I2C/SPI | IIC, Quad SPI | MPU-6050, ADXL345 |
-| 인체·접촉 | PIR, 터치, 버튼, 로터리 엔코더 | GPIO | AXI GPIO | HC-SR501 (PIR), TTP223, 로터리 엔코더(전용 RTL, 미시뮬레이션) |
+| 인체·접촉 | PIR, 터치, 버튼, 로터리 엔코더 | GPIO | AXI GPIO | HC-SR501 (PIR), TTP223, 버튼 디바운스([기본 입출력](gpio/basic-io.md), 모델 시험), 로터리 엔코더(전용 RTL, 미시뮬레이션) |
 | 공기질·가스 | MQ 계열, CO2 모듈, SGP30 | 아날로그, UART, I2C | XADC, UART Lite, IIC | 없음 |
 | 전류·전압 | INA219 | I2C | IIC | 없음 |
 | 위치 | GPS 모듈(NEO-6M) | UART | UART Lite | NEO-6M |
@@ -24,7 +24,7 @@
 | BLDC | ESC | PWM | AXI Timer PWM | 없음 |
 | 릴레이·솔레노이드·부저·팬 | 릴레이 모듈 등 | GPIO(+PWM) | AXI GPIO | 릴레이 SRD-05VDC-SL-C, 팬 PWM·타코, 부저(사양 미확인) |
 | LED 스트립 | WS2812 | 단일선(타이밍 엄격) | 전용 RTL | 없음 |
-| 표시 | 7세그(온보드), LCD1602, OLED SSD1306, TFT ILI9341(사용자 노션), VGA(온보드) | GPIO, I2C, SPI, VGA | AXI GPIO, IIC, Quad SPI, 전용 RTL | ILI9341(전용 RTL+드라이버, 초기화 표는 데이터시트 본문 필요), SSD1306, MAX7219 (일부 미확인) |
+| 표시 | 7세그(온보드), LCD1602, OLED SSD1306, TFT ILI9341(사용자 노션), VGA(온보드) | GPIO, I2C, SPI, VGA | AXI GPIO, IIC, Quad SPI, 전용 RTL | ILI9341(전용 RTL+드라이버, 초기화 표는 데이터시트 본문 필요), SSD1306, MAX7219(드라이버·체인 모델 시험, [display.md](spi/display.md)), HD44780 문자 LCD([lcd1602.md](i2c/lcd1602.md), 모델 시험) (일부 미확인) |
 | 시계 | DS3234(SPI), DS1302(3선), DS1307, DS3231 | SPI, 3선, I2C | Quad SPI, 전용 RTL, IIC | DS3234, DS3231 |
 | 저장 | microSD, SPI 플래시(W25Q64JV), I2C EEPROM | SPI, I2C | Quad SPI, IIC | W25Q64JV (microSD 미확인) |
 | ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | MCP3008, MCP4921 |

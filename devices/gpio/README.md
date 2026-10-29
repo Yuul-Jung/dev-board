@@ -14,6 +14,8 @@
 | TTP223 터치 | [ttp223.md](ttp223.md) | AXI GPIO 입력 |
 | 4선 PWM 팬 | [fan-pwm.md](fan-pwm.md) | AXI Timer PWM [sw/axi_timer_pwm.c](sw/axi_timer_pwm.c) + 캡처 [sw/axi_timer_tach.c](sw/axi_timer_tach.c) |
 | 부저 | [buzzer.md](buzzer.md) | AXI Timer PWM (사양 미확인) |
+| LED·버튼·RGB·비차단 타이머 | [basic-io.md](basic-io.md) | AXI GPIO [sw/axi_gpio.c](sw/axi_gpio.c), [sw/basic_io.c](sw/basic_io.c) (모델 시험) |
+| LM35·CdS·가변저항·조이스틱 | [analog-sensors.md](analog-sensors.md) | 변환 함수 [sw/analog_sensors.c](sw/analog_sensors.c) (ADC 는 I2C/SPI 쪽 드라이버) |
 
 모터·서보·스테퍼는 [../motor/](../motor/README.md). 호스트 테스트: [tb/](tb/) (`../run_host_tests.sh`).
 

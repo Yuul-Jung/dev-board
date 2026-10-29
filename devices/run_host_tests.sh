@@ -37,6 +37,7 @@ cc -I ps2/sw ps2/tb/test_ps2_sw.c ps2/sw/ps2.c -o "$T/ps2" && run ps2-sw "$T/ps2
 run ps2-model python3 ps2/tb/model_ps2_rx.py
 run quad-model python3 gpio/tb/model_quad.py
 run links python3 tools/check_links.py
+run crosscheck-facts bash -c 'python3 -I tools/crosscheck_pdf.py --facts-only >/dev/null && echo ALL PASS'
 if [ "${FUZZ:-0}" = 1 ]; then
   [ "${SAN:-0}" = 1 ] || SANF="-g -O1 -fsanitize=address,undefined -fno-sanitize-recover=all"
   cc -I i2c/sw i2c/tb/fuzz_bme280.c i2c/sw/bme280.c i2c/sw/axi_iic.c "$T/stub.c" -o "$T/f1" && run fuzz-bme280 "$T/f1"

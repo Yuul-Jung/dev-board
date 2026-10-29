@@ -2,7 +2,7 @@
 
 <!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md)
 
-구분: **확인** = 이번 작업에서 데이터시트를 열어 확인, **계산**, **설계안**, **미확인**. 소자 문서: [sensors.md](sensors.md), [clock.md](clock.md), 기존 [bme280.md](bme280.md).
+구분: **확인** = 이번 작업에서 데이터시트를 열어 확인, **계산**, **설계안**, **미확인**. 소자 문서: [sensors.md](sensors.md), [clock.md](clock.md), 기존 [bme280.md](bme280.md), 문자 LCD [lcd1602.md](lcd1602.md).
 
 ## AXI IIC (PG090 v2.1, 2024-12-18) — 확인 (문서 본문 열람)
 | 항목 | 값 |
@@ -41,6 +41,7 @@
 | MCP23017 | 0x20~0x27 (A2A1A0) | 400 kHz (고속 1.7 MHz 는 4.5~5.5 V) | 1.8~5.5 V | [io-expander.md](io-expander.md) |
 | ADS1115 (ADC) | 0x48~0x4B (ADDR=GND/VDD/SDA/SCL) | 400 kHz (고속 3.4 MHz) | 2.0~5.5 V | [ads1115.md](ads1115.md) |
 | SSD1306 (OLED) | 0x3C, 0x3D | 미확인 | 로직 1.65~3.3 V | [ssd1306.md](ssd1306.md) (2차 자료 기반) |
+| HD44780 문자 LCD (PCF8574 백팩) | PCF8574 주소(0x20~0x27, 백팩은 모듈별 확인) | 100 kHz 가정 | LCD 5 V 가 흔함(미확인) | [lcd1602.md](lcd1602.md) (요약 경유 D1 + 모델 시험) |
 
 ## 버스 계획 (설계안)
 - **주소 충돌**: MPU-6050(AD0=Low)과 DS3231 이 둘 다 0x68. MPU-6050 의 AD0 를 High 로 올려 0x69 를 쓰거나 버스를 나눕니다. (확인된 주소 값에서 도출)

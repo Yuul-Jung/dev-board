@@ -2,8 +2,12 @@
 
 <!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
 ## 문서를 열어야 값을 확인할 수 있는 것
-- SPI: ILI9341 데이터시트 본문(타이밍·초기화·COLMOD/MADCTL — 막힘, PDF 필요), microSD 사양, SSD1306 SPI 타이밍·차지 펌프, nRF24L01+ NOACK 패킷의 TX_DS 시점·수신 모드 중 STATUS 쓰기(실제 칩 확인), MCP2515 필터·마스크·슬립·오류 처리·OSM(드라이버 미작성), MAX31855 SPI 모드, W5500 RWB(도우미 미작성), ADXL345 데이터시트 원문 대조(현재 AN-1077 기반: 쓰기 R/W 비트 값·BW_RATE·DATA_FORMAT 비트·3선 모드), PG153 SCK 비율 선택지(본문 상충)와 p.105 예제
+- SPI(W5500): UDP 수신 시 RX 버퍼에 붙는 헤더 형식, 소프트 리셋 후 대기 시간, MACRAW 의 `Sn_SR` 값(영문 사본 p.47 0x02 / p.51 0x42 상충), `w5500_send` 가 TIMEOUT 으로 끝난 뒤 TX 포인터 상태, `Sn_TX_RD`/`Sn_RX_WR` 읽기 전용 여부, 요약이 아닌 PDF 원문 대조(현재 웹 가져오기 요약 + NuttX)
+- SPI(MAX7219): CLK 휴지 레벨, 표시 시험 레지스터 전원 투입 값, 자릿수 방향과 8×8 행·열 방향(모듈별), PDF 원문 대조(요약 경유, 두 번째 출처 없음)
+- SPI: ILI9341 데이터시트 본문(타이밍·초기화·COLMOD/MADCTL — 막힘, PDF 필요), microSD 사양, SSD1306 SPI 타이밍·차지 펌프, nRF24L01+ NOACK 패킷의 TX_DS 시점·수신 모드 중 STATUS 쓰기(실제 칩 확인), MCP2515 필터·마스크·슬립·오류 처리·OSM(드라이버 미작성), MAX31855 SPI 모드, ADXL345 데이터시트 원문 대조(현재 AN-1077 기반: 쓰기 R/W 비트 값·BW_RATE·DATA_FORMAT 비트·3선 모드), PG153 SCK 비율 선택지(본문 상충)와 p.105 예제
+- GPIO(AXI GPIO, PG144): 입력으로 설정된 비트에 DATA 를 쓰면 저장되는지, 리셋 직후 DATA/TRI 값(문서 안에서 상충), 인터럽트가 레벨인지 에지인지, PDF 원문 대조(요약 경유). AXI Timer 자유 실행 시계의 ARHT=1 재적재 동작(PG079 본문은 확인, 실제 IP 동작 미확인). LM35 정확도·음의 온도 구성, CdS 셀별 lux 환산 값
 - GPIO: AXI Timer PWM 0 %/100 %·ARHT 필요 여부(PG079 에 없음), 타코 캡처 후 카운터 동작, 엔코더 위상·클릭당 카운트, TTP223 원문, 부저 사양, 서보 3.3 V 신호 레벨
+- I2C(HD44780): 글자 ROM 표(A00/A02)와 ASCII 차이, 20×4 의 3·4 행 주소(모듈 관례를 가정), 5 V 모듈의 입력 하이 레벨 최소값, 3.3 V 구동 시 오실레이터 속도, PCF8574 백팩 핀 배치(모듈마다), 백팩 I2C 풀업 전원, PDF 원문 대조(요약 경유)
 - I2C: SSD1306 데이터시트 원문 대조(현재 2차 자료 기반 드라이버 작성됨, COM 핀 0xDA 인자·최대 SCL 미확인), SHT3x 응답 바이트 배치, DS3231 비트 마스크, MPU-6050 온도 변환식, ADS1115(비교기·ALERT·고속 모드·일반 호출 리셋 미작성), PCF8574A 주소·MCP23017 인터럽트·BANK=1 지도(미작성), DS1307 레벨 변환 설계·EEPROM WP 핀 동작 시험·24C02 계열(1바이트 주소) 미작성, BME280 데이터시트 예제 계수로 재검증, 습도식 괄호 원문 대조
 - UART: HC-05 KEY 핀/AT 모드 진입·AT 모드 보레이트, NEO-6M UBX 설정, GGA 필드 순서와 `$`·`*` 의 XOR 범위, ESP, LoRa
 - CAN: RXNEMP 재세트 동작, 트랜시버 핀·종단, 24 MHz can_clk 생성(MMCM), 라이선스 포함 여부

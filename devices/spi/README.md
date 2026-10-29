@@ -88,7 +88,7 @@ Pmod 신호는 3.3 V 로 취급합니다(설계안). 문서 값:
 | [comm-storage-io.md](comm-storage-io.md) | MCP2515, MFRC522, W5500, nRF24L01+, W25Q64JV, microSD, 74HC595 |
 
 ## 6. 드라이버 (devices/spi/sw, 호스트 모의 테스트만)
-`axi_qspi.h/.c`(표준 SPI 마스터), `spi_devices.h/.c`(W25Q64JV JEDEC ID·BUSY, MAX31855 해석).
+`axi_qspi.h/.c`(표준 SPI 마스터), `spi_devices.h/.c`(W25Q64JV JEDEC ID·BUSY, MAX31855 해석), `max7219.h/.c`(체인 지원 7세그·매트릭스), `w5500.h/.c`(TCP/UDP 소켓), `mcp2515`·`nrf24l01`(각 소자 문서 참고). W5500·MAX7219 는 장치 모델(자작) 시험, 자세한 내용은 [display.md](display.md), [comm-storage-io.md](comm-storage-io.md).
 
 **전송 절차 (확인, PG153 v3.2 「Standard SPI Mode Transactions」 p.77, 수동 SS 흐름)**
 1. SPISSR 을 전부 1 로 → 2. SPICR 에 수동 SS(bit7) + SPE + inhibit(bit8) 을 설정(SCK/IO0 초기화, 전송은 막음) → 3. inhibit 상태에서 DTR 를 채움(SPIDTR 는 리셋 상태에서 채워야 함) → 4. SPISSR 로 SS 선택 → 5. SPICR 에서 inhibit 을 해제(전송 시작) → 6. 인터럽트(IPISR bit4) 또는 폴링으로 완료 대기 → 7. inhibit 설정 → 8. 새 데이터 기록 후 다시 해제. 드라이버는 이 순서를 그대로 따른다(`qspi_xfer` 한 덩어리 = 3·5·6·7).
@@ -100,7 +100,7 @@ Pmod 신호는 3.3 V 로 취급합니다(설계안). 문서 값:
 
 테스트(`tb/test_qspi_mock.c`): SPICR 값(모드 3 = 0x19E, 모드 0 = 0x186, 초기엔 inhibit), DTR 쓰기가 항상 inhibit 상태에서 일어나고 끝나면 다시 inhibit, CS 해제, W25Q JEDEC EF 40 17·BUSY, MAX31855 양수·음수·오류 비트, FIFO 16 에서 40바이트가 16+16+8 로 나뉘어 순서대로 돌아옴, 타임아웃 후 inhibit 복구 → ALL PASS. 모의 IP 는 PG153 에 적힌 대로 내가 구현한 것이라 실제 IP 동작의 검증은 아님.
 
-미확인: 비율 선택지(위), 모드 변경 시 SPE 를 내려야 하는지(인스턴스당 모드 고정으로 회피), MAX31855 의 SPI 모드, W5500 도우미(RWB 미확인으로 미작성). ADXL345·MCP3008 은 `sw/spi_sensors.c` 로 작성(근거: AN-1077, MCP3008 데이터시트), 인터럽트 구동 방식.
+미확인: 비율 선택지(위), 모드 변경 시 SPE 를 내려야 하는지(인스턴스당 모드 고정으로 회피), MAX31855 의 SPI 모드, W5500(RWB 는 확인됨, UDP 수신 헤더·소프트 리셋 대기 등은 comm-storage-io.md 의 미확인 목록). ADXL345·MCP3008 은 `sw/spi_sensors.c` 로 작성(근거: AN-1077, MCP3008 데이터시트), 인터럽트 구동 방식.
 
 ## 7. 한계
 - 모든 RTL/드라이버는 시뮬레이션·합성 전. RTL 은 ILI9341 엔진 하나뿐입니다.

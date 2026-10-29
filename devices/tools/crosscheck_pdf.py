@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """코드 헤더에 적은 레지스터 오프셋·비트 이름을 AMD PG 문서 텍스트(pdftotext -layout 결과)와 자동 대조한다.
 사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt, 선택으로 mcp2515.txt, nrf24.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
-W5500 블록은 PDF 텍스트가 아니라 저장소 안의 spi/ref/w5500_facts.txt(데이터시트 본문 요약과 NuttX 소스에서 옮긴 사실표)를 쓴다.
+W5500·MAX7219·AXI GPIO·HD44780·아날로그 센서 블록은 PDF 텍스트가 아니라 저장소 안의 */ref/*_facts.txt(데이터시트 본문 요약 등에서 옮긴 사실표)를 쓴다.
+--facts-only 를 주면 PDF 텍스트 블록은 건너뛰고 사실표 블록만 검사한다(PDF 텍스트 없이 실행 가능).
 한계: 이름과 숫자가 같은 줄/근처에 있는지만 본다. 비트 의미의 세부는 사람이 읽어 확인한 것이다."""
-import re,sys
-def load(p): return open(p,errors='ignore').read().splitlines()
+import re,sys,os
+FACTS_ONLY = '--facts-only' in sys.argv     # PDF 텍스트 없이 사실표 블록만 (PDF 텍스트 블록은 건너뛰고 그 사실을 출력)
+def load(p):
+    if FACTS_ONLY and not os.path.exists(p): return []
+    return open(p,errors='ignore').read().splitlines()
 def has(lines, num, kws, window=0):
     """num 이 들어간 줄에서 kws(모두) 가 같은 줄 또는 window 줄 이내에 있는지"""
     for i,l in enumerate(lines):
@@ -15,8 +19,8 @@ def has(lines, num, kws, window=0):
 res=[]
 def chk(doc,lines,label,num,kws,w=0):
     ok=has(lines,num,kws,w); res.append((doc,label,ok))
-import sys,os
-D=sys.argv[1] if len(sys.argv)>1 else '.'
+_a=[a for a in sys.argv[1:] if not a.startswith('--')]
+D=_a[0] if _a else '.'
 P=os.path.join(D,'pg153.txt'); L=load(P)
 for lab,num,k in [('SRR 0x40',r'\b40h?\b|0x40',['reset']),('SPICR 0x60',r'\b60h?\b|0x60',['control']),('SPISR 0x64',r'64h?\b|0x64',['status']),
   ('DTR 0x68',r'68h?\b|0x68',['transmit']),('DRR 0x6C',r'6Ch?\b|0x6C',['receive']),('SPISSR 0x70',r'70h?\b|0x70',['slave select']),
@@ -186,6 +190,11 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('아날로그',('gpio','sw','analog_sensors.h'),('gpio','ref','analog_sensors_facts.txt'),'AN_')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
+PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}
+if FACTS_ONLY:
+    n=len([r for r in res if r[0] in PDFTAGS])
+    res=[r for r in res if r[0] not in PDFTAGS]
+    print('(--facts-only: PDF 텍스트 블록 항목 %d개는 비교하지 않고 제외)'%n)
 bad=[r for r in res if not r[2]]
 for r in res: print('OK  ' if r[2] else 'MISS', r[0], r[1])
 print(len(res),'항목 중 자동 대조 실패',len(bad))

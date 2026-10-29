@@ -112,7 +112,9 @@
   ],
   "sck_max_mhz": 10,
   "digits": 8,
-  "evidence": "D1"
+  "evidence": "D1 (요약 경유, 두 번째 출처 없음)",
+  "vih_min_v": 3.5,
+  "driver": "spi/sw/max7219.c (모델 시험, 보드 미실행)"
  },
  {
   "id": "ds3234",
@@ -233,7 +235,8 @@
   ],
   "sockets": 8,
   "versionr": "0x04",
-  "evidence": "D1"
+  "evidence": "D1 (요약 경유) + D3 (NuttX 일치)",
+  "driver": "spi/sw/w5500.c (모델 시험, 보드 미실행)"
  },
  {
   "id": "w25q64jv",
@@ -630,5 +633,59 @@
   "page_bytes": 64,
   "write_cycle_ms_max": 5,
   "evidence": "D1 (Microchip DS21203 사본). 24LC256 은 VCC 2.5~5.5 V"
+ },
+ {
+  "id": "hd44780",
+  "interface": [
+   "gpio",
+   "i2c"
+  ],
+  "category": "display",
+  "size": "16x2, 20x4 등",
+  "backpack": "PCF8574 (핀 배치는 모듈 관례, 미확인)",
+  "bus_timing_ns_2v7_4v5": {
+   "tcycE_min": 1000,
+   "PWEH_min": 450,
+   "tDSW_min": 195
+  },
+  "exec_us_270khz": {
+   "clear_home_ms": 1.52,
+   "other": 37
+  },
+  "evidence": "D1 (요약 경유) + D3 (명령 코드·시간 일치)",
+  "driver": "i2c/sw/hd44780.c (모델 시험, 보드 미실행)"
+ },
+ {
+  "id": "lm35",
+  "interface": "analog",
+  "category": "temperature",
+  "vs_v": [
+   4,
+   30
+  ],
+  "mv_per_degc": 10,
+  "range_degc": {
+   "LM35/LM35A": [
+    -55,
+    150
+   ],
+   "LM35C/LM35CA": [
+    -40,
+    110
+   ],
+   "LM35D": [
+    0,
+    100
+   ]
+  },
+  "evidence": "D1 (요약 경유, 두 번째 출처 없음, 정확도 수치 미확인)",
+  "driver": "gpio/sw/analog_sensors.c (변환 함수, 보드 미실행)"
+ },
+ {
+  "id": "cds-ldr",
+  "interface": "analog",
+  "category": "light",
+  "evidence": "설계안 (분압식은 회로 이론, 조도 환산은 셀 데이터시트 필요 — 미확인)",
+  "driver": "gpio/sw/analog_sensors.c"
  }
 ]
