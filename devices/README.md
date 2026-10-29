@@ -13,10 +13,11 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (RTL 없음, 일부 미확인) |
 | `uart/` | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 절차 일부 미확인) |
 | `i2s/` | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
-| `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
+| `can/` | CAN 컨트롤러·트랜시버 | AXI CAN, MCP2515, SN65HVD230 (레지스터 미확인) |
+| `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
-**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/` — 모두 시뮬레이션 전. 다음 후보: PS/2, CAN (I2S 는 AMD IP 확인으로 대상에서 제외).
+**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/` — 모두 시뮬레이션 전. 다음 후보: PS/2 (I2S, CAN 은 AMD IP 확인으로 대상에서 제외).
 
 전체 범주 목록과 상태는 `CATEGORIES.md`.
 
@@ -38,4 +39,5 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | SPI | AXI Quad SPI (PG153) | 레지스터 오프셋·SPICR 비트·SCK 비율 확인, 전송 절차 미확인 |
 | 타이머·캡처 | AXI Timer (PG079) | Generate / Capture / PWM / Cascade 모드 (오프셋 미확인) |
 | I2S | I2S Transmitter/Receiver (PG308) | 기능 일부 확인, Artix-7 지원·라이선스 미확인 |
-| 1-Wire, CAN, Bluetooth, Ethernet | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성) |
+| CAN | AXI CAN (PG096) | 제품 페이지 확인(Artix 7, 2.0B, 1 Mbps), 레지스터 미확인 |
+| 1-Wire, Bluetooth, Ethernet | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성). Ethernet 은 AXI Ethernet Lite 가능성 미확인 |

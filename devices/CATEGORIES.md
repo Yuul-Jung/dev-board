@@ -28,7 +28,7 @@
 | ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | MCP3008, MCP4921(일부) |
 | I/O 확장 | PCF8574, MCP23017, 74HC595 | I2C, SPI | IIC, Quad SPI | 74HC595 |
 | 오디오 | I2S 마이크(INMP441), I2S 앰프(MAX98357A) | I2S | AMD I2S IP(PG308, 일부 확인) | INMP441, MAX98357A |
-| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), nRF24L01+, IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | HC-05, MAX485, MCP2515, MFRC522, W5500, nRF24L01+ |
+| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(AXI CAN 또는 MCP2515, +트랜시버 SN65HVD230), RFID(MFRC522), nRF24L01+, IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | HC-05, MAX485, MCP2515, MFRC522, W5500, nRF24L01+ |
 | **절연·레벨·전원** | 포토커플러(PC817, 사용자 노션), 레벨 시프터, 풀업·풀다운 | 하드웨어 | 해당 없음 | L298 문서에 일부 |
 
 ## 모든 소자에 공통으로 필요한 점검 항목
@@ -43,4 +43,4 @@
 1. 센서·모터에서 문서가 있는 소자를 SoC 맵과 맞춰 정리(완료: 온도·습도·거리·모터·서보·스테퍼)
 2. 표시(TFT, OLED), 시계(RTC), 모션(IMU) — SPI 소자는 `spi/`, I2C 소자(MPU-6050, SHT31, BH1750, DS3231)는 `i2c/` 에 작성 완료. 남은 I2C: SSD1306 I2C 주소, DS1307, ADS1115 등
 3. 통신 모듈(UART, SPI)과 저장
-4. 오디오(I2S)와 CAN
+4. 오디오(I2S)와 CAN — `i2s/`, `can/` 작성 완료

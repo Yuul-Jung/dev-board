@@ -394,5 +394,28 @@
    96
   ],
   "evidence": "D1"
+ },
+ {
+  "id": "axi-can",
+  "interface": "can",
+  "category": "can",
+  "bitrate_max_mbps": 1,
+  "standards": [
+   "ISO 11898-1",
+   "CAN 2.0A/B"
+  ],
+  "tx_fifo_max": 64,
+  "evidence": "D1 product page"
+ },
+ {
+  "id": "sn65hvd230",
+  "interface": "can",
+  "category": "can-transceiver",
+  "vcc_v": [
+   3.0,
+   3.6
+  ],
+  "rate_max_mbps": 1,
+  "evidence": "D1 product page"
  }
 ]
