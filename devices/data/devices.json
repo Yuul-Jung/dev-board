@@ -417,5 +417,31 @@
   ],
   "rate_max_mbps": 1,
   "evidence": "D1 product page"
+ },
+ {
+  "id": "pmod-nic100",
+  "interface": "spi",
+  "category": "ethernet",
+  "chip": "ENC424J600",
+  "vcc_v": [
+   3.0,
+   3.6
+  ],
+  "rate_mbps": [
+   10,
+   100
+  ],
+  "evidence": "D1"
+ },
+ {
+  "id": "axi-ethernet-lite",
+  "interface": "mii",
+  "category": "ethernet",
+  "rate_mbps": [
+   10,
+   100
+  ],
+  "bus": "AXI4-Lite",
+  "evidence": "D1/D3 partial"
  }
 ]

@@ -6,5 +6,6 @@
 - UART: AXI UART Lite 보레이트 설정 방식(PG142 본문), HC-05 KEY 핀/AT 모드 진입, NEO-6M UBX 설정 명령, ESP, LoRa, NMEA 파서 검증
 - I2S: PG308 본문(Artix-7 지원, 라이선스, 포트, 클럭), 마스터 코덱 소자, Vivado IP 카탈로그 확인 후 필요하면 전용 수신 RTL
 - CAN: PG096/DS791 본문(레지스터, 비트 타이밍, 클럭), 평가 라이선스 제약, MCP2515 SPI 명령 코드, 트랜시버 핀 매핑·종단
-- Bluetooth / Ethernet: 모듈 선정부터 필요
+- Ethernet: PG135 본문(레지스터, 클럭, 디바이스), Pmod NIC100 최대 SPI 클럭, W5500 모듈 사양, MicroBlaze V 에서 emaclite 동작
+- Bluetooth: BLE 모듈 선정
 각 항목은 제조사 문서를 열어 값을 확인한 뒤 해당 폴더에 추가.
