@@ -24,6 +24,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.
 
 전체 범주 목록과 상태는 [CATEGORIES.md](CATEGORIES.md), 남은 일은 [TODO.md](TODO.md), 문서 형식은 [TEMPLATE.md](TEMPLATE.md).
+학습 순서로 보려면 아두이노 교재 목차에 맞춘 [BOOK-MAP.md](BOOK-MAP.md)(장별 대응과 빈칸).
 
 ## 검증 자료
 - [VERIFICATION.md](VERIFICATION.md): 적대적 검증 결과와 재현 방법 (원문 대조, 새니타이저, 퍼징, 링크 검사).
