@@ -21,6 +21,7 @@ cc -I spi/sw spi/tb/test_mcp2515_model.c spi/sw/mcp2515.c -o "$T/mcm" && run mcp
 cc -I spi/sw spi/tb/test_nrf24_model.c spi/sw/nrf24l01.c -o "$T/nrf" && run nrf24-model "$T/nrf"
 cc -I spi/sw spi/tb/test_w5500_model.c spi/sw/w5500.c -o "$T/w55" && run w5500-model "$T/w55"
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_ntp.c ethernet/sw/ntp.c ethernet/sw/ntp_client.c spi/sw/w5500.c -o "$T/ntp" && run ntp-model "$T/ntp"
+cc -I spi/sw -I ethernet/sw ethernet/tb/test_dns.c ethernet/sw/dns.c ethernet/sw/dns_client.c ethernet/sw/net_name.c ethernet/sw/ntp.c ethernet/sw/ntp_client.c ethernet/sw/http.c ethernet/sw/http_client.c spi/sw/w5500.c -o "$T/dns" && run dns-model "$T/dns"
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_http.c ethernet/sw/http.c ethernet/sw/http_client.c spi/sw/w5500.c -o "$T/http" && run http-model "$T/http"
 cc -I spi/sw spi/tb/test_max7219_model.c spi/sw/max7219.c -o "$T/m72" && run max7219-model "$T/m72"
 cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp2515 "$T/mcp2515"
@@ -46,5 +47,6 @@ if [ "${FUZZ:-0}" = 1 ]; then
   cc -I uart/sw uart/tb/fuzz_nmea.c uart/sw/nmea.c -o "$T/f2" && run fuzz-nmea "$T/f2"
   cc -I can/sw can/tb/exhaustive_timing.c can/sw/axi_can.c -o "$T/f3" && run can-timing "$T/f3"
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_http.c ethernet/sw/http.c -o "$T/f4" && run fuzz-http "$T/f4"
+  cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_dns.c ethernet/sw/dns.c -o "$T/f5" && run fuzz-dns "$T/f5"
 fi
 exit $fail

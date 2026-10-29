@@ -1,0 +1,20 @@
+# DNS 사실표 — 헤더(ethernet/sw/dns.h)의 상수를 대조하는 근거.
+# 출처 A = Chromium net/dns/dns_protocol.h (WebFetch 요약), 출처 B = iPXE src/include/ipxe/dns.h (WebFetch 요약), 출처 C = zytrax DNS 해설 ch15 (WebFetch 요약). 모두 D3.
+# RFC 1035 원문은 열지 못함(미확인). 줄 형식은 w5500_facts.txt 와 같다: def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모 — 근거1·2 는 메모에 적은 출처를 가리킨다
+def|DNS_PORT|53|53|A: kDefaultPort = 53, B: #define DNS_PORT 53
+def|DNS_HDR_LEN|12|12|A: Header 구조체 16비트 6개, B: dns_header 16비트 6개 → 6 * 2 = 12 (계산)
+def|DNS_MAX_UDP|512|-|A: kMaxUDPSize = 512 (주석: RFC 1035 4.2.1)
+def|DNS_MAX_NAME_WIRE|255|-|A: kMaxNameLength = 255 (길이 바이트 포함). 끝의 0 바이트까지 포함하는지는 설계안
+def|DNS_MAX_LABEL|63|63|C: 길이 바이트 상위 2비트 00 → 최대 63, B: DNS_LABEL_LEN(byte) = byte & ~0xc0 → 최대 63
+def|DNS_TYPE_A|1|1|A: kTypeA = 1, B: DNS_TYPE_A 1
+def|DNS_TYPE_CNAME|5|5|A: kTypeCNAME = 5, B: DNS_TYPE_CNAME 5
+def|DNS_CLASS_IN|1|1|A: kClassIN = 1, B: DNS_CLASS_IN 1
+def|DNS_FLAG_QR|0x8000|0x8000|A: kFlagResponse = 0x8000, C: QR 은 flags 의 맨 왼쪽(0번) 비트 → 1 << 15
+def|DNS_FLAG_TC|0x0200|0x0200|A: kFlagTC = 0x200, C: TC 는 왼쪽 6번 비트 → 1 << (15 - 6)
+def|DNS_FLAG_RD|0x0100|0x0100|A: kFlagRD = 0x100, B: DNS_FLAG_RD 0x0100, C: RD 는 왼쪽 7번 비트 → 1 << 8
+def|DNS_RCODE_SERVFAIL|2|-|A: kRcodeSERVFAIL = 2
+def|DNS_RCODE_NXDOMAIN|3|-|A: kRcodeNXDOMAIN = 3
+val|압축 포인터 표지(상위 2비트 11 = 0xC0)|192|192|A: kLabelPointer = 0xc0, B: DNS_IS_COMPRESSED (byte & 0xc0)
+val|압축 포인터 오프셋 마스크|16383|16383|A: kOffsetMask = 0x3fff, B: DNS_COMPRESSED_OFFSET (word & ~0xc000) → 0x3FFF
+val|OPCODE 4비트가 시작하는 비트(오른쪽 기준 11)|11|11|C: OPCODE 는 왼쪽 1~4번 비트 → 15 - 4 = 11. 코드의 (flags >> 11) & 0xF 와 일치 — 계산
+!val|RA 비트(0x0080)·RCODE 폭 4비트|4|-|C 표는 RCODE 열의 폭을 보이지 않고 RA 값을 직접 주지 않음. 일반 지식으로 하위 4비트 → 이 코드는 RA 를 쓰지 않고 RCODE 하위 4비트만 봄(미확인)

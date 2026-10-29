@@ -1,8 +1,8 @@
-# 소켓 위 응용: NTP 시계 맞추기, HTTP GET
+# 소켓 위 응용: DNS, NTP 시계 맞추기, HTTP GET
 
 <!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [ethernet](README.md)
 
-교재 30장(웹 클라이언트·NTP)의 유선 대체입니다. Wi-Fi/ESP 는 없고, W5500([드라이버](../spi/comm-storage-io.md)) 소켓 위에서 동작합니다. 전부 **호스트 모델 시험까지만** 했고 보드·실제 서버에서 실행한 적이 없습니다.
+교재 30장(웹 클라이언트·NTP)의 유선 대체입니다(이름 풀기 DNS 포함). Wi-Fi/ESP 는 없고, W5500([드라이버](../spi/comm-storage-io.md)) 소켓 위에서 동작합니다. 전부 **호스트 모델 시험까지만** 했고 보드·실제 서버에서 실행한 적이 없습니다.
 
 구분: **확인** = 문서/소스를 열어 확인, **D1(요약 경유)** = 웹 가져오기 요약을 거친 1차 자료, **D3** = 제3자 구현, **설계안**, **미확인**.
 
@@ -10,6 +10,7 @@
 |---|---|---|
 | UDP 수신 `w5500_udp_recvfrom` | [`../spi/sw/w5500.c`](../spi/sw/w5500.c) | [`../spi/tb/test_w5500_model.c`](../spi/tb/test_w5500_model.c) |
 | SNTP 패킷·질의 | [`sw/ntp.h`](sw/ntp.h), [`sw/ntp.c`](sw/ntp.c)(순수 함수), [`sw/ntp_client.c`](sw/ntp_client.c) | [`tb/test_ntp.c`](tb/test_ntp.c), 사실표 [`ref/ntp_facts.txt`](ref/ntp_facts.txt) |
+| DNS 이름 풀기(A 레코드) | [`sw/dns.h`](sw/dns.h), [`sw/dns.c`](sw/dns.c)(순수 함수), [`sw/dns_client.c`](sw/dns_client.c), 이름으로 NTP·HTTP 를 부르는 [`sw/net_name.h`](sw/net_name.h)/[`.c`](sw/net_name.c) | [`tb/test_dns.c`](tb/test_dns.c), 무작위 [`tb/fuzz_dns.c`](tb/fuzz_dns.c), 사실표 [`ref/dns_facts.txt`](ref/dns_facts.txt) |
 | HTTP/1.1 GET | [`sw/http.h`](sw/http.h), [`sw/http.c`](sw/http.c)(요청 만들기·스트리밍 응답 해석), [`sw/http_client.c`](sw/http_client.c) | [`tb/test_http.c`](tb/test_http.c), 무작위 [`tb/fuzz_http.c`](tb/fuzz_http.c) |
 | W5500 장치 모델(공용) | — | [`../spi/tb/w5500_model.h`](../spi/tb/w5500_model.h) |
 
@@ -58,15 +59,29 @@
 **설계안(문서로 확인하지 못한 선택)**: `Transfer-Encoding` 과 `Content-Length` 가 같이 오면 chunked 우선 / `Content-Length` 가 서로 다르면 오류 / 줄 이어쓰기·CR 단독은 오류 / 1xx 는 건너뛰고 다음 응답 / 마지막 코딩이 chunked 가 아닌 `Transfer-Encoding` 은 "닫을 때까지" / 청크 확장·트레일러 무시 / 헤더 한 줄 95자까지만 보관(`Content-Length`·`Transfer-Encoding` 줄이 잘리면 오류) / 청크 크기 8자리까지.
 호스트·경로에 공백·제어문자·비ASCII 가 있으면 요청을 만들지 않습니다(요청 분할·헤더 주입 방지). 경로의 퍼센트 인코딩은 호출자 몫입니다.
 
-**하지 않는 것**: HTTPS(TLS), 리다이렉트 따라가기, `Content-Encoding`(gzip) 복호, 연결 유지, 요청 본문, DNS, 날씨 API 같은 JSON 해석(교재 30장 날씨 예제는 이 위에 따로 얹어야 함).
+**하지 않는 것**: HTTPS(TLS), 리다이렉트 따라가기, `Content-Encoding`(gzip) 복호, 연결 유지, 요청 본문, 날씨 API 같은 JSON 해석(교재 30장 날씨 예제는 이 위에 따로 얹어야 함). 이름으로 접속하려면 아래 4절의 `http_get_name` 을 쓴다.
+
+## 4. DNS (이름 → IPv4)
+`dns_resolve(w, sock, local_port, dns_server_ip, name, id, timeout_us, tries, ip, &ttl)`: UDP 53 으로 A 레코드를 묻고 첫 A 의 주소와 TTL 을 돌려줍니다. `tries` 번까지 다시 보내고(시도마다 `timeout_us`), 다른 ID·다른 보낸 쪽 IP/포트·질문이 다른 응답·깨진 응답은 무시하고 계속 기다립니다. 서버가 정상 응답으로 NXDOMAIN·SERVFAIL·기타 RCODE·A 없음·잘림(TC)을 알리면 바로 그 오류를 돌려줍니다. `ntp_query_name`, `http_get_name`([`net_name.h`](sw/net_name.h))은 이름이 점 십진 IPv4 면 DNS 를 건너뛰고, 아니면 먼저 `dns_resolve` 를 합니다(`http_get_name` 은 포트가 80 이 아니면 Host 헤더에 `:포트` 를 붙임).
+
+| 사실 | 근거 |
+|---|---|
+| 헤더 12바이트(id, flags, qdcount, ancount, nscount, arcount 각 16비트 빅엔디안), QR 0x8000 · TC 0x0200 · RD 0x0100, RCODE 0~5(2 = SERVFAIL, 3 = NXDOMAIN), TYPE A = 1 · CNAME = 5, CLASS IN = 1, 포트 53, UDP 512바이트, 이름 255바이트 이하 | Chromium `dns_protocol.h` — D3(요약 경유). 포트·헤더 구조·타입·압축 매크로는 iPXE `dns.h` — D3 와 일치 |
+| 이름 = (길이 바이트 + 글자들)의 반복, 0 으로 끝. 레이블 최대 63(상위 2비트 00). 상위 2비트 11 = 압축 포인터(나머지 14비트 = 메시지 시작부터의 오프셋), 포인터는 이름을 끝냄. flags 안의 QR·OPCODE(4비트)·AA·TC·RD·RA 위치 | zytrax DNS 해설 + Chromium(`kLabelPointer`, `kOffsetMask`) + iPXE(`DNS_COMPRESSED_OFFSET`) — D3 |
+
+**설계안(문서로 확인하지 못한 선택)**: 이름 총길이 255 에 끝의 0 바이트까지 포함 / 이름 글자는 영문자·숫자·`-`·`_` 만 / 응답의 질문이 보낸 질문(이름 대소문자 무시, A, IN)과 다르면 거부 / 답변을 순서대로 한 번 훑으며 CNAME 은 최대 8번 따라감(A 가 CNAME 보다 앞서 나오는 응답은 못 찾음) / A 가 여럿이면 첫 번째 / A 의 RDLENGTH ≠ 4 는 형식 오류 / TC 가 켜져 있어도 쓸 수 있는 A 가 있으면 사용 / 포인터는 최대 16번 따라감(무한 루프 방지, 메시지 밖을 가리키면 오류).
+**미확인**: RFC 1035 원문 대조, RA 비트와 RCODE 폭(일반 지식으로 하위 4비트), 실제 DNS 서버(공유기·공용 DNS)와의 동작, DNS 서버 IP 를 어디서 얻는지(DHCP 는 하지 않음 — 호출자가 고정 지정).
+**보안 한계**: 16비트 ID 와 보낸 쪽 IP·포트 검사만으로는 위조 응답을 막기 어렵습니다(로컬 포트를 호출자가 정함, 무작위화는 하지 않음). DNSSEC 없음.
+**하지 않는 것**: AAAA(IPv6), TCP 폴백, EDNS, 캐시, DHCP, mDNS.
 
 ## 시험
 - W5500 UDP 수신: 모델에 패킷 경계 규칙·피어 훅·틱 훅을 추가하고 `t_udp_recv` 28항목(300바이트 패킷으로 길이 상·하위 바이트 구분, 연속 패킷, 잘림, 길이 0, 부분 도착, 블록 경계·16비트 올림, 8 + 2040 / 2041 경계, 잘못된 길이, 인자·상태). 변형 23/23 잡힘.
 - NTP: 순수 함수(손으로 계산한 값 — 2024-01-01 = 3913056000, 시대 경계, 비트 경계 0xDB·0x1C) + 모델 위 질의(정상, 무응답, 원점·IP·포트·스트라툼 0·LI 3·모드·전송 시각 0 이 틀린 응답 무시, 남의 패킷 뒤의 정상 응답, 짧은 패킷, 68바이트 응답, 시대 1, 송신 실패, 사용 중 소켓). 변형 60/60 잡힘.
 - HTTP: 요청 만들기, 응답 해석 75건(각각 통째·1바이트씩·3바이트씩 넣어 같은 결과인지 3번씩), W5500 위 `http_get`(Content-Length·chunked·닫을 때까지, 데이터와 FIN 동시, 상대 RST, 5000바이트 본문, 중간 끊김, 무응답, 형식 오류, sink 중단, 접속 거부, 송신 실패, 인자). 무작위 15만 건(파서가 쪼개는 방식에 따라 결과가 달라지는지, ASan/UBSan). 변형 85/85 잡힘(동치 변형은 목록에서 제외).
+- DNS: 질의 바이트 손계산(29바이트), 이름 규칙 경계(레이블 63/64, 이름 255/256, 버퍼 29/28), IPv4 문자열 18개 거절, 응답 해석 50여 항목(압축 포인터, CNAME 1·2·8·9번과 순환, RCODE 1~5, TC, 다른 CLASS·TYPE·소유자 이름 건너뛰기, 자기 자신/서로 가리키는/범위 밖 포인터, 예약 레이블, 경계 초과), 모델 위 `dns_resolve`(재시도, 다른 ID·IP·포트·질문 무시, 쓰레기 뒤 정상 응답, NXDOMAIN 등 즉시 반환, 송신 실패, 사용 중 소켓), 이름으로 NTP·HTTP. 무작위 40만 건(ASan/UBSan, 성공이면 IP 가 메시지 안에 실제로 있는지). 변형 109/109 잡힘(동치 변형은 목록에서 제외).
 - 한계: 상대 서버·패킷이 전부 내가 만든 것이라, 규격 해석이 틀렸으면 시험도 같이 틀립니다. 실제 서버와의 상호 동작은 확인하지 못했습니다.
 
 ## 미확인
-W5500 UDP 헤더의 바이트 순서(W5500 자체 확인), `Sn_RX_RD` 전진량의 칩 동작, 부분 도착 시 `Sn_RX_RSR` 반영 시점, RFC 5905·9112 원문 대조, 실제 NTP 서버·HTTP 서버와의 통신, 모듈의 PHY/RJ45 구성.
+DNS 항목은 4절. W5500 UDP 헤더의 바이트 순서(W5500 자체 확인), `Sn_RX_RD` 전진량의 칩 동작, 부분 도착 시 `Sn_RX_RSR` 반영 시점, RFC 5905·9112 원문 대조, 실제 NTP 서버·HTTP 서버와의 통신, 모듈의 PHY/RJ45 구성.
 
 <!-- nav-foot -->[ethernet 목차](README.md)

@@ -188,7 +188,8 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('HD44780',('i2c','sw','hd44780.h'),('i2c','ref','hd44780_facts.txt'),'HD44780_'),
                              ('시계(AXI Timer)',('gpio','sw','basic_io.h'),('gpio','ref','basic_io_facts.txt'),'TMR_'),
                              ('아날로그',('gpio','sw','analog_sensors.h'),('gpio','ref','analog_sensors_facts.txt'),'AN_'),
-                             ('SNTP',('ethernet','sw','ntp.h'),('ethernet','ref','ntp_facts.txt'),'NTP_')]:
+                             ('SNTP',('ethernet','sw','ntp.h'),('ethernet','ref','ntp_facts.txt'),'NTP_'),
+                             ('DNS',('ethernet','sw','dns.h'),('ethernet','ref','dns_facts.txt'),'DNS_')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}

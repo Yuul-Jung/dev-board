@@ -236,7 +236,7 @@
   "sockets": 8,
   "versionr": "0x04",
   "evidence": "D1 (요약 경유) + D3 (NuttX 일치)",
-  "driver": "spi/sw/w5500.c (TCP/UDP 송수신·UDP 수신 헤더 해석, 모델 시험, 보드 미실행). 응용: ethernet/sw/ntp*.c, ethernet/sw/http*.c"
+  "driver": "spi/sw/w5500.c (TCP/UDP 송수신·UDP 수신 헤더 해석, 모델 시험, 보드 미실행). 응용: ethernet/sw/dns*.c, ethernet/sw/ntp*.c, ethernet/sw/http*.c, ethernet/sw/net_name.c"
  },
  {
   "id": "w25q64jv",
