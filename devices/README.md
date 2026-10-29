@@ -8,10 +8,10 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 |---|---|---|
 | `gpio/` | GPIO (트리거/에코, 단일선 독자 프로토콜 포함) | HC-SR04, DHT22 |
 | `1-wire/` | 1-Wire | DS18B20 |
-| `i2c/` | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 절차 미확인) |
+| `i2c/` | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 본문 확인) |
 | `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
 | `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (RTL 없음, 일부 미확인) |
-| `uart/` | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 절차 일부 미확인) |
+| `uart/` | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 본문 확인) |
 | `i2s/` | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
 | `can/` | CAN 컨트롤러·트랜시버 | AXI CAN, MCP2515, SN65HVD230 (레지스터 미확인) |
 | `ethernet/` | 이더넷 3경로 비교 | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
@@ -35,11 +35,11 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | 인터페이스 | AMD IP | 확인한 내용 |
 |---|---|---|
 | GPIO | AXI GPIO (PG144) | 1–32비트, 이중 채널, 비트별 입출력(TRI), 선택적 인터럽트 |
-| UART | AXI UART Lite (PG142) | 16문자 FIFO, 5–8비트, 패리티, 상승 에지 인터럽트 |
-| I2C | AXI IIC (PG090) | 100k/400k/1M, 마스터·슬레이브, 7/10비트, FIFO 16바이트 |
+| UART | AXI UART Lite (PG142 v2.0) | 본문 확인: 16 FIFO, 5–8비트, 패리티, 보레이트는 설계 시점 파라미터 |
+| I2C | AXI IIC (PG090 v2.1) | 본문 확인: 100k/400k/1M, 레지스터, THIGH/TLOW 식, 동적 절차 |
 | SPI | AXI Quad SPI (PG153) | 레지스터 오프셋·SPICR 비트·SCK 비율 확인, 전송 절차 미확인 |
 | 타이머·캡처 | AXI Timer (PG079) | Generate / Capture / PWM / Cascade 모드 (오프셋 미확인) |
-| I2S | I2S Transmitter/Receiver (PG308) | 기능 일부 확인, Artix-7 지원·라이선스 미확인 |
-| CAN | AXI CAN (PG096) | 제품 페이지 확인(Artix 7, 2.0B, 1 Mbps), 레지스터 미확인 |
-| Ethernet | AXI Ethernet Lite (PG135) | MII 10/100 MAC, 핑퐁 버퍼, AXI4-Lite 확인(제품 소개·위키), 레지스터 미확인 |
+| I2S | I2S Transmitter/Receiver (PG308) | 본문 확인: 7 series 지원, 무료, 마스터 전용, 24/16비트 |
+| CAN | CAN (PG096 v5.1) | 본문 확인: 레지스터·초기화·비트 타이밍, 7 series, 라이선스는 카탈로그 확인 필요 |
+| Ethernet | AXI Ethernet Lite (PG135 v3.0) | 본문 확인: MII 18신호, 2 KB 버퍼, 무료, 레지스터 맵 |
 | 1-Wire, Bluetooth | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성) |

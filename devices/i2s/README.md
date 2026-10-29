@@ -2,28 +2,31 @@
 
 구분: **확인** = 문서를 열어 확인, **계산**, **설계안**, **미확인**.
 
-## AMD IP: I2S Transmitter / Receiver (PG308) — 일부 확인
-이전 문서들의 "열람한 AMD IP 없음"은 틀렸습니다. 이번에 PG308 페이지를 열어 IP가 존재함을 확인했고 해당 문구를 고쳤습니다.
+## AMD IP: I2S Transmitter / Receiver (PG308 v1.0, 2025-08-12) — 확인 (문서 본문 열람)
+| 항목 | 값 |
+|---|---|
+| 디바이스 | 지원 계열에 **7 series** 포함 |
+| 라이선스 | **추가 비용 없이 Vivado에 포함** (End User License) |
+| 인터페이스 | AXI4-Lite(제어), AXI4-Stream(오디오), AXI4 |
+| 채널·폭 | I2S 선 최대 4개, 최대 8채널, 데이터 16 또는 24비트 (20비트 미지원) |
+| 형식 | 표준 I2S, 좌/우 정렬, 선택적 32비트 LRCLK |
+| 모드 | **마스터만. 슬레이브 모드 미지원** (문서의 미지원 기능 목록) |
+| 포트 (송신) | aud_mclk(입력, "보통 Fs의 배수"), aud_mrst, s_axis_aud_*, lrclk_out, sclk_out, sdata_0~3_out, irq |
+| 포트 (수신) | aud_mclk, lrclk_out, sclk_out, sdata_0~3_in |
+| SCLK 생성 | I2S Timing Control(0x20) 하위 8비트 divider: MCLK/SCLK = divider × 2. 일반적으로 SCLK = 2 × 24 × Fs (폭 16이면 2 × 16 × Fs) |
+| LRCLK | 보통 SCLK / (2 × 폭). 좌/우 정렬 또는 32비트 LRCLK 선택 시 SCLK / (2×32) |
+| 레지스터 | 0x00 Core Version · 0x04 Core Configuration · 0x08 Control · 0x0C Validity · 0x10 Interrupt Control · 0x14 Interrupt Status · 0x20 I2S Timing Control · 0x30/0x34/0x38/0x3C 채널 0/1~6/7 Control · 0x50~0x64 AES Channel Status |
+| 디버깅 안내 | 소리가 안 나오면 ADC/DAC/코덱이 슬레이브인지 확인. IP는 마스터이며 16/24비트 I2S만 지원. 코덱 MCLK는 IP에 넣는 MCLK와 같아야 함 |
 
-| 항목 | 값 | 구분 |
-|---|---|---|
-| 인터페이스 | AXI4-Stream, 레지스터는 별도(AXI4-Lite 추정, 문서에 명시 없음) | 부분 확인 |
-| 채널 | I2S 선 최대 4개, 오디오 채널 최대 8 | 확인 |
-| 데이터 폭 | 16비트 또는 24비트 | 확인 |
-| 형식 | 표준 I2S, 좌/우 정렬 | 확인 |
-| 모드 | **마스터 I2S 모드**(슬레이브는 언급 없음) | 확인 |
-| 기타 | FIFO 깊이 설정, AES 채널 상태, 선택적 32비트 LRCLK | 확인 |
-| 샘플링 속도 | "어떤 샘플링 속도든 지원" (구체 범위 없음) | 확인(문구) |
-| 레지스터 오프셋 | 0x00 Core Version · 0x04 Core Configuration · 0x08 Control · 0x0C Validity · 0x10 Interrupt Control · 0x14 Interrupt Status · 0x20 I2S Timing Control · 0x30/0x34/0x38/0x3C 채널 0/1~6/7 Control · 0x50~0x64 AES Channel Status | 확인(목차의 이름·오프셋만, 비트 필드는 미확인) |
-| 지원 디바이스 계열(Artix-7 포함 여부), 라이선스, 포트 이름, 자원 사용량, 클럭 구조 | 문서 본문 못 열음 | **미확인** |
-
-**결정**: 사용자 규칙(AMD IP 있으면 IP)에 따라 IP를 우선합니다. 단 Artix-7 지원과 라이선스는 Vivado IP 카탈로그에서 확인해야 합니다. 카탈로그에 없거나 쓸 수 없으면 그때 전용 수신 RTL(INMP441용)을 작성합니다. 지금은 RTL을 쓰지 않았습니다.
-마스터 전용이므로 INMP441, MAX98357A 처럼 BCLK/LRCLK 를 받는 슬레이브 소자에 맞습니다. 마스터인 코덱과는 맞지 않습니다.
+**결정**: AMD IP 사용(마스터). BCLK·LRCLK를 받는 슬레이브 소자(INMP441, MAX98357A)에 맞음. 마스터 코덱은 연결 불가. 전용 RTL 불필요.
+INMP441은 64×fWS의 SCK와 채널당 32 클럭이 필요하므로 **24비트 + 32비트 LRCLK 모드**가 맞음(LRCLK = SCLK / 64, 문서 서술에서 도출. 이 조합의 동작은 실제 보드에서 확인 필요).
 
 ## 클럭 계산
-Basys3 는 클럭 관리 타일 5개(RM, 확인). BCLK 는 100 MHz 를 정수로 나눠 만들 수 없으므로 MMCM/클럭 위저드가 필요합니다(계산).
-- INMP441: fSCK = 64 × fWS (확인). 48 kHz → 3.072 MHz(문서 예시), 16 kHz → 1.024 MHz. 100 MHz / 3.072 MHz ≈ 32.55 이므로 정수 분주 불가(계산).
-- IP가 BCLK 를 자체 생성하는지 외부에서 받는지는 미확인.
+Basys3 는 클럭 관리 타일 5개(RM, 확인). 오디오 클럭 aud_mclk 를 MMCM/클럭 위저드로 만들어 넣고, IP가 divider 로 SCLK 를 만듭니다(PG308 확인).
+- INMP441: fSCK = 64 × fWS (확인). 48 kHz → SCLK 3.072 MHz(데이터시트 예시). MCLK 를 256×Fs = 12.288 MHz 로 잡으면 MCLK/SCLK = 4 = divider × 2 → divider 2 (계산, MCLK 선택은 설계안).
+- 16 kHz 이면 SCLK 1.024 MHz, MCLK 256×Fs = 4.096 MHz → divider 2.
+- 100 MHz → 12.288 MHz 를 MMCM 으로 정확히 만들 수 있는지(분수 분주 오차)는 이번에 계산하지 않았습니다(미확인).
+- 100 MHz 를 단순 정수 분주해서는 3.072 MHz 를 만들 수 없음(100/3.072 ≈ 32.55, 계산).
 
 ## 소자
 [devices.md](devices.md): INMP441(마이크), MAX98357A(앰프).

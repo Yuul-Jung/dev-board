@@ -2,24 +2,28 @@
 
 구분: **확인** = 이번 작업에서 데이터시트를 열어 확인, **계산**, **설계안**, **미확인**. 소자 문서: [sensors.md](sensors.md), [clock.md](clock.md), 기존 [bme280.md](bme280.md).
 
-## AXI IIC (PG090)
-기능 요약(Xilinx 위키): 100k/400k/1M, 마스터·슬레이브·멀티 마스터, 7/10비트 주소, 송수신 FIFO 각 16바이트.
-레지스터는 PG090 본문을 열지 못해 Zephyr 드라이버 헤더(`i2c_xilinx_axi.h`, Apache-2.0)에서 확인했습니다. **D3 (2차 자료, 드라이버 구현 기준)**.
+## AXI IIC (PG090 v2.1, 2024-12-18) — 확인 (문서 본문 열람)
+| 항목 | 값 |
+|---|---|
+| 속도 | 표준 100 kHz, Fast 400 kHz, Fast-Mode Plus 1 MHz |
+| 기능 | 마스터/슬레이브/멀티 마스터, 7/10비트 주소, 동적 시작·정지 생성, GPO 포트(1~8비트) |
+| 디바이스 | 지원 계열에 7 series 포함, Artix-7 최대 주파수 표 있음 |
+| 인터페이스 | AXI4-Lite |
+| 3상태 포트 | sda_i, sda_o, sda_t, scl_i, scl_o, scl_t (t = 3상태 출력 활성). IOBUF는 상위에서 연결 (IP Integrator에서는 자동 삽입되는 `iic` 인터페이스 사용) |
+| 파라미터 | SCL Clock Frequency(IIC_FREQ_KHZ, 기본 100), Address Mode(7/10), SCL/SDA Inertial delay(0~255 AXI clk), AXI Clock Frequency(25~300 MHz), GPO 폭·기본값 |
 
-| 오프셋 | 이름 | 오프셋 | 이름 |
-|---|---|---|---|
-| 0x01C | GIE (bit31 = 활성) | 0x11C | TEN_ADR (10비트 주소) |
-| 0x020 | ISR | 0x120 | RX_FIFO_PIRQ |
-| 0x028 | IER | 0x124 | GPO |
-| 0x040 | SOFTR (0xA 쓰기) | 0x128~0x144 | 타이밍 레지스터 8개 (TSUSTA, TSUSTO, THDSTA, TSUDAT, TBUF, THIGH, TLOW, THDDAT) |
-| 0x100 | CR | 0x108 | TX_FIFO (bit8 START, bit9 STOP) |
-| 0x104 | SR | 0x10C | RX_FIFO (하위 8비트 데이터) |
-| 0x110 | ADR | 0x114 / 0x118 | TX / RX FIFO 점유 (하위 4비트) |
+**SCL 타이밍 (확인)**: THIGH/TLOW 레지스터 기본값은 IP가 설정한 SCL 주파수와 AXI 클럭으로 자동 계산됩니다. 식은 `값 = (AXI 클럭 Hz / (2 × IIC Hz)) − 7 − SCL_INERTIAL_DELAY`. 문서 예시: 25 MHz / 100 kHz / 지연 0 → 118.
+계산: AXI 100 MHz, 400 kHz, 지연 0 → 100,000,000 / 800,000 − 7 = 118. 맞지 않으면 레지스터를 읽어 조정(문서 설명). TSUSTA 등은 I2C 규격 시간 + Tr 을 클럭 수로 환산(예: 4.7 µs + 1 µs, 100 MHz → 570).
 
-- CR 비트: 0 EN · 1 TX_FIFO_RST · 2 MSMS(컨트롤러/타깃) · 3 TX(송신/수신) · 4 TXAK · 5 RSTA(반복 시작) · 6 GC_EN
-- SR 비트: 0 ABGC · 1 AAS · 2 BB(버스 사용 중) · 3 SRW · 4 TX_FIFO_FULL · 5 RX_FIFO_FULL · 6 RX_FIFO_EMPTY · 7 TX_FIFO_EMPTY
-- ISR/IER 비트: 0 중재 손실 · 1 송신 오류/타깃 송신 완료 · 2 TX FIFO 빔 · 3 RX FIFO 가득 · 4 버스 유휴 · 5 타깃으로 호출됨 · 6 타깃 호출 아님 · 7 TX FIFO 절반 빔
-미확인(PG090 본문): 타이밍 레지스터에 넣을 값 계산식과 SCL 400 kHz 설정 방법, SDA/SCL 3상태 포트 이름(IOBUF 구성), 동적 컨트롤러 모드 절차.
+레지스터 (문서 표): 0x01C GIE · 0x020 ISR · 0x028 IER · 0x040 SOFTR · 0x100 CR · 0x104 SR · 0x108 TX_FIFO · 0x10C RX_FIFO · 0x110 ADR · 0x114 TX_FIFO_OCY · 0x118 RX_FIFO_OCY · 0x11C TEN_ADR · 0x120 RX_FIFO_PIRQ · 0x124 GPO · 0x128 TSUSTA … 0x13C THIGH · 0x140 TLOW · 0x144 THDDAT (타이밍 8개, 0x128 시작). 비트는 Zephyr 드라이버와 일치(CR: EN, TX_FIFO_RST, MSMS, TX, TXAK, RSTA, GC_EN / SR: ABGC, AAS, BB, SRW, TX_FIFO_FULL, RX_FIFO_FULL, RX_FIFO_EMPTY, TX_FIFO_EMPTY).
+
+**동적 컨트롤러 절차 (확인)**
+- 초기화: RX_FIFO_PIRQ=0x0F → TX_FIFO 리셋 → CR로 EN=1, TX_FIFO 리셋 해제, 일반 호출 끔. (FIFO 둘 다 비어 있어야 함)
+- TX_FIFO 워드: bit8 = START, bit9 = STOP, 하위 8비트 = 주소+R/W 또는 데이터. 읽기는 주소 워드 뒤에 수신 바이트 수를 한 워드로 쓰고 STOP 은 그 워드에 설정.
+- 4바이트 읽기 예(주소 0x34): 0x135 쓰기(START+주소+읽기) → 0x204 쓰기(STOP+4바이트) → RX_FIFO 비지 않을 때까지 대기하며 4바이트 읽기.
+- 쓰기 예(EEPROM 주소 0x34, 내부 0x33): 0x134, 0x33, 0x89, 0xAB, 0xCD, 0x2EF(STOP+마지막 바이트).
+- 전송 전에 SR로 FIFO 비어 있음과 버스 유휴 확인, TX_FIFO 가득 여부 확인 권장.
+- 동적 모드는 7비트 주소 마스터만 지원.
 
 ## 소자 요약 (확인)
 | 소자 | 7비트 주소 | 최대 SCL | 전원 | 문서 |
@@ -39,4 +43,4 @@
 - **인터럽트**: MPU-6050 INT, DS3231 INT/SQW(active-low), 별도 GPIO.
 
 ## 한계
-RTL 없음(AMD IP 사용). AXI IIC 레지스터는 D3 수준으로만 확인했고 SCL 타이밍 계산은 미확인이라 드라이버를 쓰지 않았습니다. 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
+RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를 확인했으나 RTL/드라이버는 아직 작성하지 않았습니다(필요 시 위 절차대로 작성). 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
