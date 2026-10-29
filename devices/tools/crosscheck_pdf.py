@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """코드 헤더에 적은 레지스터 오프셋·비트 이름을 AMD PG 문서 텍스트(pdftotext -layout 결과)와 자동 대조한다.
 사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt, 선택으로 mcp2515.txt, nrf24.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
+W5500 블록은 PDF 텍스트가 아니라 저장소 안의 spi/ref/w5500_facts.txt(데이터시트 본문 요약과 NuttX 소스에서 옮긴 사실표)를 쓴다.
 한계: 이름과 숫자가 같은 줄/근처에 있는지만 본다. 비트 의미의 세부는 사람이 읽어 확인한 것이다."""
 import re,sys
 def load(p): return open(p,errors='ignore').read().splitlines()
@@ -128,6 +129,46 @@ if os.path.exists(NP):
         if lab.startswith('ACTIVATE'):
             res.append(('nRF24',lab,not any('ACTIVATE' in l for l in L)))
         else: chk('nRF24',L,lab,num,k,0)
+
+# ---- W5500 (PDF 텍스트 대신 spi/ref/w5500_facts.txt: 데이터시트 v1.0.5 본문 요약과 NuttX 소스에서 옮긴 사실표) ----
+# 이 환경에서는 W5500 PDF 를 직접 내려받지 못해 다른 블록처럼 "원문 텍스트 검색"이 아니다. 헤더의 상수를 사실표와 대조하고, 사실표의 두 출처(DS, NuttX)가 서로 같은지 본다.
+HERE=os.path.dirname(os.path.abspath(__file__))
+WH=os.path.join(HERE,'..','spi','sw','w5500.h'); WF=os.path.join(HERE,'..','spi','ref','w5500_facts.txt')
+if os.path.exists(WH) and os.path.exists(WF):
+    defs={}
+    for l in open(WH,encoding='utf-8'):
+        m=re.match(r'#define\s+(W5500_\w+)\s+(.*)$',l)
+        if not m: continue
+        expr=re.sub(r'/\*.*?\*/','',m.group(2)).strip()
+        expr=re.sub(r'(\b0[xX][0-9A-Fa-f]+|\b\d+)[uU]\b',r'\1',expr)
+        try: defs[m.group(1)]=eval(expr,{'__builtins__':{}},{})
+        except Exception: pass
+    for l in open(WF,encoding='utf-8'):
+        l=l.rstrip('\n')
+        if not l.strip() or l.startswith('#'): continue
+        parts=l.split('|'); kind=parts[0]
+        if kind=='def':
+            name,ds,nt=parts[1],int(parts[2],0),parts[3]
+            res.append(('W5500',f'{name} = {parts[2]} (헤더 = 사실표)',defs.get(name)==ds))
+            if nt!='-': res.append(('W5500',f'{name}: DS 와 NuttX 일치',int(nt,0)==ds))
+        elif kind=='val':
+            if parts[3]!='-': res.append(('W5500',f'{parts[1]}: DS 와 NuttX 일치',int(parts[2],0)==int(parts[3],0)))
+        elif kind=='!val':
+            res.append(('W5500(알려진 불일치, 실패로 세지 않음)',f'{parts[1]}: DS {parts[2]} / NuttX {parts[3]}',True))
+    import subprocess,tempfile
+    csrc=('#include <stdio.h>\n#include "w5500.h"\nint main(void){for(int n=0;n<8;n++)printf("%d %d %d %d %d\\n",'
+          'W5500_CTRL(W5500_BSB_SOCK_REG(n),W5500_RWB_READ,W5500_OM_VDM),W5500_CTRL(W5500_BSB_SOCK_REG(n),W5500_RWB_WRITE,W5500_OM_VDM),'
+          'W5500_CTRL(W5500_BSB_SOCK_TX(n),W5500_RWB_WRITE,W5500_OM_VDM),W5500_CTRL(W5500_BSB_SOCK_RX(n),W5500_RWB_READ,W5500_OM_VDM),W5500_CTRL(W5500_BSB_COMMON,W5500_RWB_READ,W5500_OM_VDM));return 0;}\n')
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            open(os.path.join(td,'m.c'),'w').write(csrc)
+            subprocess.run(['cc','-I',os.path.dirname(WH),os.path.join(td,'m.c'),'-o',os.path.join(td,'m')],check=True,capture_output=True)
+            rows=[tuple(map(int,x.split())) for x in subprocess.run([os.path.join(td,'m')],check=True,capture_output=True,text=True).stdout.splitlines()]
+        ds=[(((4*n+1)<<3)|0,((4*n+1)<<3)|4,((4*n+2)<<3)|4,((4*n+3)<<3)|0,0) for n in range(8)]      # DS: BSB = 00001+4n / 00010+4n / 00011+4n, 제어 바이트 = BSB<<3 | RWB<<2 | OM
+        nt=[((n<<5)|0x08|0x00,(n<<5)|0x08|0x04,(n<<5)|0x10|0x04,(n<<5)|0x18|0x00,0) for n in range(8)]  # NuttX 식
+        res.append(('W5500','제어 바이트 8소켓 (DS 의 BSB 식)',rows==ds)); res.append(('W5500','제어 바이트 8소켓 (NuttX 의 식)',rows==nt))
+    except Exception as e:
+        res.append(('W5500','제어 바이트 대조(cc 실행 실패: %s)'%type(e).__name__,False))
 bad=[r for r in res if not r[2]]
 for r in res: print('OK  ' if r[2] else 'MISS', r[0], r[1])
 print(len(res),'항목 중 자동 대조 실패',len(bad))
