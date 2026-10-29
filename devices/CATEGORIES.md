@@ -14,7 +14,7 @@
 | 인체·접촉 | PIR, 터치, 버튼, 로터리 엔코더 | GPIO | AXI GPIO | 없음 |
 | 공기질·가스 | MQ 계열, CO2 모듈, SGP30 | 아날로그, UART, I2C | XADC, UART Lite, IIC | 없음 |
 | 전류·전압 | INA219 | I2C | IIC | 없음 |
-| 위치 | GPS 모듈 | UART | UART Lite | 없음 |
+| 위치 | GPS 모듈(NEO-6M) | UART | UART Lite | NEO-6M |
 | 카메라 | OV7670 등 | 병렬 + I2C(SCCB) | 전용 RTL | 없음 |
 | **DC 모터** | L298, TB6612FNG | PWM + GPIO | 전용 RTL(`motor/rtl`) | L298, TB6612FNG |
 | **서보** | SG90 | PWM | AXI Timer PWM 또는 전용 RTL | SG90 |
@@ -28,7 +28,7 @@
 | ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | MCP3008, MCP4921(일부) |
 | I/O 확장 | PCF8574, MCP23017, 74HC595 | I2C, SPI | IIC, Quad SPI | 74HC595 |
 | 오디오 | I2S 마이크(INMP441), I2S 앰프(MAX98357) | I2S | 전용 RTL | 없음 |
-| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | 없 | MCP2515, MFRC522, W5500, nRF24L01+ (SPI 부분) |
+| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), nRF24L01+, IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | HC-05, MAX485, MCP2515, MFRC522, W5500, nRF24L01+ |
 | **절연·레벨·전원** | 포토커플러(PC817, 사용자 노션), 레벨 시프터, 풀업·풀다운 | 하드웨어 | 해당 없음 | L298 문서에 일부 |
 
 ## 모든 소자에 공통으로 필요한 점검 항목

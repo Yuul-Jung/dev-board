@@ -329,5 +329,37 @@
   ],
   "accuracy_ppm": 2,
   "evidence": "D1"
+ },
+ {
+  "id": "neo6m",
+  "interface": "uart",
+  "category": "gps",
+  "vcc_v": [
+   2.7,
+   3.6
+  ],
+  "baud_default": 9600,
+  "format": "8N1",
+  "evidence": "D1"
+ },
+ {
+  "id": "hc05",
+  "interface": "uart",
+  "category": "bluetooth",
+  "baud_default": 38400,
+  "format": "8N1",
+  "profile": "SPP",
+  "evidence": "D3"
+ },
+ {
+  "id": "max485",
+  "interface": "uart",
+  "category": "rs485",
+  "vcc_v": [
+   4.75,
+   5.25
+  ],
+  "max_mbps": 2.5,
+  "evidence": "D1"
  }
 ]

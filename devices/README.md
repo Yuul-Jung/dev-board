@@ -11,7 +11,8 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `i2c/` | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 절차 미확인) |
 | `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
 | `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (RTL 없음, 일부 미확인) |
-| `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
+| `uart/` | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 절차 일부 미확인) |
+| `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/` — 모두 시뮬레이션 전. 다음 후보: I2S, PS/2, CAN.
