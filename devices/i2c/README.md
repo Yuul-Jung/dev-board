@@ -42,5 +42,13 @@
 - **핀**: SCL, SDA 2핀. 한 버스에 위 5개 소자 동시 연결 가능(주소 충돌 해소 후).
 - **인터럽트**: MPU-6050 INT, DS3231 INT/SQW(active-low), 별도 GPIO.
 
+## 드라이버 (`sw/`, 호스트 모의 테스트 통과)
+- `axi_iic.[ch]`: PG090 동적 컨트롤러 절차 구현. `axi_iic_init`, `axi_iic_write`, `axi_iic_read`(1~255바이트), `axi_iic_write_read`(반복 시작). 주소는 **7비트**로 넣으면 드라이버가 `<<1 | R/W` 를 만듭니다. PG090 예제의 "주소 0x34"는 R/W 자리를 포함한 8비트 바이트이므로 7비트로는 0x1A 입니다.
+- 오류 처리: 버스 사용 중(-4), 시간 초과(-1), NACK(-2, ISR bit1 확인 후 ISR 지우기와 TX FIFO 리셋 — PG090 절차). 읽기에서 주소 NACK은 데이터가 안 와 시간 초과로 나타나며 같은 복구를 수행합니다.
+- `i2c_sensors.[ch]`: MPU-6050(WHO_AM_I 0x68 확인, sleep 해제, 14바이트 읽기), SHT31(0x2400, 15 ms 대기, CRC-8, 변환식), BH1750(0x01 → 0x10, lux = raw/1.2), DS3231(00h~06h 원시 7바이트).
+- 테스트 `tb/test_axi_iic_mock.c`: TX_FIFO 워드열이 PG090 예제(`0x134,0x33,0x89,0xAB,0xCD,0x2EF` 쓰기, `0x135,0x204` 읽기)와 일치하는지, 반복 시작 워드열, NACK 복구, 인자·바쁨 검사, SHT31 CRC 검사값(0xBEEF→0x92)과 변환, BH1750 lux를 확인합니다. 모의 하드웨어는 FIFO를 즉시 처리하는 단순 모델이라 **실제 타이밍·FIFO 깊이(16)·수신 FIFO 넘침은 검증하지 않았습니다**.
+- 빌드: `gcc -Wall -I sw -include tb/mock_iic.h tb/test_axi_iic_mock.c sw/axi_iic.c sw/i2c_sensors.c`.
+- 한계: 16바이트보다 긴 읽기를 폴링으로 하면 RX FIFO가 넘칠 수 있음(속도에 따라, 미검증). DS3231 비트 마스크와 시/요일 디코딩은 규격 확인 전이라 넣지 않았습니다. 인터럽트 방식은 구현하지 않았습니다.
+
 ## 한계
 RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를 확인했으나 RTL/드라이버는 아직 작성하지 않았습니다(필요 시 위 절차대로 작성). 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
