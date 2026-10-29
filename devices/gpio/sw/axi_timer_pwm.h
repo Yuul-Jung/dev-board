@@ -1,6 +1,11 @@
-/* AXI Timer(PG079)로 PWM 만들기 — 팬(25 kHz)과 패시브 부저(주파수)에 사용.
- * 근거는 PG079 가 아니라 Zephyr xlnx,xps-timer-1.00.a PWM 드라이버(D3, 2차 자료)이다. PG079 원문은 열지 못했다.
- * 레지스터: TCSR0 0x00 TLR0 0x04, TCSR1 0x10 TLR1 0x14. 타이머0 = 주기, 타이머1 = 하이 시간. */
+/* AXI Timer (PG079 v2.0) PWM — 팬(25 kHz)과 패시브 부저(주파수)에 사용.
+ * 확인(PG079 PDF): 레지스터 TCSR0 0x00 / TLR0 0x04 / TCR0 0x08, TCSR1 0x10 / TLR1 0x14 / TCR1 0x18.
+ *   PWM 은 타이머 0(주기)과 타이머 1(하이 시간) 한 쌍을 쓴다. 두 타이머 모두 MDT=0(generate), GENT=1, PWMA=1,
+ *   GenerateOut 은 active-high. 카운트다운(UDT=1)일 때 주기 = (TLR0+2)·T_clk, 하이 = (TLR1+2)·T_clk.
+ *   LOAD 비트는 카운터 동작을 막으므로 ENT 를 켤 때 같이 지워야 함. ENALL 에 1 을 쓰면 ENALL·ENT0·ENT1 이 세트됨.
+ * 설계안/미확인: ARHT(자동 재적재) 사용은 PG079 PWM 절에 명시가 없고 Zephyr 드라이버를 따름. 0 %/100 % 상수 출력은
+ *   PG079 에 설명이 없어 Zephyr 요약대로 추정. 카운터 폭 파라미터는 32비트로 가정. 이 PWM 은 타이머 0·1 을 모두 쓰므로
+ *   캡처(타코)용으로는 별도 AXI Timer 인스턴스가 필요하다. */
 #ifndef AXI_TIMER_PWM_H
 #define AXI_TIMER_PWM_H
 #include <stdint.h>
