@@ -41,3 +41,12 @@ int max31855_read(qspi_t *s, unsigned cs, max31855_t *o)
     max31855_decode(((uint32_t)rx[0] << 24) | ((uint32_t)rx[1] << 16) | ((uint32_t)rx[2] << 8) | rx[3], o);
     return QSPI_OK;
 }
+
+int hc595_write(qspi_t *s, unsigned cs, const uint8_t *data, unsigned n)
+{
+    if (!s || !data || n == 0 || n > 16) return QSPI_ERR_ARGS;
+    qspi_cs(s, cs, 1);
+    int r = qspi_xfer(s, data, 0, n);
+    qspi_cs(s, cs, 0);                       /* CS(=STCP) 상승 → 저장 레지스터로 전송 */
+    return r;
+}
