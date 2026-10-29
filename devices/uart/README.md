@@ -27,3 +27,13 @@ UART Lite 인스턴스 소자당 1개, Pmod 핀은 TX/RX 2선. 보레이트가 �
 
 ## 전용 RTL 여부
 UART Lite 가 있으므로 소자 접근은 IP. 전용 RTL 후보는 RS-485 방향 제어(DE/RE) 자동화뿐이며, GPIO 한 비트를 소프트웨어가 제어하면 충분하므로 이번에는 작성하지 않았습니다.
+
+## 드라이버 (devices/uart/sw, 설계안·호스트 모의 테스트만)
+| 파일 | 내용 | 근거 |
+|---|---|---|
+| uartlite.h/.c | PG142 레지스터 접근. Rx 가 비었으면 읽지 않음(빈 FIFO 읽기 = SLVERR), STAT 오류 비트(5~7)는 읽으면 지워지므로 읽을 때마다 누적 | 확인 (PG142) |
+| nmea.h/.c | 줄 조립, XOR 체크섬, RMC 파서 (위경도 1e-7도, 속도 0.01노트) | NMEA_Format_v0.1 (NavSpark) — 형식·XOR·RMC 필드 순서 확인 |
+| hc05.h/.c | AT 명령 문자열 생성과 `OK` 응답 확인 | D3 (2차 자료) |
+
+미확인: 체크섬 XOR 범위에 `$`·`*` 포함 여부(문서가 명시 안 함, 관례대로 둘 사이로 계산). GGA 필드 순서(문서에서 확인하지 못해 GGA 파서 없음). RMC 위도 표기가 문서 안에서 ddmm/dddmm 으로 상충해 두 형식 모두 처리. NavSpark 문서이므로 NEO-6M 의 NMEA 2.3 출력과 같다는 보장은 없음. HC-05 의 AT 모드 보레이트·응답 형식.
+테스트: `cd devices && gcc -Wall -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/*.c -o t && ./t` → ALL PASS (모의 레지스터 기준이며 보드 동작 검증 아님).
