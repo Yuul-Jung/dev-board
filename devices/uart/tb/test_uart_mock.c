@@ -29,7 +29,7 @@ void mock_ul_wr(uint32_t off, uint32_t v)
 static int fails;
 #define CHK(c) do { if (!(c)) { printf("FAIL line %d: %s\n", __LINE__, #c); fails++; } } while (0)
 
-static int cnt; static int poll_ok(void *c) { return ++cnt < 1000; }
+static int cnt; static int poll_ok(void *c) { (void)c; return ++cnt < 1000; }
 
 int main(void)
 {

@@ -79,7 +79,7 @@
    320
   ],
   "colors": 262144,
-  "evidence": "D1 partial"
+  "evidence": "D1 partial (본문 타이밍·명령 파라미터 미열람)"
  },
  {
   "id": "ssd1306",
@@ -405,7 +405,7 @@
    "CAN 2.0A/B"
   ],
   "tx_fifo_max": 64,
-  "evidence": "D1 product page"
+  "evidence": "D1 (PG096 v5.1 본문)"
  },
  {
   "id": "sn65hvd230",
@@ -465,5 +465,55 @@
   "coil_mw": 360,
   "contact": "SPDT",
   "evidence": "D3"
+ },
+ {
+  "id": "ttp223",
+  "interface": "gpio",
+  "category": "touch",
+  "vcc_v": [
+   2.0,
+   5.0
+  ],
+  "response_ms_low_power": 220,
+  "evidence": "D3"
+ },
+ {
+  "id": "alps-rotary-encoder",
+  "interface": "gpio",
+  "category": "input",
+  "detents": 30,
+  "pulses": 15,
+  "chatter_ms_max": 3,
+  "bounce_ms_max": 2,
+  "evidence": "D3 (도면 미판독)"
+ },
+ {
+  "id": "intel-4wire-pwm-fan",
+  "interface": "gpio",
+  "category": "fan",
+  "pwm_khz": [
+   21,
+   25,
+   28
+  ],
+  "tach_pulses_per_rev": 2,
+  "tach_pullup_v_max": 13.2,
+  "vcc_v": [
+   10.8,
+   13.2
+  ],
+  "evidence": "D1 partial (규격 PDF 사본)"
+ },
+ {
+  "id": "ps2-keyboard-mouse",
+  "interface": "ps2",
+  "category": "input",
+  "frame_bits": 11,
+  "parity": "odd",
+  "tck_us": [
+   30,
+   50
+  ],
+  "evidence": "D3 (Digilent Pmod PS2 문서)"
  }
 ]

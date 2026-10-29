@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-static int fmt(char *o, size_t cap, int n) { return (n < 0 || (size_t)n >= cap) ? -1 : n; }
+static int fmt(char *o, size_t cap, int n) { (void)o; return (n < 0 || (size_t)n >= cap) ? -1 : n; }
 int hc05_cmd_at(char *o, size_t cap) { return fmt(o, cap, snprintf(o, cap, "AT\r\n")); }
 int hc05_cmd_name(char *o, size_t cap, const char *s) { return fmt(o, cap, snprintf(o, cap, "AT+NAME=%s\r\n", s)); }
 int hc05_cmd_pswd(char *o, size_t cap, const char *s) { return fmt(o, cap, snprintf(o, cap, "AT+PSWD=%s\r\n", s)); }
