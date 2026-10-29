@@ -12,7 +12,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `spi/` `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
-**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/` (시뮬레이션 전). 다음 후보: I2S, DHT22 단일선, PS/2, CAN.
+**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22) — 모두 시뮬레이션 전. 다음 후보: I2S, PS/2, CAN.
 
 ## 근거 수준
 - **D1 데이터시트 열람**: 제조사 또는 제조사 문서 사본을 열어 값을 확인함. 사본 출처를 소자 문서에 적음.
