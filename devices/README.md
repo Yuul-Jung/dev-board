@@ -9,10 +9,13 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `gpio/` | GPIO (트리거/에코, 단일선 독자 프로토콜 포함) | HC-SR04, DHT22 |
 | `1-wire/` | 1-Wire | DS18B20 |
 | `i2c/` | I2C | BME280 |
+| `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
 | `spi/` `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
-**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22) — 모두 시뮬레이션 전. 다음 후보: I2S, PS/2, CAN.
+**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/` — 모두 시뮬레이션 전. 다음 후보: I2S, PS/2, CAN.
+
+전체 범주 목록과 상태는 `CATEGORIES.md`.
 
 ## 근거 수준
 - **D1 데이터시트 열람**: 제조사 또는 제조사 문서 사본을 열어 값을 확인함. 사본 출처를 소자 문서에 적음.
