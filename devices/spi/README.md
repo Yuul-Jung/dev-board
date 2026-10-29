@@ -28,7 +28,8 @@ Basys3(XC7A35T) + MicroBlaze V 에서 SPI 소자를 붙이는 방법을 정리�
 SPICR 비트 (확인): 9 LSB First, 8 Master Transaction Inhibit(리셋 1), 7 Manual Slave Select Assertion Enable(리셋 1), 6 Rx FIFO Reset, 5 Tx FIFO Reset, 4 CPHA, 3 CPOL(0=SCK 대기 Low), 2 Master, 1 SPE, 0 LOOP.
 표준 슬레이브 모드는 SCK 비율 2에서 지원하지 않습니다 (확인).
 
-미확인: 실행 중 SCK 비율 변경 가능 여부, 전송 절차(수동 슬레이브 선택 사용 시 순서), SPISR/IPISR 비트 이름, 인터럽트 조건. 구현 전에 PG153 해당 절을 다시 열어야 합니다.
+추가 확인 (표 열람): SRR 은 0x0000000A 쓰기만 허용. SPISR 비트: 0 Rx_Empty(리셋 1), 1 Rx_Full, 2 Tx_Empty(리셋 1), 3 Tx_Full, 4 MODF, 5 Slave_Mode_Select(리셋 1), 6 CPOL_CPHA_Error(CPOL/CPHA 가 01 또는 10 일 때), 7 Slave Mode Error, 8 MSB Error, 9 Loopback Error, 10 Command Error. IPISR 비트 이름 14개(Command Error ~ MODF) 중 DRR_Not_Empty 는 비트 8. SPIDTR 는 채우기 전에 리셋 상태여야 함. 마스터 트랜잭션 inhibit 설정은 전송 중에 하면 결과 불명.
+미확인: 실행 중 SCK 비율 변경 가능 여부, 마스터 전송의 정확한 순서(「Protocol Description」 p.70, 「Example Programming Sequence」 p.105 본문을 열지 못함), 인터럽트 조건. 아래 6절 순서는 그대로 설계안입니다.
 
 ## 2. 경로 결정
 사용자 규칙: AMD IP가 있으면 IP, 없을 때만 전용 RTL.
@@ -36,7 +37,7 @@ SPI 마스터는 AXI Quad SPI 가 있으므로 **소자 접근은 IP**로 합니
 
 | 후보 | 이유 | 상태 |
 |---|---|---|
-| ILI9341 화면 스트리밍 엔진 | 프레임 1,228,800 비트(계산)를 CPU 없이 보내려면 DMA/전용 엔진 필요. 사용자 노션에 `spi_master_core.v`, ILI9341 컨트롤러 설계가 있음 | 설계안, 이번에 RTL 작성 안 함 |
+| ILI9341 바이트·fill 엔진 | D/CX 제어와 프레임 1,228,800 비트(계산) 채우기를 CPU 없이 처리 | `rtl/` 에 작성, 미시뮬레이션 (`rtl/README.md`). 화면 DMA/메모리 스트리밍은 미작성 |
 | 74HC595 / MAX7219 | 단순 시프트 출력이라 IP로 충분 | 전용 RTL 불필요 |
 
 ## 3. 버스 계획 (설계안)
@@ -94,7 +95,7 @@ IP 전송 절차가 미확인이므로 절차 대신 레지스터 접근만 적�
 #define SPI_DTR    (SPI_BASE + 0x68)
 #define SPI_DRR    (SPI_BASE + 0x6C)
 #define SPI_SSR    (SPI_BASE + 0x70)
-/* SPICR: master=bit2, SPE=bit1, CPOL=bit3, CPHA=bit4, inhibit=bit8, manual SS=bit7 */
+/* SPICR(확인): master=bit2, SPE=bit1, CPOL=bit3, CPHA=bit4, inhibit=bit8, manual SS=bit7 */
 #define CR_MODE3_MASTER ((1u<<4)|(1u<<3)|(1u<<2)|(1u<<1)|(1u<<7))
 /* 1) SRR 에 0xA 쓰기  2) SPICR = CR_MODE3_MASTER | inhibit  3) SPISSR 로 CS 선택
  * 4) SPIDTR 에 바이트 채움  5) inhibit 해제  6) SPISR 로 완료 확인  7) SPIDRR 읽기
@@ -102,5 +103,5 @@ IP 전송 절차가 미확인이므로 절차 대신 레지스터 접근만 적�
 ```
 
 ## 7. 한계
-- 모든 RTL/드라이버는 시뮬레이션·합성 전. 이번 SPI 작업은 문서와 계획만이며 RTL 파일은 추가하지 않았습니다.
-- microSD, ILI9341 시리얼 타이밍·리셋 타이밍·초기화 순서, SSD1306 SPI 타이밍, MCP4921 명령어 형식은 이번에 열어본 문서에서 값을 얻지 못해 미확인으로 남겼습니다.
+- 모든 RTL/드라이버는 시뮬레이션·합성 전. RTL 은 ILI9341 엔진 하나뿐입니다.
+- microSD, ILI9341 시리얼 타이밍·리셋 타이밍·초기화 순서(재시도했으나 발췌에 본문 없음), SSD1306 SPI 타이밍, MCP4921 명령어 형식은 이번에 열어본 문서에서 값을 얻지 못해 미확인으로 남겼습니다.
