@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """코드 헤더에 적은 레지스터 오프셋·비트 이름을 AMD PG 문서 텍스트(pdftotext -layout 결과)와 자동 대조한다.
-사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
+사용: crosscheck_pdf.py <폴더>  (폴더에 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt, 선택으로 mcp2515.txt). PDF 는 저장소에 넣지 않는다(재배포 문제).
 한계: 이름과 숫자가 같은 줄/근처에 있는지만 본다. 비트 의미의 세부는 사람이 읽어 확인한 것이다."""
 import re,sys
 def load(p): return open(p,errors='ignore').read().splitlines()
@@ -54,6 +54,45 @@ for lab,num,k in [('TCSR0 0h',r'\b0h\b',['tcsr0']),('TLR0 04h',r'04h',['tlr0']),
     chk('PG079',L,lab,num,k)
 for lab,num,k in [('MDT bit0',r'^\s*0\s',['mdt0']),('UDT bit1',r'^\s*1\s',['udt0']),('GENT bit2',r'^\s*2\s',['gent0']),('CAPT bit3',r'^\s*3\s',['capt0']),('ARHT bit4',r'^\s*4\s',['arht0']),('LOAD bit5',r'^\s*5\s',['load0']),('ENIT bit6',r'^\s*6\s',['enit0']),('ENT bit7',r'^\s*7\s',['ent0']),('TINT bit8',r'^\s*8\s',['t0int']),('PWMA bit9',r'^\s*9\s',['pwma0']),('ENALL bit10',r'^\s*10\s',['enall'])]:
     chk('PG079',L,lab,num,k)
+
+# ---- MCP2515 (선택: mcp2515.txt = DS20001801K 의 pdftotext -layout 결과). Table 11-2(레지스터 요약), Table 12-1(SPI 명령), 레지스터 설명 ----
+MP=os.path.join(D,'mcp2515.txt')
+if os.path.exists(MP):
+    L=load(MP)
+    def row(name,addr):
+        """Table 11-2 의 한 행에서 주소 뒤 비트 이름 8개(bit7→bit0)를 돌려준다"""
+        for l in L:
+            m=re.match(r'\s*'+name+r'\s+'+addr+r'\s+(.*)$',l)
+            if m:
+                tok=m.group(1).split()
+                return tok[:8]
+        return None
+    def bits(name,addr,expect):
+        r=row(name,addr); ok=bool(r) and all(r[7-b].upper()==n.upper() for b,n in expect.items())
+        res.append(('MCP2515',f'{name} {addr}h 비트 '+','.join(f'{b}={n}' for b,n in expect.items()),ok))
+    bits('CANINTE','2B',{7:'MERRE',6:'WAKIE',5:'ERRIE',4:'TX2IE',3:'TX1IE',2:'TX0IE',1:'RX1IE',0:'RX0IE'})
+    bits('CANINTF','2C',{7:'MERRF',6:'WAKIF',5:'ERRIF',4:'TX2IF',3:'TX1IF',2:'TX0IF',1:'RX1IF',0:'RX0IF'})
+    bits('CANCTRL','XF',{7:'REQOP2',6:'REQOP1',5:'REQOP0',4:'ABAT',3:'OSM',2:'CLKEN'})
+    bits('CANSTAT','XE',{7:'OPMOD2',6:'OPMOD1',5:'OPMOD0'})
+    bits('CNF1','2A',{7:'SJW1',6:'SJW0',5:'BRP5',0:'BRP0'})
+    bits('CNF2','29',{7:'BTLMODE',6:'SAM',5:'PHSEG12',3:'PHSEG10',2:'PRSEG2',0:'PRSEG0'})
+    bits('CNF3','28',{2:'PHSEG22',0:'PHSEG20'})
+    bits('TXB0CTRL','30',{6:'ABTF',3:'TXREQ',1:'TXP1',0:'TXP0'})
+    bits('TXB2CTRL','50',{3:'TXREQ'})
+    bits('EFLG','2D',{7:'RX1OVR',6:'RX0OVR',5:'TXBO'})
+    for lab,num,k in [('RESET C0',r'1100 0000',['reset']),('READ 03',r'0000 0011',['read']),('WRITE 02',r'0000 0010',['write']),
+        ('READ RX BUFFER 90',r'1001 0nm0',['read rx buffer']),('LOAD TX BUFFER 40',r'0100 0abc',['load tx buffer']),('RTS 80',r'1000 0nnn',['rts']),
+        ('READ STATUS A0',r'1010 0000',['read status']),('RX STATUS B0',r'1011 0000',['rx status']),('BIT MODIFY 05',r'0000 0101',['bit modify'])]:
+        chk('MCP2515',L,lab,num,k,0)
+    for lab,num,k in [('REQOP 000 normal',r'000 = Sets Normal',['normal']),('REQOP 001 sleep',r'001 = Sets Sleep',['sleep']),('REQOP 010 loopback',r'010 = Sets Loopback',['loopback']),
+        ('REQOP 011 listen-only',r'011 = Sets Listen',['listen']),('REQOP 100 configuration',r'100 = Sets Config',['configuration'])]:
+        chk('MCP2515',L,lab,num,k,0)
+    for lab,num,k in [('RXBnSIDL bit4 SRR',r'bit 4\s+SRR',['srr']),('RXBnSIDL bit3 IDE',r'bit 3\s+IDE',['ide']),('RXBnDLC bit6 RTR',r'bit 6\s+RTR',['rtr']),
+        ('RXBnSIDH 61h/71h',r'ADDRESS: 61h',['rxbnsidh']),('RXBnSIDL 62h/72h',r'ADDRESS: 62h',['rxbnsidl']),('RXBnDLC 65h/75h',r'ADDRESS: 65h',['rxbndlc'])]:
+        chk('MCP2515',L,lab,num,k,1)
+    chk('MCP2515',L,'OST 128 OSC1 클럭',r'128 OSC1',['reset'],1)
+    chk('MCP2515',L,'READ RX BUFFER 가 RXnIF 해제',r'automatically clearing',['rxnif'],2)
+    chk('MCP2515',L,'5.5절 PropSeg+PS1 ≥ PS2',r'PropSeg \+ PS1',['ps2'],0)
 bad=[r for r in res if not r[2]]
 for r in res: print('OK  ' if r[2] else 'MISS', r[0], r[1])
 print(len(res),'항목 중 자동 대조 실패',len(bad))

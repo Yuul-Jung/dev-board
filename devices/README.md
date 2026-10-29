@@ -15,7 +15,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [`spi/`](spi/README.md) | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (PG153 본문 확인, QSPI·ILI9341 드라이버, ILI9341 전용 RTL; 일부 미확인) |
 | [`uart/`](uart/README.md) | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 본문 확인, 드라이버·NMEA RMC) |
 | [`i2s/`](i2s/README.md) | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
-| [`can/`](can/README.md) | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(명령 코드 미확인), SN65HVD230 |
+| [`can/`](can/README.md) | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(데이터시트 PDF 로 명령·레지스터 확인, 드라이버는 spi/sw), SN65HVD230 |
 | [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
 | [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교 | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
 | [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05 는 `uart/` 에 있음 |

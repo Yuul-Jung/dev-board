@@ -27,14 +27,14 @@ SRR 비트: 0 SRST, 1 CEN. 전원 인가 시 CEN=0, SR의 CONFIG=1.
 **계산 예**: can_clk 24 MHz, 목표 1 Mbps → BRP+1 = 3 (BRPR=2) 이면 tq = 125 ns, 비트당 8 tq → 1 Mbps. TS1 실제 5(필드 4), TS2 실제 2(필드 1), SJW 실제 1(필드 0) → 샘플 지점 6/8 = 75% (샘플 지점은 설계 선택). Basys3 클럭은 100 MHz(RM)이므로 24 MHz 는 MMCM으로 만들어야 함(계산). can_clk 를 24 MHz 외 값으로 써도 되는지는 문서 표 서술만 있어 미확인.
 
 ## 경로 B: MCP2515 (SPI) — `../spi/comm-storage-io.md`
-컨트롤러가 칩 안에 있어 FPGA는 SPI 만 쓰면 됩니다(AXI Quad SPI). 확인된 사양: CAN 2.0B 1 Mb/s, SPI 10 MHz, 수신 버퍼 2, 송신 버퍼 3. SPI 명령 코드는 미확인.
+컨트롤러가 칩 안에 있어 FPGA는 SPI 만 쓰면 됩니다(AXI Quad SPI). 확인된 사양: CAN 2.0B 1 Mb/s, SPI 10 MHz, 수신 버퍼 2, 송신 버퍼 3. SPI 명령 코드·모드·비트 타이밍·버퍼 배치는 DS20001801K PDF 로 확인했고 드라이버(`../spi/sw/mcp2515.c`)와 시험이 있다(보드 미실행).
 
 | 비교 | 경로 A (AXI CAN) | 경로 B (MCP2515) |
 |---|---|---|
 | 필요 핀 | TX, RX 2핀 + 트랜시버 | SPI 4~5핀 + INT + 트랜시버 |
 | FPGA 자원 | IP 사용 | Quad SPI 재사용 가능 |
 | 성능 | 송수신 FIFO 각 64 | 버퍼 수신 2/송신 3 |
-| 문서 상태 | 레지스터·초기화 절차 확인 | 명령 코드 미확인 |
+| 문서 상태 | 레지스터·초기화 절차 확인 | 명령 코드·레지스터 확인(PDF), 필터·슬립 등 일부 미작성 |
 | 라이선스 | Vivado 카탈로그 License 열에서 확인 필요 | 없음 |
 
 ## 트랜시버: SN65HVD230 (TI) — D1 일부 (제품 페이지)

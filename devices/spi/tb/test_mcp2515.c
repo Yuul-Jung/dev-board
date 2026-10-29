@@ -1,5 +1,7 @@
-/* MCP2515 호스트 시험: 확인된 부분(비트 타이밍, TX 버퍼 배치, [B] 옵코드 바이트열)만 검사한다.
- * [C] 미확인 항목(WRITE/READ RX 옵코드, 모드 레지스터)은 시험하지 않는다 — 시험이 같은 추측을 반복할 뿐이므로. */
+/* MCP2515 호스트 시험. 두 층으로 나뉜다.
+ *  1) 바이트열 층: 옵코드·비트 타이밍·버퍼 배치를 데이터시트 표(DS20001801K Table 12-1, Register 4-x/5-x)의 값과 직접 비교.
+ *  2) 장치 모델 층: 데이터시트 규칙(구성 모드에서만 CNF 쓰기, 루프백 RTS → RXB0, READ RX BUFFER 의 CS 상승 시 RXnIF 해제,
+ *     READ STATUS 비트 배치)을 구현한 SPI 레벨 모델 위에서 init/send/recv 왕복을 시험. 모델은 내가 읽은 규칙의 해석이다. */
 #include <stdio.h>
 #include <string.h>
 #include "../sw/mcp2515.h"
@@ -16,7 +18,7 @@ static int bad;
 static int exists_exact(uint32_t fosc, uint32_t br)
 {
     for (unsigned brp = 0; brp < 64; brp++) for (unsigned pr = 1; pr <= 8; pr++) for (unsigned p1 = 1; p1 <= 8; p1++) for (unsigned p2 = 2; p2 <= 8; p2++) {
-        unsigned n = 1 + pr + p1 + p2; if (n < 8 || n > 25) continue;
+        unsigned n = 1 + pr + p1 + p2; if (n < 8 || n > 25 || pr + p1 < p2) continue;   /* 5.5절 규칙 포함 */
         if ((uint64_t)fosc == (uint64_t)2 * (brp + 1) * br * n) return 1;
     }
     return 0;
@@ -38,6 +40,7 @@ int main(void)
         unsigned n = 1 + pr + ph1 + ph2;
         CHECK((uint64_t)fo[a] == (uint64_t)2 * (brp + 1) * br[b] * n);           /* 비트레이트 정확 */
         CHECK(ph2 >= 2 && n >= 8 && n <= 25 && sjw >= 1 && sjw <= 4 && sjw <= ph2);
+        CHECK(pr + ph1 >= ph2);                                  /* 5.5절: PropSeg + PS1 ≥ PS2 */
         CHECK((c2 & 0x80) && !(c2 & 0x40) && !(c3 & 0xF8));     /* BTLMODE=1, SAM=0, CNF3 상위 비트 0 */
         unsigned sp = (1 + pr + ph1) * 1000 / n;
         CHECK(sp >= 700 && sp <= 925);
@@ -73,6 +76,13 @@ int main(void)
     f.ext = 0; f.id = 0x123; f.dlc = 1; f.rtr = 0; f.data[0] = 9;
     CHECK(mcp2515_load_tx(&s, 0, 1, &f) == QSPI_OK && seen_n == 7 && seen[0] == 0x42 && seen[1] == 0x24 && seen[2] == 0x60 && seen[5] == 1 && seen[6] == 9);
     CHECK(mcp2515_load_tx(&s, 0, 3, &f) == QSPI_ERR_ARGS);
+    CHECK(MCP_OP_WRITE == 0x02 && MCP_OP_READ_RXB == 0x90 && MCP_OP_RX_STATUS == 0xB0 && MCP_CANSTAT == 0x0E && MCP_CANCTRL == 0x0F && MCP_CANINTE == 0x2B && MCP_CANINTF == 0x2C);
+    CHECK(MCP_MODE_NORMAL == 0 && MCP_MODE_SLEEP == 0x20 && MCP_MODE_LOOPBACK == 0x40 && MCP_MODE_LISTEN == 0x60 && MCP_MODE_CONFIG == 0x80);   /* Register 10-1 */
+    CHECK(MCP_RX0IF == 1 && MCP_RX1IF == 2 && MCP_TX0IF == 4 && MCP_TX1IF == 8 && MCP_TX2IF == 16 && MCP_ERRIF == 32 && MCP_WAKIF == 64 && MCP_MERRF == 128);   /* Register 7-2 */
+    CHECK(mcp2515_write_regs(&s, 0, 0x28, b, 2) == QSPI_OK && seen_n == 4 && seen[0] == 0x02 && seen[1] == 0x28);
+    { mcp_frame_t ff; uint8_t hdr[5] = { 0x91, 0xA8, 0x56, 0x78, 0x01 }; CHECK(mcp2515_unpack_rx(hdr, &ff) == QSPI_OK && ff.ext && ff.id == 0x12345678 && ff.dlc == 1 && !ff.rtr);
+      uint8_t h2[5] = { 0x24, 0x70, 0, 0, 0x02 }; CHECK(mcp2515_unpack_rx(h2, &ff) == QSPI_OK && !ff.ext && ff.id == 0x123 && ff.rtr);       /* SRR=1 → 표준 원격 프레임 */
+      uint8_t h3[5] = { 0x91, 0xA8, 0x56, 0x78, 0x41 }; CHECK(mcp2515_unpack_rx(h3, &ff) == QSPI_OK && ff.ext && ff.rtr); }
     CHECK(MCP_TXB_CTRL(0) == 0x30 && MCP_TXB_CTRL(1) == 0x40 && MCP_TXB_CTRL(2) == 0x50 && MCP_TXB_SIDH(2) == 0x51);
     fail = 1; int c0 = cs_cnt; CHECK(mcp2515_reset(&s, 0) == QSPI_ERR_TIMEOUT && cs_cnt == c0 + 1); fail = 0;   /* 실패해도 CS 해제 */
     if (!bad) puts("ALL PASS");

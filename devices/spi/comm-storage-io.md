@@ -2,7 +2,7 @@
 
 <!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [spi](README.md)
 
-## MCP2515 (CAN 컨트롤러) — D1 일부
+## MCP2515 (CAN 컨트롤러) — D1
 | 항목 | 값 |
 |---|---|
 | CAN | V2.0B, 최대 1 Mb/s |
@@ -11,18 +11,23 @@
 | 버퍼 | 수신 2개(RXB0, RXB1), 송신 3개(우선순위·중단 기능) |
 | 핀 | INT 1개 (PDIP/SOIC 12번) |
 | 동작 모드 | 설정(Configuration) 모드에서만 마스크·필터·비트 타이밍 변경, Sleep 대기 전류 1 µA(전형) |
-| SPI 명령 옵코드, CANCTRL 주소 | 데이터시트 PDF 텍스트가 87,709자에서 끝나 12장(SPI 명령 표)과 제어 레지스터 표가 통째로 빠져 있음. 일부는 2차 자료로 확인(아래) |
+| 근거 | Microchip DS20001801K **PDF 본문을 직접 읽음**(D1). 이전 요약에서 "열어본 발췌에 없음"이던 SPI 옵코드·모드 레지스터 표는 PDF 12장·10장·11장에서 확인 |
 
-**근거를 세 구역으로 나눈 상세** (드라이버 [`sw/mcp2515.h`](sw/mcp2515.h) 머리말과 동일)
-| 구역 | 내용 | 근거 |
-|---|---|---|
-| A 확인 | 비트 타이밍: CNF1 = SJW[7:6] BRP[5:0], CNF2 = BTLMODE[7] SAM[6] PHSEG1[5:3] PRSEG[2:0], CNF3 = SOF[7] WAKFIL[6] PHSEG2[2:0]; Tq = 2×(BRP+1)/Fosc, 구간 = (필드+1)×Tq, PHSEG2 최소 2 Tq (5.3절의 "2×BRP×TOSC" 와 불일치 — 레지스터 설명을 따름) | D1 |
-| A 확인 | 주소: CNF3 28h, CNF2 29h, CNF1 2Ah, TEC 1Ch, REC 1Dh, EFLG 2Dh, TXBnCTRL 30/40/50h, TXBnSIDH 31/41/51h … DLC 35/45/55h, 데이터 36~3Dh …, RXB0CTRL 60h, RXB1CTRL 70h, RXBnSIDH 61/71h, RXBnDLC 65/75h, 데이터 66~6Dh / 76~7Dh, BFPCTRL 0Ch, TXRTSCTRL 0Dh | D1 |
-| A 확인 | 필드: TXREQ = TXBnCTRL bit3, TXP[1:0] bit1:0; TXBnSIDL = SID[2:0] bit7:5, EXIDE bit3, EID[17:16] bit1:0; TXBnDLC = RTR bit6, DLC bit3:0 (8 초과도 8바이트만 전송); RXB0CTRL RXM[1:0] = bit6:5, RXM=11 → 필터 끔; CANINTF RX0IF bit0, RX1IF bit1; 수신 플래그는 MCU 가 지워야 다음 메시지가 들어옴 | D1 |
-| B 2차 자료 | SPI 옵코드 READ 03h, BIT MODIFY 05h, LOAD TX BUFFER 40h, RTS 80h(\|nnn: TXB0/1/2), READ STATUS A0h, RESET C0h | D3 (Zephyr mcp2515 드라이버 커밋) |
-| C 미확인 | WRITE, READ RX BUFFER 옵코드; CANCTRL/CANSTAT/CANINTE/CANINTF 주소(CANINTE/F 는 CNF1 2Ah 와 EFLG 2Dh 사이 두 칸이라는 계산만 가능); REQOP/OPMOD 모드 코드; TX0IF 비트; RXBnSIDL 의 IDE/SRR 비트; LOAD TX 의 abc 해석; 리셋 후 발진기 안정 시간 | 없음 — **DS21801 PDF 필요** |
+**확인된 값 (DS20001801K)**
+| 항목 | 값 |
+|---|---|
+| SPI 명령(Table 12-1) | RESET C0h, READ 03h, READ RX BUFFER 1001 0nm0 (nm 00→RXB0SIDH 61h, 01→RXB0D0 66h, 10→RXB1SIDH 71h, 11→RXB1D0 76h; **CS 가 올라가면 해당 RXnIF 자동 해제**), WRITE 02h, LOAD TX BUFFER 0100 0abc (000→TXB0SIDH 31h, 001→TXB0D0 36h, 010→TXB1SIDH 41h, 011→TXB1D0 46h, 100→TXB2SIDH 51h, 101→TXB2D0 56h), RTS 1000 0nnn (bit0 TXB0, bit1 TXB1, bit2 TXB2), READ STATUS A0h, RX STATUS B0h, BIT MODIFY 05h(+주소·마스크·값; 지원하지 않는 레지스터에서는 마스크가 FFh 로 강제되어 바이트 쓰기가 됨) |
+| 명령 규칙 | 모드 0,0 / 1,1. 명령 하나마다 CS 를 내렸다 올려야 함. WRITE/READ 는 CS Low 동안 순차 접근. RESET 은 구성 모드로 만들고 전원 투입 때 보내기를 강하게 권장 |
+| 모드(Register 10-1/10-2) | CANCTRL[7:5] REQOP: 000 정상, 001 슬립, 010 루프백, 011 수신 전용, 100 구성(전원 투입 시 100, CANCTRL 리셋값 87h). CANSTAT[7:5] OPMOD 가 현재 모드. CANCTRL 주소는 xFh, CANSTAT 은 xEh (어느 상위 니블이든 동일 레지스터) |
+| 인터럽트(Register 7-1/7-2) | CANINTE 2Bh, CANINTF 2Ch: bit7 MERR, 6 WAK, 5 ERR, 4 TX2, 3 TX1, 2 TX0, 1 RX1, 0 RX0. 플래그는 MCU 가 지워야 함(READ RX BUFFER 의 RXnIF 는 예외) |
+| READ STATUS(Figure 12-8) | bit0 RX0IF, 1 RX1IF, 2 TXB0 TXREQ, 3 TX0IF, 4 TXB1 TXREQ, 5 TX1IF, 6 TXB2 TXREQ, 7 TX2IF |
+| 수신 버퍼(Register 4-4~4-8) | RXBnSIDL: SID[2:0] bit7:5, SRR bit4(표준 원격), IDE bit3, EID[17:16] bit1:0. RXBnDLC: RTR bit6(확장 프레임의 원격), RB1/RB0, DLC bit3:0. 송신 쪽은 TXBnSIDL 의 EXIDE bit3 |
+| 비트 타이밍(5장) | CNF1 = SJW[7:6] BRP[5:0], CNF2 = BTLMODE[7] SAM[6] PHSEG1[5:3] PRSEG[2:0], CNF3 = SOF[7] WAKFIL[6] PHSEG2[2:0]. TQ = 2×(BRP+1)/Fosc (Register 5-1; 5.3절 식 5-2 의 "2·BRP·TOSC" 는 표기가 달라 레지스터 설명을 따름). 구간 범위: PropSeg 1~8, PS1 1~8, PS2 2~8(IPT = 2 Tq), SJW 1~4. 규칙(5.5절): PropSeg+PS1 ≥ PS2, PropSeg+PS1 ≥ TDELAY(보통 1~2 Tq), PS2 ≥ SJW. CNF 는 구성 모드에서만 변경 가능 |
+| 발진기 시작(8.1절) | OST 가 전원 투입·SPI RESET·RESET 핀·슬립 복귀 후 **128 OSC1 클럭** 동안 리셋 유지. 그동안 SPI 접근 금지 |
 
-드라이버는 A·B 구역만 시험하고 C 구역은 `*_UNVERIFIED` 임시값으로 격리해 두었습니다(모드 전환·메시지 수신은 C 구역이 필요하므로 PDF 대조 전에는 완성되지 않음). 비트 타이밍 계산기는 8/16/20 MHz × 10개 속도에서 독립 전수 탐색과 해 존재 여부가 일치하고 비트레이트가 정확합니다([`tb/test_mcp2515.c`](tb/test_mcp2515.c)).
+**여전히 미확인**: 필터·마스크 설정 절차의 예제, 슬립/웨이크업 절차, 오류 카운터 처리, BFPCTRL/TXRTSCTRL 핀 기능 사용, 한 번 송신 모드(OSM), 클럭 출력 설정(드라이버는 건드리지 않음). 드라이버는 필터·마스크를 쓰지 않고 `RXM=11`(모두 수신)로 둠.
+
+**드라이버**: [`sw/mcp2515.h`](sw/mcp2515.h), [`sw/mcp2515.c`](sw/mcp2515.c) — `calc_timing`, `init`(구성 모드 확인 → CNF 쓰기 → 필터 끔 → 인터럽트 끔 → 요청 모드), `set_mode`(BIT MODIFY 후 CANSTAT 확인), `send`(TXREQ 0 인 TXB 를 찾아 LOAD TX → RTS), `recv`(READ STATUS → READ RX BUFFER 13바이트). 시험: [`tb/test_mcp2515.c`](tb/test_mcp2515.c)(옵코드·타이밍·버퍼 배치를 표의 값과 직접 비교, 비트 타이밍은 독립 전수 탐색과 해 존재 여부 일치), [`tb/test_mcp2515_model.c`](tb/test_mcp2515_model.c)(위 규칙을 구현한 SPI 레벨 모델 위에서 루프백 왕복 20,000 프레임, 구성 모드 전용 CNF 쓰기, RXnIF 자동 해제, RXB0 우선, TXB 가득 참, 모드 전환 실패 감지, 모드 중 재초기화). 모델은 내가 읽은 규칙의 해석이므로 해석이 틀리면 같이 틀린다. 보드 미실행. 레지스터·비트·옵코드 33개는 [`tools/crosscheck_pdf.py`](../tools/crosscheck_pdf.py) 로 PDF 텍스트와 자동 대조(전부 일치, 변조 사본은 실패로 잡힘).
 
 **기존 CAN 과의 차이**: 이 저장소의 [AXI CAN](../can/README.md) 은 FPGA 안의 IP(PG096, 24 MHz 기준 BRPR 방식)이고, MCP2515 는 SPI 로 붙는 외부 컨트롤러(예: 8/16 MHz 수정 발진기, BRP 방식)라 타이밍 식이 다르다. 두 경우 모두 CAN 트랜시버(예: 외부 칩)가 따로 필요하다.
 
