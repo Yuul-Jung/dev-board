@@ -1,0 +1,15 @@
+# 아날로그 센서 사실표 — gpio/sw/analog_sensors.h 의 상수를 대조하는 근거.
+# 출처 DS = TI LM35 데이터시트. 이 환경에서는 PDF 를 직접 열지 못해 웹 가져오기(WebFetch)가 돌려준 본문 요약에서 옮겨 적음(D1 요약 경유).
+# 두 번째 독립 출처는 없다('-'). 이 표는 "헤더 = 요약에서 옮긴 값" 한 방향 대조뿐이며 요약 자체의 오류는 잡지 못한다.
+# 줄 형식은 w5500_facts.txt 와 같다: def|헤더 매크로 이름|DS 값|두 번째 출처 값|메모
+def|AN_LM35_UV_PER_MDEGC|10|-|출력 10 mV/°C = m°C 당 10 µV
+def|AN_LM35_VS_MIN_MV|4000|-|전원 4 V 이상
+def|AN_LM35_VS_MAX_MV|30000|-|전원 30 V 이하
+def|AN_LM35_FULL_MIN_MDEGC|-55000|-|LM35, LM35A: −55 °C
+def|AN_LM35_FULL_MAX_MDEGC|150000|-|LM35, LM35A: 150 °C
+def|AN_LM35_C_MIN_MDEGC|-40000|-|LM35C, LM35CA: −40 °C
+def|AN_LM35_C_MAX_MDEGC|110000|-|LM35C, LM35CA: 110 °C
+def|AN_LM35_D_MIN_MDEGC|0|-|LM35D: 0 °C
+def|AN_LM35_D_MAX_MDEGC|100000|-|LM35D: 100 °C
+# 헤더에 매크로가 없는 사실 (기록용)
+val|단독 구동 가능 용량성 부하 pF|50|-|요약. 그 이상은 75 Ω 직렬 + 0.2 µF 또는 1 µF 댐퍼
