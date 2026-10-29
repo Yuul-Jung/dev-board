@@ -1,0 +1,73 @@
+[
+ {
+  "id": "hc-sr04",
+  "interface": "gpio",
+  "category": "distance",
+  "vcc_v": "5",
+  "range_cm": [
+   2,
+   400
+  ],
+  "trig_us": 10,
+  "formula": "cm = echo_us / 58",
+  "evidence": "D1"
+ },
+ {
+  "id": "dht22",
+  "interface": "gpio-single-wire",
+  "category": "temp-humidity",
+  "vcc_v": [
+   3.3,
+   6
+  ],
+  "rh": [
+   0,
+   100
+  ],
+  "temp_c": [
+   -40,
+   80
+  ],
+  "period_s": 2,
+  "frame_bits": 40,
+  "evidence": "D1"
+ },
+ {
+  "id": "ds18b20",
+  "interface": "1-wire",
+  "category": "temperature",
+  "vcc_v": [
+   3.0,
+   5.5
+  ],
+  "temp_c": [
+   -55,
+   125
+  ],
+  "resolution_bits": [
+   9,
+   12
+  ],
+  "conv_ms_max_12bit": 750,
+  "family_code": "28h",
+  "evidence": "D1"
+ },
+ {
+  "id": "bme280",
+  "interface": [
+   "i2c",
+   "spi"
+  ],
+  "category": "environment",
+  "vdd_v": [
+   1.71,
+   3.6
+  ],
+  "i2c_addr": [
+   "0x76",
+   "0x77"
+  ],
+  "chip_id": "0x60",
+  "evidence": "D1"
+ }
+]
