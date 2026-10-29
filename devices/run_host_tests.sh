@@ -23,6 +23,7 @@ cc -I spi/sw spi/tb/test_w5500_model.c spi/sw/w5500.c -o "$T/w55" && run w5500-m
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_ntp.c ethernet/sw/ntp.c ethernet/sw/ntp_client.c spi/sw/w5500.c -o "$T/ntp" && run ntp-model "$T/ntp"
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_dns.c ethernet/sw/dns.c ethernet/sw/dns_client.c ethernet/sw/net_name.c ethernet/sw/ntp.c ethernet/sw/ntp_client.c ethernet/sw/http.c ethernet/sw/http_client.c spi/sw/w5500.c -o "$T/dns" && run dns-model "$T/dns"
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_dhcp.c ethernet/sw/dhcp.c ethernet/sw/dhcp_client.c spi/sw/w5500.c -o "$T/dhcp" && run dhcp-model "$T/dhcp"
+cc -I spi/sw -I ethernet/sw ethernet/tb/test_json.c ethernet/sw/json.c ethernet/sw/http.c ethernet/sw/http_client.c spi/sw/w5500.c -o "$T/json" && run json-model "$T/json"
 cc -I spi/sw -I ethernet/sw ethernet/tb/test_http.c ethernet/sw/http.c ethernet/sw/http_client.c spi/sw/w5500.c -o "$T/http" && run http-model "$T/http"
 cc -I spi/sw spi/tb/test_max7219_model.c spi/sw/max7219.c -o "$T/m72" && run max7219-model "$T/m72"
 cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp2515 "$T/mcp2515"
@@ -50,5 +51,7 @@ if [ "${FUZZ:-0}" = 1 ]; then
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_http.c ethernet/sw/http.c -o "$T/f4" && run fuzz-http "$T/f4"
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_dns.c ethernet/sw/dns.c -o "$T/f5" && run fuzz-dns "$T/f5"
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_dhcp.c ethernet/sw/dhcp.c -o "$T/f6" && run fuzz-dhcp "$T/f6"
+  cc -I ethernet/sw ethernet/tb/fuzz_json.c ethernet/sw/json.c -o "$T/f7" && run fuzz-json "$T/f7"
+  "$T/f7" dump | python3 -I ethernet/tb/json_diff.py > /dev/null && echo "PASS  json-vs-python" || { echo "FAIL  json-vs-python"; fail=1; }
 fi
 exit $fail

@@ -17,7 +17,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [`i2s/`](i2s/README.md) | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
 | [`can/`](can/README.md) | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(데이터시트 PDF 로 명령·레지스터 확인, 드라이버는 spi/sw), SN65HVD230 |
 | [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
-| [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교, W5500 위 DHCP·DNS·NTP·HTTP 응용([socket-apps.md](ethernet/socket-apps.md)) | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
+| [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교, W5500 위 DHCP·DNS·NTP·HTTP·JSON 응용([socket-apps.md](ethernet/socket-apps.md)) | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
 | [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05 는 `uart/` 에 있음 |
 | [`data/`](data/README.md) | 위 소자의 구조화 데이터 ([devices.json](data/devices.json)) | |
 

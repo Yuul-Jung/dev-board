@@ -190,7 +190,8 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('아날로그',('gpio','sw','analog_sensors.h'),('gpio','ref','analog_sensors_facts.txt'),'AN_'),
                              ('SNTP',('ethernet','sw','ntp.h'),('ethernet','ref','ntp_facts.txt'),'NTP_'),
                              ('DNS',('ethernet','sw','dns.h'),('ethernet','ref','dns_facts.txt'),'DNS_'),
-                             ('DHCP',('ethernet','sw','dhcp.h'),('ethernet','ref','dhcp_facts.txt'),'DH(?:CP|O)_')]:
+                             ('DHCP',('ethernet','sw','dhcp.h'),('ethernet','ref','dhcp_facts.txt'),'DH(?:CP|O)_'),
+                             ('JSON',('ethernet','sw','json.h'),('ethernet','ref','json_facts.txt'),'JSON_(?:CTRL|HEX|ESC)_')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}

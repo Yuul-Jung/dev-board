@@ -3,7 +3,7 @@
 <!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
 ## 문서를 열어야 값을 확인할 수 있는 것
 - SPI(W5500): UDP 수신 헤더의 W5500 에서의 바이트 순서와 `Sn_RX_RD` 전진량(형식 8바이트는 확인, 순서는 W5100 라이브러리 근거만, 전진량은 WIZnet 문서 안에서 상충), 부분 도착 시 `Sn_RX_RSR` 반영 시점, 소프트 리셋 후 대기 시간, MACRAW 의 `Sn_SR` 값(영문 사본 p.47 0x02 / p.51 0x42 상충), `w5500_send` 가 TIMEOUT 으로 끝난 뒤 TX 포인터 상태, `Sn_TX_RD`/`Sn_RX_WR` 읽기 전용 여부, 요약이 아닌 PDF 원문 대조(현재 웹 가져오기 요약 + NuttX)
-- 이더넷 응용(DHCP·DNS·NTP·HTTP): RFC 1035·2131·2132·5905 원문 대조(DNS 의 RA/RCODE 폭, NTP 비트 배치·스트라툼 0/LI 3 의 의미·시대 처리)와 RFC 9112 전체(요약이 앞 100000자만 읽었음) 대조, 실제 DNS/NTP/HTTP 서버와의 상호 동작, NTP 왕복 지연 보정, DHCP 에서 W5500 의 SIPR=0.0.0.0 송수신·브로드캐스트 플래그·BROADCAST 플래그 필요 여부(보드에서 확인), HTTPS·JSON(날씨 예제)
+- 이더넷 응용(DHCP·DNS·NTP·HTTP·JSON): RFC 1035·2131·2132·5905·8259 원문 대조(DNS 의 RA/RCODE 폭, NTP 비트 배치·스트라툼 0/LI 3 의 의미·시대 처리)와 RFC 9112 전체(요약이 앞 100000자만 읽었음) 대조, 실제 DNS/NTP/HTTP 서버와의 상호 동작, NTP 왕복 지연 보정, DHCP 에서 W5500 의 SIPR=0.0.0.0 송수신·브로드캐스트 플래그·BROADCAST 플래그 필요 여부(보드에서 확인), HTTPS, JSON 해석을 실제 날씨 API 응답으로 확인(형식 미확인), 본문이 RAM 에 안 들어갈 때를 위한 스트리밍 해석
 - SPI(MAX7219): CLK 휴지 레벨, 표시 시험 레지스터 전원 투입 값, 자릿수 방향과 8×8 행·열 방향(모듈별), PDF 원문 대조(요약 경유, 두 번째 출처 없음)
 - SPI: ILI9341 데이터시트 본문(타이밍·초기화·COLMOD/MADCTL — 막힘, PDF 필요), microSD 사양, SSD1306 SPI 타이밍·차지 펌프, nRF24L01+ NOACK 패킷의 TX_DS 시점·수신 모드 중 STATUS 쓰기(실제 칩 확인), MCP2515 필터·마스크·슬립·오류 처리·OSM(드라이버 미작성), MAX31855 SPI 모드, ADXL345 데이터시트 원문 대조(현재 AN-1077 기반: 쓰기 R/W 비트 값·BW_RATE·DATA_FORMAT 비트·3선 모드), PG153 SCK 비율 선택지(본문 상충)와 p.105 예제
 - GPIO(AXI GPIO, PG144): 입력으로 설정된 비트에 DATA 를 쓰면 저장되는지, 리셋 직후 DATA/TRI 값(문서 안에서 상충), 인터럽트가 레벨인지 에지인지, PDF 원문 대조(요약 경유). AXI Timer 자유 실행 시계의 ARHT=1 재적재 동작(PG079 본문은 확인, 실제 IP 동작 미확인). LM35 정확도·음의 온도 구성, CdS 셀별 lux 환산 값

@@ -1,0 +1,17 @@
+# JSON 사실표 — 헤더(ethernet/sw/json.h)의 상수를 대조하는 근거.
+# 출처 A = RFC 8259 (rfc-editor.org, WebFetch 요약 — D1(요약 경유); 전문 대조는 하지 않음). 줄 형식은 dns_facts.txt 와 같다: def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모
+def|JSON_CTRL_MAX|0x1F|-|A 7절: 따옴표·역슬래시·"제어 문자 U+0000 through U+001F" 는 이스케이프해야 함
+def|JSON_HEX_DIGITS|4|-|A 7절: \uXXXX 는 16진수 4자리
+def|JSON_ESC_U_LEN|6|-|A 7절: BMP 밖 문자는 "12-character sequence" 서러게이트 쌍(𝄞) → \uXXXX 한 개 = 6글자 (계산)
+val|공백 문자 종류(space, tab, LF, CR)|4|-|A 2절
+val|구조 문자 개수([ ] { } : ,)|6|-|A 2절
+val|두 글자 이스케이프 개수(\" \\ \/ \b \f \n \r \t)|8|-|A 7절
+val|리터럴 이름(true false null)은 소문자만|3|-|A 3절
+val|정수 앞자리 0 금지(0 또는 1~9 로 시작)|1|-|A 6절 "Leading zeros are not allowed"
+val|U+1D11E = 𝄞 (서러게이트 쌍 예)|0x1D11E|-|A 7절 예. 시험 데이터의 0xF0 0x9D 0x84 0x9E 와 같은 값
+!val|깊이 제한 16(JSON_MAX_DEPTH)|16|-|설계안: A 9절은 파서가 깊이를 제한해도 된다고만 함. 16 은 내가 정한 값
+!val|짝 없는 서러게이트를 json_str 이 거부|1|-|설계안: 문법상 유효(\ud800 단독)하나 UTF-8 로 바꿀 수 없음. A 는 이 경우 동작이 "unpredictable" 이라는 취지(요약에는 8.2절 인용이 없음 — 미확인)
+!val|서러게이트 범위 D800~DBFF(상위)·DC00~DFFF(하위)|0xD800|0xDC00|일반 지식(유니코드 표준 원문은 이 세션에서 열지 않음 — 미확인)
+!val|앞의 UTF-8 BOM 한 번을 건너뜀|1|-|설계안: A 8.1절은 전송 시 BOM 을 붙이면 안 되고 파서가 무시해도 된다고 함(요약)
+!val|이름이 겹치면 먼저 나온 것|1|-|설계안: A 4절은 동작이 예측 불가라고만 함
+!val|문자열 안 0x80 이상 바이트의 UTF-8 유효성 검사 안 함|0|-|설계안: A 8.1절은 UTF-8 이어야 한다고 하나 이 파서는 검사하지 않음
