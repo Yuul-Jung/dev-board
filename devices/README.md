@@ -10,7 +10,8 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `1-wire/` | 1-Wire | DS18B20 |
 | `i2c/` | I2C | BME280 |
 | `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
-| `spi/` `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
+| `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (RTL 없음, 일부 미확인) |
+| `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/` — 모두 시뮬레이션 전. 다음 후보: I2S, PS/2, CAN.
@@ -32,6 +33,6 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | GPIO | AXI GPIO (PG144) | 1–32비트, 이중 채널, 비트별 입출력(TRI), 선택적 인터럽트 |
 | UART | AXI UART Lite (PG142) | 16문자 FIFO, 5–8비트, 패리티, 상승 에지 인터럽트 |
 | I2C | AXI IIC (PG090) | 100k/400k/1M, 마스터·슬레이브, 7/10비트, FIFO 16바이트 |
-| SPI | AXI Quad SPI (PG153) | 기능 요약만 확인 |
+| SPI | AXI Quad SPI (PG153) | 레지스터 오프셋·SPICR 비트·SCK 비율 확인, 전송 절차 미확인 |
 | 타이머·캡처 | AXI Timer (PG079) | Generate / Capture / PWM / Cascade 모드 (오프셋 미확인) |
 | 1-Wire, I2S, CAN, Bluetooth, Ethernet | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성) |

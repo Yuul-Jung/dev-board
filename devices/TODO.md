@@ -2,7 +2,7 @@
 - GPIO: PIR 모션, 릴레이, 서보(PWM)
 - 1-Wire: DS2438 등
 - I2C: MPU-6050, SHT31, BH1750, OLED(SSD1306)
-- SPI: MAX31855, ADXL345, microSD, DAC
+- SPI: microSD 사양 재확인, MCP4921 정식 데이터시트, ILI9341 타이밍·초기화 순서, SSD1306 SPI 타이밍, MCP2515 명령 코드, nRF24L01+·MAX31855 SPI 모드, PG153 전송 절차(`spi/README.md` 7절)
 - UART: GPS 모듈, 블루투스 SPP 모듈
 - I2S: MEMS 마이크, 오디오 코덱
 - CAN: 트랜시버 모듈

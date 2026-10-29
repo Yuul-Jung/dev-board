@@ -6,11 +6,11 @@
 
 | 범주 | 소자(후보) | 인터페이스 | SoC 경로 | 문서 |
 |---|---|---|---|---|
-| 온도 | DS18B20, DHT22, MAX31855(열전대), 서미스터 | 1-Wire, 단일선, SPI, 아날로그 | 전용 RTL, SPI IP, XADC | DS18B20, DHT22 |
+| 온도 | DS18B20, DHT22, MAX31855(열전대), 서미스터 | 1-Wire, 단일선, SPI, 아날로그 | 전용 RTL, SPI IP, XADC | DS18B20, DHT22, MAX31855 |
 | 습도·기압 | BME280 | I2C/SPI | AXI IIC, Quad SPI | BME280 |
 | 거리 | HC-SR04, ToF(VL53L0X 등), 적외선 | GPIO, I2C, 아날로그 | 전용 RTL, IIC | HC-SR04 |
 | 조도 | CdS(사용자 노션), BH1750 | 아날로그 또는 I2C | XADC, IIC | 없음 |
-| 모션 | MPU-6050, ADXL345, 자이로 | I2C/SPI | IIC, Quad SPI | 없음 |
+| 모션 | MPU-6050, ADXL345, 자이로 | I2C/SPI | IIC, Quad SPI | ADXL345 |
 | 인체·접촉 | PIR, 터치, 버튼, 로터리 엔코더 | GPIO | AXI GPIO | 없음 |
 | 공기질·가스 | MQ 계열, CO2 모듈, SGP30 | 아날로그, UART, I2C | XADC, UART Lite, IIC | 없음 |
 | 전류·전압 | INA219 | I2C | IIC | 없음 |
@@ -22,13 +22,13 @@
 | BLDC | ESC | PWM | AXI Timer PWM | 없음 |
 | 릴레이·솔레노이드·부저·팬 | 릴레이 모듈 등 | GPIO(+PWM) | AXI GPIO | 없음 |
 | LED 스트립 | WS2812 | 단일선(타이밍 엄격) | 전용 RTL | 없음 |
-| 표시 | 7세그(온보드), LCD1602, OLED SSD1306, TFT ILI9341(사용자 노션), VGA(온보드) | GPIO, I2C, SPI, VGA | AXI GPIO, IIC, Quad SPI, 전용 RTL | 없음 |
-| 시계 | DS1302, DS1307, DS3231 | 3선, I2C | 전용 RTL, IIC | 없음 |
-| 저장 | microSD, SPI 플래시, I2C EEPROM | SPI, I2C | Quad SPI, IIC | 없음 |
-| ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | 없음 |
-| I/O 확장 | PCF8574, MCP23017, 74HC595 | I2C, SPI | IIC, Quad SPI | 없음 |
+| 표시 | 7세그(온보드), LCD1602, OLED SSD1306, TFT ILI9341(사용자 노션), VGA(온보드) | GPIO, I2C, SPI, VGA | AXI GPIO, IIC, Quad SPI, 전용 RTL | ILI9341, SSD1306, MAX7219 (SPI, 일부 미확인) |
+| 시계 | DS3234(SPI), DS1302(3선), DS1307, DS3231 | SPI, 3선, I2C | Quad SPI, 전용 RTL, IIC | DS3234 |
+| 저장 | microSD, SPI 플래시(W25Q64JV), I2C EEPROM | SPI, I2C | Quad SPI, IIC | W25Q64JV (microSD 미확인) |
+| ADC·DAC | MCP3008, ADS1115, MCP4921 | SPI, I2C | Quad SPI, IIC | MCP3008, MCP4921(일부) |
+| I/O 확장 | PCF8574, MCP23017, 74HC595 | I2C, SPI | IIC, Quad SPI | 74HC595 |
 | 오디오 | I2S 마이크(INMP441), I2S 앰프(MAX98357) | I2S | 전용 RTL | 없음 |
-| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | 없음 |
+| 무선·유선 통신 | HC-05, ESP 모듈, LoRa, W5500, RS-485(MAX485), CAN(MCP2515+트랜시버), RFID(MFRC522), IR 리모컨 | UART, SPI, GPIO | UART Lite, Quad SPI, 전용 RTL | 없 | MCP2515, MFRC522, W5500, nRF24L01+ (SPI 부분) |
 | **절연·레벨·전원** | 포토커플러(PC817, 사용자 노션), 레벨 시프터, 풀업·풀다운 | 하드웨어 | 해당 없음 | L298 문서에 일부 |
 
 ## 모든 소자에 공통으로 필요한 점검 항목
@@ -41,6 +41,6 @@
 
 ## 진행 순서 제안
 1. 센서·모터에서 문서가 있는 소자를 SoC 맵과 맞춰 정리(완료: 온도·습도·거리·모터·서보·스테퍼)
-2. 표시(TFT, OLED), 시계(RTC), 모션(IMU)
+2. 표시(TFT, OLED), 시계(RTC), 모션(IMU) — SPI 소자는 `spi/` 에 작성 완료, I2C 소자 남음
 3. 통신 모듈(UART, SPI)과 저장
 4. 오디오(I2S)와 CAN
