@@ -2,9 +2,24 @@
 
 구분: **확인** = 이번 작업에서 데이터시트를 열어 확인, **계산**, **설계안**, **미확인**. 소자 문서: [sensors.md](sensors.md), [clock.md](clock.md), 기존 [bme280.md](bme280.md).
 
-## AXI IIC (PG090) — 요약만 확인
-100k/400k/1M, 마스터·슬레이브·멀티 마스터, 7/10비트 주소, 송수신 FIFO 각 16바이트 (AMD IP 요약, Xilinx 위키).
-미확인: 레지스터 오프셋, 전송 절차, 인터럽트 비트, SDA/SCL 3상태 핀 처리(IOBUF 필요 여부는 PG090에서 확인할 것).
+## AXI IIC (PG090)
+기능 요약(Xilinx 위키): 100k/400k/1M, 마스터·슬레이브·멀티 마스터, 7/10비트 주소, 송수신 FIFO 각 16바이트.
+레지스터는 PG090 본문을 열지 못해 Zephyr 드라이버 헤더(`i2c_xilinx_axi.h`, Apache-2.0)에서 확인했습니다. **D3 (2차 자료, 드라이버 구현 기준)**.
+
+| 오프셋 | 이름 | 오프셋 | 이름 |
+|---|---|---|---|
+| 0x01C | GIE (bit31 = 활성) | 0x11C | TEN_ADR (10비트 주소) |
+| 0x020 | ISR | 0x120 | RX_FIFO_PIRQ |
+| 0x028 | IER | 0x124 | GPO |
+| 0x040 | SOFTR (0xA 쓰기) | 0x128~0x144 | 타이밍 레지스터 8개 (TSUSTA, TSUSTO, THDSTA, TSUDAT, TBUF, THIGH, TLOW, THDDAT) |
+| 0x100 | CR | 0x108 | TX_FIFO (bit8 START, bit9 STOP) |
+| 0x104 | SR | 0x10C | RX_FIFO (하위 8비트 데이터) |
+| 0x110 | ADR | 0x114 / 0x118 | TX / RX FIFO 점유 (하위 4비트) |
+
+- CR 비트: 0 EN · 1 TX_FIFO_RST · 2 MSMS(컨트롤러/타깃) · 3 TX(송신/수신) · 4 TXAK · 5 RSTA(반복 시작) · 6 GC_EN
+- SR 비트: 0 ABGC · 1 AAS · 2 BB(버스 사용 중) · 3 SRW · 4 TX_FIFO_FULL · 5 RX_FIFO_FULL · 6 RX_FIFO_EMPTY · 7 TX_FIFO_EMPTY
+- ISR/IER 비트: 0 중재 손실 · 1 송신 오류/타깃 송신 완료 · 2 TX FIFO 빔 · 3 RX FIFO 가득 · 4 버스 유휴 · 5 타깃으로 호출됨 · 6 타깃 호출 아님 · 7 TX FIFO 절반 빔
+미확인(PG090 본문): 타이밍 레지스터에 넣을 값 계산식과 SCL 400 kHz 설정 방법, SDA/SCL 3상태 포트 이름(IOBUF 구성), 동적 컨트롤러 모드 절차.
 
 ## 소자 요약 (확인)
 | 소자 | 7비트 주소 | 최대 SCL | 전원 | 문서 |
@@ -24,4 +39,4 @@
 - **인터럽트**: MPU-6050 INT, DS3231 INT/SQW(active-low), 별도 GPIO.
 
 ## 한계
-RTL 없음(AMD IP 사용). AXI IIC 레지스터와 절차는 PG090 본문 확인 전이라 드라이버를 쓰지 않았습니다. 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
+RTL 없음(AMD IP 사용). AXI IIC 레지스터는 D3 수준으로만 확인했고 SCL 타이밍 계산은 미확인이라 드라이버를 쓰지 않았습니다. 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
