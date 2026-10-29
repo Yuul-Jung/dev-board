@@ -10,6 +10,7 @@ static uint16_t adc_in[16];            /* 모델이 반환할 값: 단일 종단
 void qspi_cs(qspi_t *s, unsigned idx, int a) { (void)s; if (a) { cs_cur = (int)idx; } else { cs_cur = -1; cs_high_between++; } }
 
 /* ADXL345 모델 */
+static uint16_t dac_word; static int dac_writes;
 static uint8_t ax[64]; static uint8_t last_cmd;
 
 static int mcp_model(const uint8_t *tx, uint8_t *rx, size_t len)
@@ -41,6 +42,10 @@ int qspi_xfer(qspi_t *s, const uint8_t *tx, uint8_t *rx, size_t len)
     if (tx) memcpy(t, tx, len);
     if (!rx) rx = dummy;
     if (cs_cur == 5) return mcp_model(t, rx, len);
+    if (cs_cur == 7) {                                   /* MCP4921: 16클럭 모두 받아야 래치 */
+        if (len != 2) return QSPI_ERR_ARGS;
+        dac_word = (uint16_t)((t[0] << 8) | t[1]); dac_writes++; return 0;
+    }
     if (cs_cur == 6) {                                   /* ADXL345 */
         last_cmd = t[0]; unsigned reg = t[0] & 0x3F; int rd = t[0] & 0x80, mb = t[0] & 0x40;
         rx[0] = 0;
@@ -89,6 +94,16 @@ int main(void)
     CHECK(xyz[0] == 256 && xyz[1] == -1 && xyz[2] == -4096);
     CHECK(adxl345_to_mg(256) == 998 && adxl345_to_mg(-1) == -3 && adxl345_to_mg(-4096) == -15974);
     nack = 1; CHECK(adxl345_read_xyz(&s, 6, xyz) == QSPI_ERR_TIMEOUT); nack = 0;
+    /* ---- MCP4921 ---- */
+    CHECK(mcp4921_write(&s, 7, 0, 1, 0) == QSPI_OK && dac_word == 0x1000);   /* gain2x=1 → GA=0, 버퍼 없음, 활성 */
+    CHECK(mcp4921_write(&s, 7, 4095, 0, 0) == QSPI_OK && dac_word == 0x3FFF);   /* gain2x=0 → GA=1 (1배) */
+    CHECK(mcp4921_write(&s, 7, 0x0ABC, 1, 1) == QSPI_OK && dac_word == 0x5ABC);  /* BUF=1, GA=0, SHDN=1 */
+    CHECK(mcp4921_write(&s, 7, 0x0ABC, 0, 1) == QSPI_OK && dac_word == 0x7ABC);
+    CHECK(mcp4921_write(&s, 7, 4096, 1, 0) == QSPI_ERR_ARGS);
+    dac_writes = 0; CHECK(mcp4921_shutdown(&s, 7) == QSPI_OK && (dac_word & 0x1000) == 0 && dac_writes == 1);
+    CHECK((dac_word & 0xF000) == 0 && cs_cur == -1);
+    CHECK(mcp4921_to_mv(4095, 2048, 0) == 2047 && mcp4921_to_mv(4095, 2048, 1) == 4095 && mcp4921_to_mv(2048, 2048, 1) == 2048 && mcp4921_to_mv(0, 2048, 1) == 0);
+    nack = 1; CHECK(mcp4921_write(&s, 7, 1, 1, 0) == QSPI_ERR_TIMEOUT && cs_cur == -1); nack = 0;
     if (!bad) puts("ALL PASS");
     return bad != 0;
 }

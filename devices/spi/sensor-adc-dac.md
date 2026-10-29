@@ -51,13 +51,19 @@ SoC: 센서 버스 모드 3, 인터럽트 핀은 GPIO. 연결 테스트: DEVID �
 - 드라이버: [`sw/spi_sensors.c`](sw/spi_sensors.c) (`mcp3008_read`), 시험 [`tb/test_spi_sensors.c`](tb/test_spi_sensors.c). 실제 칩에서의 프레임 정렬은 보드에서 확인 필요.
 SoC: 센서 버스, SCK ≤ 1.35 MHz (비율 128 → 781.25 kHz at 100 MHz, 계산). XADC(Basys3 내장)와 용도가 겹치지만 XADC 는 JXADC 입력 범위가 제한(별도 확인 항목)이라 채널 수·범위 필요 시 MCP3008 사용.
 
-## MCP4921 (12비트 DAC) — D1 일부
+## MCP4921 (12비트 DAC) — D1
 | 항목 | 값 |
 |---|---|
 | 해상도 | 12비트 |
 | 전원 | 2.7~5.5 V 단일 |
 | 출력 | 이득 선택 비트로 풀스케일 VREF 또는 2×VREF, VREF 외부 |
 | 정착 시간 | 4.5 µs, DNL 0.75 LSB, 전형 동작 전류 175 µA |
-| SPI 모드, 최대 SCK, 16비트 명령 형식(A/B, BUF, GA, SHDN, D11~D0), LDAC | 열어본 페이지에 없음 — 미확인 |
+| SPI | 모드 0,0 / 1,1, SCK 최대 20 MHz(25 °C), 데이터는 SCK 상승 에지에 입력, CS Low 동안 16클럭 (16클럭 전에 CS 를 올리면 중단, 이후 클럭은 무시) |
+| 16비트 명령(MSB 먼저) | bit15 A/B(MCP4921 은 DAC 하나, 0), bit14 BUF(1 = VREF 버퍼, 기본 0), **bit13 GA(1 = 이득 1배, 0 = 이득 2배, 기본 2배)**, bit12 SHDN(0 = 셧다운, 출력 고임피던스; 1 = 활성은 이 반대로 해석 — 데이터시트 문구가 순환적), bit11:0 데이터 |
+| 출력 | VOUT = VREF × G × D / 4096 (2배 이득 문구에 "4095/4096 × VREF" 라는 오타로 보이는 부분이 있어 식을 따름) |
+| VREF | 버퍼 없음 0 V ~ VDD, 버퍼 사용 0.040 V ~ VDD−0.040 V (설계값, 생산 시험 안 함) |
+| LDAC | Low 이면 입력 레지스터 → 출력 레지스터 전송. Low 로 묶으면 CS 상승 때 출력 갱신. 최소 펄스 100 ns |
+| 전원 투입 | SHDN=0 이라 출력 고임피던스, 첫 유효 쓰기 뒤에 출력. POR 약 2.0 V |
+| 셧다운 | 500 kΩ 전형 저항으로 AVSS 에 연결, 복귀에 < 10 µs |
 
-명령 형식을 확인하기 전에는 드라이버를 쓰지 않습니다. 정식 데이터시트 PDF(50쪽)가 필요합니다.
+드라이버: [`sw/spi_sensors.c`](sw/spi_sensors.c) (`mcp4921_write`, `mcp4921_shutdown`), 시험 [`tb/test_spi_sensors.c`](tb/test_spi_sensors.c). 3.3 V 로 구동할 때 VREF 는 VDD 이하여야 하므로 최대 출력은 약 3.3 V(이득 1배) 입니다(계산). 센서 버스의 모드 3 에서 쓸 수 있습니다.

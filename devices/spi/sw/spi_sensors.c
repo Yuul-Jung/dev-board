@@ -57,3 +57,24 @@ int adxl345_read_xyz(qspi_t *s, unsigned cs, int16_t xyz[3])
     for (int i = 0; i < 3; i++) xyz[i] = (int16_t)(uint16_t)(rx[1 + 2 * i] | (rx[2 + 2 * i] << 8));   /* 하위 바이트 먼저 */
     return QSPI_OK;
 }
+
+int mcp4921_write(qspi_t *s, unsigned cs, uint16_t code, int gain2x, int buffered)
+{
+    if (!s || code > 4095) return QSPI_ERR_ARGS;
+    uint16_t w = (uint16_t)(((buffered ? 1u : 0u) << 14) | ((gain2x ? 0u : 1u) << 13) | (1u << 12) | code);
+    uint8_t tx[2] = { (uint8_t)(w >> 8), (uint8_t)w };
+    qspi_cs(s, cs, 1);
+    int r = qspi_xfer(s, tx, 0, 2);
+    qspi_cs(s, cs, 0);                         /* CS 상승에서 래치 */
+    return r;
+}
+
+int mcp4921_shutdown(qspi_t *s, unsigned cs)
+{
+    if (!s) return QSPI_ERR_ARGS;
+    uint8_t tx[2] = { 0x00, 0x00 };            /* SHDN = 0 */
+    qspi_cs(s, cs, 1);
+    int r = qspi_xfer(s, tx, 0, 2);
+    qspi_cs(s, cs, 0);
+    return r;
+}

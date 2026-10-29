@@ -28,4 +28,14 @@ int adxl345_write_reg(qspi_t *s, unsigned cs, uint8_t reg, uint8_t v);
 int adxl345_init(qspi_t *s, unsigned cs);
 int adxl345_read_xyz(qspi_t *s, unsigned cs, int16_t xyz[3]);   /* 6바이트 연속 읽기(MB=1) */
 static inline int32_t adxl345_to_mg(int16_t raw) { return ((int32_t)raw * 39) / 10; }   /* 13비트 모드 약 3.9 mg/LSB */
+
+/* MCP4921 12비트 DAC (Microchip 데이터시트 사본, D1). 모드 0,0 / 1,1, SCK ≤ 20 MHz, VDD 2.7~5.5 V.
+ * 16비트 명령(MSB 먼저): bit15 A/B(MCP4921 은 DAC 하나, 0 을 씀), bit14 BUF(1 = VREF 버퍼 사용),
+ *   bit13 GA(**1 = 이득 1배, 0 = 이득 2배**), bit12 SHDN(0 = 셧다운·출력 고임피던스; 1 = 활성은 이 반대로 해석한 것),
+ *   bit11:0 데이터. 데이터는 CS 상승 때 입력 레지스터에 래치되고, LDAC 를 Low 로 묶으면 같은 순간 출력이 갱신된다.
+ *   VOUT = VREF × G × D / 4096. 전원 투입 직후 출력은 고임피던스이고 첫 유효 쓰기 뒤에 나온다. */
+int mcp4921_write(qspi_t *s, unsigned cs, uint16_t code, int gain2x, int buffered);   /* code 0~4095 */
+int mcp4921_shutdown(qspi_t *s, unsigned cs);
+static inline uint32_t mcp4921_to_mv(uint16_t code, uint32_t vref_mv, int gain2x)
+{ return (uint32_t)(((uint64_t)code * vref_mv * (gain2x ? 2u : 1u)) / 4096u); }
 #endif
