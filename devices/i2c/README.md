@@ -35,6 +35,8 @@
 | BH1750FVI | 0x23 (ADDR=Low), 0x5C (ADDR=High) | 400 kHz | 2.4~3.6 V (절대 최대 4.5 V) | sensors.md |
 | DS3231 | 0x68 (고정) | 400 kHz | VCC 2.3~5.5 V, VBAT 2.3~5.5 V | clock.md |
 | BME280 | 0x76, 0x77 | (bme280.md) | 1.71~3.6 V | bme280.md |
+| DS1307 | 0x68 | **100 kHz 만** | **VCC 4.5~5.5 V** (3.3 V 불가) | [rtc-eeprom.md](rtc-eeprom.md) |
+| 24xx256 EEPROM | 0x50~0x57 | 400 kHz (24LC256) | 24LC256 2.5~5.5 V | [rtc-eeprom.md](rtc-eeprom.md) |
 | PCF8574 | 0x20~0x27 (A2A1A0) | 100 kHz (400 kHz 언급) | 2.5~6 V | [io-expander.md](io-expander.md) |
 | MCP23017 | 0x20~0x27 (A2A1A0) | 400 kHz (고속 1.7 MHz 는 4.5~5.5 V) | 1.8~5.5 V | [io-expander.md](io-expander.md) |
 | ADS1115 (ADC) | 0x48~0x4B (ADDR=GND/VDD/SDA/SCL) | 400 kHz (고속 3.4 MHz) | 2.0~5.5 V | [ads1115.md](ads1115.md) |

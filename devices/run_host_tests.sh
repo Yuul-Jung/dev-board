@@ -12,6 +12,7 @@ printf 'void iic_delay_ms(unsigned ms){(void)ms;}\n' > "$T/stub.c"
 
 cc -include i2c/tb/mock_iic.h -I i2c/sw i2c/tb/test_axi_iic_mock.c i2c/sw/axi_iic.c i2c/sw/i2c_sensors.c -o "$T/i2c" && run i2c "$T/i2c"
 cc -I i2c/sw i2c/tb/test_bme280.c i2c/sw/bme280.c i2c/sw/axi_iic.c "$T/stub.c" -o "$T/bme" && run bme280 "$T/bme"
+cc -I i2c/sw i2c/tb/test_rtc_eeprom.c i2c/sw/rtc_eeprom.c -o "$T/rtce" && run rtc-eeprom "$T/rtce"
 cc -I i2c/sw i2c/tb/test_io_expander.c i2c/sw/io_expander.c -o "$T/ioe" && run io-expander "$T/ioe"
 cc -I i2c/sw i2c/tb/test_ads1115.c i2c/sw/ads1115.c -o "$T/ads" && run ads1115 "$T/ads"
 cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"

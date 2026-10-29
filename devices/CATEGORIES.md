@@ -44,6 +44,6 @@
 
 ## 진행 순서 제안
 1. 센서·모터에서 문서가 있는 소자를 SoC 맵과 맞춰 정리(완료: 온도·습도·거리·모터·서보·스테퍼)
-2. 표시(TFT, OLED), 시계(RTC), 모션(IMU) — SPI 소자는 `spi/`, I2C 소자(MPU-6050, SHT31, BH1750, DS3231)는 `i2c/` 에 작성 완료. SSD1306 I2C 드라이버 작성(2차 자료 기반, [i2c/ssd1306.md](i2c/ssd1306.md)). ADS1115 드라이버 작성([i2c/ads1115.md](i2c/ads1115.md)). PCF8574·MCP23017 드라이버 작성([i2c/io-expander.md](i2c/io-expander.md)). 남은 I2C: DS1307, EEPROM 등
+2. 표시(TFT, OLED), 시계(RTC), 모션(IMU) — SPI 소자는 `spi/`, I2C 소자(MPU-6050, SHT31, BH1750, DS3231)는 `i2c/` 에 작성 완료. SSD1306 I2C 드라이버 작성(2차 자료 기반, [i2c/ssd1306.md](i2c/ssd1306.md)). ADS1115 드라이버 작성([i2c/ads1115.md](i2c/ads1115.md)). PCF8574·MCP23017 드라이버 작성([i2c/io-expander.md](i2c/io-expander.md)). DS1307·24xx256 EEPROM 드라이버 작성([i2c/rtc-eeprom.md](i2c/rtc-eeprom.md)).
 3. 통신 모듈(UART, SPI)과 저장
 4. 오디오(I2S)와 CAN — `i2s/`, `can/` 작성 완료

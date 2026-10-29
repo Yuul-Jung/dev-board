@@ -582,5 +582,50 @@
   ],
   "io_pins": 16,
   "evidence": "D1 (BANK=0 레지스터 표, 인터럽트 동작 미작성)"
+ },
+ {
+  "id": "ds1307",
+  "interface": [
+   "i2c"
+  ],
+  "category": "clock",
+  "vdd_v": [
+   4.5,
+   5.5
+  ],
+  "vbat_v": [
+   2.0,
+   3.5
+  ],
+  "i2c_addr": [
+   "0x68"
+  ],
+  "max_scl_khz": 100,
+  "evidence": "D1 (Maxim 데이터시트 사본). 3.3 V 버스 직접 연결 불가"
+ },
+ {
+  "id": "24xx256",
+  "interface": [
+   "i2c"
+  ],
+  "category": "storage",
+  "vdd_v": [
+   1.7,
+   5.5
+  ],
+  "i2c_addr": [
+   "0x50",
+   "0x51",
+   "0x52",
+   "0x53",
+   "0x54",
+   "0x55",
+   "0x56",
+   "0x57"
+  ],
+  "size_bytes": 32768,
+  "page_bytes": 64,
+  "write_cycle_ms_max": 5,
+  "evidence": "D1 (Microchip DS21203 사본). 24LC256 은 VCC 2.5~5.5 V"
  }
 ]
