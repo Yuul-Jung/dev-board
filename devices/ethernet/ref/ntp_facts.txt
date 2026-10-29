@@ -1,0 +1,17 @@
+# SNTP 사실표 — 헤더(ethernet/sw/ntp.h)의 상수를 대조하는 근거.
+# 출처 A = OpenBSD rdate ntp.c (WebFetch 요약), 출처 B = chrony 3.3 ntp.h (WebFetch 요약). 둘 다 D3(제3자 구현), RFC 5905 원문은 열지 못함(미확인).
+# 줄 형식은 w5500_facts.txt 와 같다: def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모 — 근거1·2 는 메모에 적은 출처(A/B)를 가리킨다
+def|NTP_PORT|123|-|출처 B 만: "#define NTP_PORT 123" (UDP 포트). A 요약에는 포트 상수가 없음
+def|NTP_VERSION|4|4|A: NTP_VERSION 4, B: NTP_VERSION 4
+def|NTP_MODE_CLIENT|3|3|A: NTP_MODE_CLIENT 3, B: MODE_CLIENT = 3
+def|NTP_MODE_SERVER|4|-|출처 B 만: MODE_SERVER = 4 (A 요약에는 서버 모드 상수가 없음; 응답 모드 검사 자체는 설계안)
+def|NTP_PACKET_LEN|48|48|A: NTP_PACKET_MIN 48(응답은 48~68), B: 구조체 필드 합 = 1+1+1+1+4+4+4+8*4 = 48 (확장·MAC 제외)
+def|NTP_OFF_TRANSMIT|40|40|A: #define NTP_TRANSMIT 40, 필드 순서(B)로 계산: 16 + 8 + 8 + 8 = 40
+def|NTP_UNIX_OFFSET|2208988800|2208988800|A: JAN_1970 2208988800.0
+val|NTP_UNIX_OFFSET 계산 (70*365+17)*86400|2208988800|2208988800|1900→1970 은 70년, 윤년 17번 (1904~1968) — 계산
+val|첫 바이트 = VN*8 + Mode (VN 4, 모드 3)|35|35|0x23: A 의 packet[0] = (NTP_VERSION << 3) | NTP_MODE_CLIENT 와 B 의 NTP_LVM(0,4,3) 이 같은 값 — 계산
+val|LI 시프트|6|6|A: packet[0] >> 6, B: NTP_LVM_TO_LEAP (lvm >> 6) & 3
+val|VN 시프트|3|3|A: (packet[0] >> 3) & 0x07, B: (lvm >> 3) & 7
+val|Mode 마스크|7|7|A: packet[0] & 0x07, B: lvm & 7
+val|전송 시각 이전 필드 바이트 수(LVM·스트라툼·폴·정밀도 4 + 루트 지연 4 + 루트 분산 4 + 참조 ID 4 + 참조 8 + 원점 8 + 수신 8)|40|40|B 의 구조체 필드 순서(계산)
+val|분수 단위 2^32|4294967296|4294967296|A: NTP_SCALE 4294967296.0

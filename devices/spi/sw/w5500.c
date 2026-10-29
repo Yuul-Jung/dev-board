@@ -294,3 +294,25 @@ int w5500_recv(w5500_t *w, unsigned n, uint8_t *buf, unsigned maxlen)
     TRY(command(w, n, W5500_CR_RECV));                 /* 새 Sn_RX_RD 를 칩에 알림 (p.58) */
     return (int)len;
 }
+
+int w5500_udp_recvfrom(w5500_t *w, unsigned n, uint8_t ip[4], uint16_t *port, uint8_t *buf, unsigned maxlen)
+{
+    if (!w || !ip || !port || !buf || n >= W5500_NSOCK || maxlen == 0) return QSPI_ERR_ARGS;
+    if (w->proto[n] != W5500_PROTO_UDP) return W5500_ERR_STATE;
+    uint16_t avail, rd;
+    TRY(w5500_rx_avail(w, n, &avail));
+    if (avail < W5500_UDP_HDR) return W5500_ERR_NOPKT;
+    TRY(w5500_rd16(w, W5500_BSB_SOCK_REG(n), W5500_Sn_RX_RD, &rd));
+    uint8_t h[W5500_UDP_HDR];
+    TRY(buf_xfer(w, W5500_BSB_SOCK_RX(n), w->rxsz[n], rd, 0, 0, h, W5500_UDP_HDR));
+    unsigned dlen = ((unsigned)h[6] << 8) | h[7];
+    if (W5500_UDP_HDR + dlen > w->rxsz[n]) return W5500_ERR_FRAME;
+    if (avail < W5500_UDP_HDR + dlen) return W5500_ERR_NOPKT;
+    unsigned c = dlen < maxlen ? dlen : maxlen;
+    if (c) TRY(buf_xfer(w, W5500_BSB_SOCK_RX(n), w->rxsz[n], (uint16_t)(rd + W5500_UDP_HDR), 0, 0, buf, c));
+    memcpy(ip, h, 4);
+    *port = (uint16_t)(((unsigned)h[4] << 8) | h[5]);
+    TRY(w5500_wr16(w, W5500_BSB_SOCK_REG(n), W5500_Sn_RX_RD, (uint16_t)(rd + W5500_UDP_HDR + dlen)));
+    TRY(command(w, n, W5500_CR_RECV));
+    return (int)c;
+}

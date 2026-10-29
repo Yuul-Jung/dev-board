@@ -64,12 +64,12 @@ CAN 버스에는 트랜시버가 별도로 필요합니다 (`../CATEGORIES.md`).
 연결 테스트: VERSIONR(0x0039)을 읽어 0x04 확인. SoC: 빠른 버스(SPI1) + CS + INT/RST GPIO. 이더넷 경로로는 AXI Ethernet Lite 와 대안 관계 (IP 문서는 [`../ethernet/`](../ethernet/README.md)).
 
 ### 드라이버 `sw/w5500.h/.c` (axi_qspi 위, 호스트 모델 시험만)
-- 사용 범위: 초기화(RSTn 핀 콜백이 있으면 핀 리셋, 없으면 MR.RST 소프트 리셋 후 자동 해제를 폴링 → VERSIONR 확인 → MAC/IP/마스크/게이트웨이·버퍼 크기를 쓰고 읽어 되돌려 확인), TCP 클라이언트·서버(`w5500_tcp_connect`, `w5500_tcp_listen`), 송신(`w5500_send`, `w5500_udp_sendto`), 수신(`w5500_rx_avail`, `w5500_recv`), 닫기·연결 끊기.
+- 사용 범위: 초기화(RSTn 핀 콜백이 있으면 핀 리셋, 없으면 MR.RST 소프트 리셋 후 자동 해제를 폴링 → VERSIONR 확인 → MAC/IP/마스크/게이트웨이·버퍼 크기를 쓰고 읽어 되돌려 확인), TCP 클라이언트·서버(`w5500_tcp_connect`, `w5500_tcp_listen`), 송신(`w5500_send`, `w5500_udp_sendto`), 수신(`w5500_rx_avail`, `w5500_recv`(TCP 원시 바이트), `w5500_udp_recvfrom`(UDP 8바이트 헤더 해석, 형식과 근거는 [소켓 위 응용](../ethernet/socket-apps.md)의 1절)), 닫기·연결 끊기.
 - 설계 결정(확인된 규칙에서 도출): 소켓 명령은 `Sn_CR` 이 0 으로 돌아온 것을 확인하고서야 다음 동작으로 간다. `TX_FSR`/`RX_RSR` 은 값이 같을 때까지 반복해서 읽는다. 버퍼 접근은 블록 경계에서 나눠 쓰고 포인터는 16비트 원값으로 기록한다(올림 버림). 버퍼 크기는 줄이는 쪽을 먼저 써서 합계가 항상 16 KB 이내가 되게 한다. `w5500_recv` 는 `Sn_IR.RECV` 를 건드리지 않는다(호출자가 `w5500_clear_ir`).
-- 오류 코드: VERSION -60, VERIFY -61, TIMEOUT -62, STATE -63, NOSPACE -64, PEER -65. SPI 계층 오류는 `axi_qspi` 값 그대로 전달.
-- 시험 `tb/test_w5500_model.c`: 데이터시트 규칙을 구현한 W5500 모델(SPI 프레임 규칙, 읽기 전용 레지스터 쓰기 금지, 버퍼 합계, 리셋 타이밍, 소켓 명령 전제, 블록 경계 위반 등을 어기면 기록)에 대해 초기화·TCP·UDP·전체 버퍼·타임아웃·쓰기 누락 주입을 실행. ASan/UBSan 통과, 의도적으로 틀리게 만든 사본 86개가 모두 실패로 잡힘. 모델은 내가 읽은 요약대로 만든 것이라 요약이 틀렸으면 같이 틀립니다.
+- 오류 코드: VERSION -60, VERIFY -61, TIMEOUT -62, STATE -63, NOSPACE -64, PEER -65, NOPKT -66(UDP 완전한 패킷 없음), FRAME -67(UDP 헤더 길이가 버퍼보다 큼). SPI 계층 오류는 `axi_qspi` 값 그대로 전달.
+- 시험 `tb/test_w5500_model.c`(장치 모델은 `tb/w5500_model.h` 로 분리해 NTP·HTTP 시험과 공유): 데이터시트 규칙을 구현한 W5500 모델(SPI 프레임 규칙, 읽기 전용 레지스터 쓰기 금지, 버퍼 합계, 리셋 타이밍, 소켓 명령 전제, 블록 경계 위반 등을 어기면 기록)에 대해 초기화·TCP·UDP·전체 버퍼·타임아웃·쓰기 누락 주입을 실행. ASan/UBSan 통과, 의도적으로 틀리게 만든 사본 86개 + UDP 수신 23개가 모두 실패로 잡힘. 모델은 내가 읽은 요약대로 만든 것이라 요약이 틀렸으면 같이 틀립니다.
 - 교차검증: `tools/crosscheck_pdf.py` 가 헤더 상수를 `ref/w5500_facts.txt` 와 대조(NuttX 값이 있는 항목은 DS·NuttX 일치도 확인). 알려진 불일치 두 가지는 실패로 세지 않고 기록: ① MACRAW 의 `Sn_SR` 값(영문 사본 p.47 은 0x02, p.51 은 0x42) → 드라이버가 MACRAW 를 쓰지 않음, ② `Sn_RXBUF_SIZE` 8 KB 의 값(DS 는 8, NuttX 는 5) → NuttX 쪽 오기로 보고 DS 를 따름.
-- **미확인(TODO)**: UDP 수신 시 RX 버퍼에 붙는 헤더 형식(이 요약에서 못 찾음 → `w5500_recv` 는 원시 바이트만), 소프트 리셋 후 대기 시간, `w5500_send` 가 TIMEOUT 으로 끝났을 때 TX 포인터 상태, `Sn_TX_RD`/`Sn_RX_WR` 가 읽기 전용인지(요약에서 확인 못 하고 모델에서 읽기 전용으로 둠), MACRAW, 실제 모듈의 PHY/자석/RJ45 구성, 보드에서의 실행.
+- **미확인(TODO)**: UDP 수신 헤더의 **W5500 에서의 바이트 순서**(형식 8바이트 = IP 4 + 포트 2 + 길이 2 는 WIZnet 문서 D1(요약 경유) + W5100 라이브러리 D3 로 확인, 순서는 W5100 코드 근거만)와 `Sn_RX_RD` 전진량(문서 본문은 길이 + 8, 같은 페이지의 코드는 길이만 — 본문을 따름), 소프트 리셋 후 대기 시간, `w5500_send` 가 TIMEOUT 으로 끝났을 때 TX 포인터 상태, `Sn_TX_RD`/`Sn_RX_WR` 가 읽기 전용인지(요약에서 확인 못 하고 모델에서 읽기 전용으로 둠), MACRAW, 실제 모듈의 PHY/자석/RJ45 구성, 보드에서의 실행.
 
 ## W25Q64JV (SPI NOR 플래시 64 Mbit) — D1 일부
 | 항목 | 값 |

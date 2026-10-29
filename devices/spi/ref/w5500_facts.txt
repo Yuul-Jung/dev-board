@@ -109,3 +109,10 @@ val|Sn_RXBUF_SIZE 허용 값 4 KB|4|4|p.55
 val|Sn_RXBUF_SIZE 허용 값 16 KB|16|16|p.55
 val|버퍼 크기 합계 상한(KB)|16|16|p.32, p.56 (TX·RX 각각)
 val|Sn_TX_WR 갱신 시 16비트 올림은 버림|1|-|p.57
+# ---- UDP 수신 헤더 (이번 확장) ----
+def|W5500_UDP_HDR|8|8|WIZnet 문서 UDP 쪽(요약): PACKET-INFO 8바이트 / W5100 Arduino socket.cpp: read_data(.., head, 0x08)
+val|UDP 헤더 상대 IP 오프셋·길이|0|0|WIZnet: 바이트 0~3 / socket.cpp: head[0..3]
+val|UDP 헤더 상대 포트 오프셋|4|4|WIZnet: 바이트 4~5 / socket.cpp: head[4], head[5]
+val|UDP 헤더 데이터 길이 오프셋|6|6|WIZnet: 바이트 6~7 / socket.cpp: head[6], head[7]
+!val|UDP 수신 후 Sn_RX_RD 전진량(데이터 길이에 더할 헤더 바이트 수)|8|0|WIZnet 문서 본문은 "길이 + 헤더 크기", 같은 페이지 코드는 데이터 길이만 더함 → 드라이버는 본문대로 8 + 길이(모델이 패킷 경계 규칙으로 강제)
+!val|UDP 헤더 포트·길이 바이트 순서(1 = 상위 바이트 먼저)|1|-|W5500 문서에는 표기 없음. W5100 계열 socket.cpp(D3)가 상위 먼저로 조립 — W5500 에도 같다고 가정(설계 + D3)
