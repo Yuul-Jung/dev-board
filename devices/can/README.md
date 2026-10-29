@@ -49,3 +49,14 @@ SRR 비트: 0 SRST, 1 CEN. 전원 인가 시 CEN=0, SR의 CONFIG=1.
 
 ## 핀 예산 (설계안)
 경로 A: TX, RX 2핀. 경로 B: SPI 버스 공유 + CS + INT.
+
+## 드라이버 (devices/can/sw, 호스트 모의 테스트만)
+`axi_can.h/.c`: 비트 타이밍 계산, 초기화, TX FIFO/HPB 송신, 수신. PG096 표에서 확인한 항목:
+- SRR: bit0 SRST, bit1 CEN. MSR: bit0 SLEEP, bit1 LBACK. BRPR/BTR 은 CEN=0 일 때만 쓸 수 있음. 실제값 = 기록값 + 1.
+- BTR: SJW[8:7], TS2[6:4], TS1[3:0]. tq = tosc × (BRP+1).
+- 메시지 4워드(ID, DLC, DW1, DW2)를 모두 써야 함. ID: [31:21] ID[28:18], [20] SRR/RTR, [19] IDE, [18:1] 확장 ID 하위 18비트, [0] RTR. DLC 는 [31:28]. DB0 = DW1[31:24].
+- SR: bit0 CONFIG, 1 LBACK, 3 NORMAL, 9 TXBFLL, 10 TXFLL. ISR 표: bit7 RXNEMP, bit8 ERROR, bit4 RXOK (본문 목록은 RXNEMP 가 빠져 있어 표 기준).
+- 24 MHz, 1 Mbps → 계산상 BRPR=2, 8 tq (PG096 예제와 일치).
+
+미확인/설계안: RXNEMP 가 ICR 로 지운 뒤 FIFO 에 메시지가 남아 있으면 다시 세트되는지(테스트 모의는 그렇다고 가정). 샘플 포인트 87.5% 목표는 PG096 이 아닌 일반 관례. CONFIG 해제 확인 대기 로직은 호출자 몫. 인터럽트, 수락 필터, 오류/버스오프 복구 코드는 미작성. can_clk 24 MHz 는 문서 기재 값이며 Basys3 에서 만드는 방법(MMCM)은 미확인.
+테스트: `cd devices && gcc -Wall -include can/tb/mock_can.h -I can/sw can/tb/test_can_mock.c can/sw/axi_can.c -o t && ./t` → ALL PASS.
