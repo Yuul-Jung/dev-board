@@ -29,7 +29,7 @@ SPICR 비트 (확인): 9 LSB First, 8 Master Transaction Inhibit(리셋 1), 7 Ma
 표준 슬레이브 모드는 SCK 비율 2에서 지원하지 않습니다 (확인).
 
 추가 확인 (표 열람): SRR 은 0x0000000A 쓰기만 허용. SPISR 비트: 0 Rx_Empty(리셋 1), 1 Rx_Full, 2 Tx_Empty(리셋 1), 3 Tx_Full, 4 MODF, 5 Slave_Mode_Select(리셋 1), 6 CPOL_CPHA_Error(CPOL/CPHA 가 01 또는 10 일 때), 7 Slave Mode Error, 8 MSB Error, 9 Loopback Error, 10 Command Error. IPISR 비트 이름 14개(Command Error ~ MODF) 중 DRR_Not_Empty 는 비트 8. SPIDTR 는 채우기 전에 리셋 상태여야 함. 마스터 트랜잭션 inhibit 설정은 전송 중에 하면 결과 불명.
-미확인: 실행 중 SCK 비율 변경 가능 여부, 마스터 전송의 정확한 순서(「Protocol Description」 p.70, 「Example Programming Sequence」 p.105 본문을 열지 못함), 인터럽트 조건. 아래 6절 순서는 그대로 설계안입니다.
+미확인: 실행 중 SCK 비율 변경 가능 여부, 마스터 전송의 정확한 순서(「Protocol Description」 p.70, 「Example Programming Sequence」 p.105 본문을 열지 못함; 6절은 FreeBSD 드라이버 기준), 인터럽트 조건. 6절 순서는 2차 자료 기준입니다.
 
 ## 2. 경로 결정
 사용자 규칙: AMD IP가 있으면 IP, 없을 때만 전용 RTL.
@@ -84,23 +84,12 @@ Pmod 신호는 3.3 V 로 취급합니다(설계안). 문서 값:
 | [sensor-adc-dac.md](sensor-adc-dac.md) | MAX31855, ADXL345, MCP3008, MCP4921 |
 | [comm-storage-io.md](comm-storage-io.md) | MCP2515, MFRC522, W5500, nRF24L01+, W25Q64JV, microSD, 74HC595 |
 
-## 6. 드라이버 스케치 (설계안, 미시뮬레이션)
-IP 전송 절차가 미확인이므로 절차 대신 레지스터 접근만 적습니다.
-
-```c
-#define SPI_BASE   0x44A00000u   /* 설계안 주소 */
-#define SPI_SRR    (SPI_BASE + 0x40)
-#define SPI_CR     (SPI_BASE + 0x60)
-#define SPI_SR     (SPI_BASE + 0x64)
-#define SPI_DTR    (SPI_BASE + 0x68)
-#define SPI_DRR    (SPI_BASE + 0x6C)
-#define SPI_SSR    (SPI_BASE + 0x70)
-/* SPICR(확인): master=bit2, SPE=bit1, CPOL=bit3, CPHA=bit4, inhibit=bit8, manual SS=bit7 */
-#define CR_MODE3_MASTER ((1u<<4)|(1u<<3)|(1u<<2)|(1u<<1)|(1u<<7))
-/* 1) SRR 에 0xA 쓰기  2) SPICR = CR_MODE3_MASTER | inhibit  3) SPISSR 로 CS 선택
- * 4) SPIDTR 에 바이트 채움  5) inhibit 해제  6) SPISR 로 완료 확인  7) SPIDRR 읽기
- * 3~7 의 정확한 순서와 SPISR 비트는 PG153 재확인 필요 (미확인) */
-```
+## 6. 드라이버 (devices/spi/sw, 호스트 모의 테스트만)
+`axi_qspi.h/.c`(표준 SPI, 바이트 단위), `spi_devices.h/.c`(W25Q64JV JEDEC ID·BUSY, MAX31855 해석).
+- 레지스터·비트: PG153 표에서 확인(위 1절). 전송 순서: PG153 본문은 열지 못했고 **FreeBSD `axi_quad_spi.c`(D3)** 를 따름 — SRR=0xA → SPICR 로 FIFO 리셋 → DGIER=0 → SPICR=MASTER|MSS|SPE(inhibit 0), CS 는 SPISSR 비트 0 = 선택(active-low), 바이트마다 DTR 쓰기 → 완료 대기 → DRR 읽기. 그 드라이버는 CPOL/CPHA·클럭 분주·인터럽트·FIFO 를 쓰지 않았음.
+- 이 드라이버가 더한 것(설계안): 모드 0~3 비트 설정(CPOL=bit3, CPHA=bit4), 완료 대기를 TX_EMPTY 대신 **Rx_Empty 해제**로 함(마지막 비트가 아직 나가는 중일 가능성 때문), 타임아웃.
+- 테스트(`tb/test_qspi_mock.c`): SPICR 값 0x9E(모드 3)/0x86(모드 0), CS 해제, W25Q JEDEC EF 40 17, BUSY 비트, MAX31855 양수·음수·오류 비트, 타임아웃 → ALL PASS. 모의 IP 는 내가 쓴 가정(FreeBSD 순서)대로 동작하므로 실제 IP 동작의 검증이 아님.
+- 미확인: SCK 분주비 설정 방법(IP 파라미터로 고정되는지), FIFO 깊이 0 구성에서 SPISR 비트 동작, 모드를 바꿀 때 SPE 를 내려야 하는지(인스턴스당 모드 고정으로 회피), MAX31855 의 SPI 모드, ADXL345·W5500·MCP3008 도우미는 읽기/쓰기 비트 값이나 프레임이 미확인이라 만들지 않음.
 
 ## 7. 한계
 - 모든 RTL/드라이버는 시뮬레이션·합성 전. RTL 은 ILI9341 엔진 하나뿐입니다.
