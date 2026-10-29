@@ -8,7 +8,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 |---|---|---|
 | `gpio/` | GPIO (트리거/에코, 단일선 독자 프로토콜 포함) | HC-SR04, DHT22 |
 | `1-wire/` | 1-Wire | DS18B20 |
-| `i2c/` | I2C | BME280 |
+| `i2c/` | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 절차 미확인) |
 | `motor/` | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
 | `spi/` | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (RTL 없음, 일부 미확인) |
 | `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |

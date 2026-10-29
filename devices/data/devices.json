@@ -270,5 +270,64 @@
    6.0
   ],
   "evidence": "D1"
+ },
+ {
+  "id": "mpu6050",
+  "interface": "i2c",
+  "category": "motion",
+  "i2c_addr": [
+   "0x68",
+   "0x69"
+  ],
+  "vdd_v": [
+   2.375,
+   3.46
+  ],
+  "whoami": "0x68",
+  "evidence": "D1"
+ },
+ {
+  "id": "sht31",
+  "interface": "i2c",
+  "category": "environment",
+  "i2c_addr": [
+   "0x44",
+   "0x45"
+  ],
+  "vdd_v": [
+   2.15,
+   5.5
+  ],
+  "scl_max_khz": 1000,
+  "evidence": "D1"
+ },
+ {
+  "id": "bh1750fvi",
+  "interface": "i2c",
+  "category": "light",
+  "i2c_addr": [
+   "0x23",
+   "0x5C"
+  ],
+  "vdd_v": [
+   2.4,
+   3.6
+  ],
+  "scl_max_khz": 400,
+  "evidence": "D1"
+ },
+ {
+  "id": "ds3231",
+  "interface": "i2c",
+  "category": "clock",
+  "i2c_addr": [
+   "0x68"
+  ],
+  "vcc_v": [
+   2.3,
+   5.5
+  ],
+  "accuracy_ppm": 2,
+  "evidence": "D1"
  }
 ]

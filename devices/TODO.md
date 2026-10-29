@@ -1,7 +1,7 @@
 # 다음 후보 (데이터시트 확인 전, 사양 미기록)
 - GPIO: PIR 모션, 릴레이, 서보(PWM)
 - 1-Wire: DS2438 등
-- I2C: MPU-6050, SHT31, BH1750, OLED(SSD1306)
+- I2C: AXI IIC(PG090) 레지스터·절차, SSD1306 I2C 주소·명령 형식, SHT3x 응답 바이트 배치, DS3231 비트 배치, MPU-6050 온도 변환식, ADS1115, PCF8574, MCP23017, EEPROM
 - SPI: microSD 사양 재확인, MCP4921 정식 데이터시트, ILI9341 타이밍·초기화 순서(데이터시트 본문 필요), SSD1306 SPI 타이밍, MCP2515 명령 코드, nRF24L01+·MAX31855 SPI 모드, PG153 전송 절차(`spi/README.md` 7절)
 - UART: GPS 모듈, 블루투스 SPP 모듈
 - I2S: MEMS 마이크, 오디오 코덱
