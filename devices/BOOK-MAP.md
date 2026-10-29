@@ -47,10 +47,10 @@
 | 31장 | 아두이노 클라우드 | 해당 없음 | 해당 없음 |
 
 ## 빈칸을 메운 기록과 남은 것
-메운 것(모두 호스트 모델 시험까지, 보드에서 실행하지 않음): 1) MAX7219 드라이버(12~13장), 2) GPIO·타이머 기본 예제(6·7·9·10장), 3) LM35·CdS·가변저항·조이스틱 변환(8·16장), 4) HD44780 텍스트 LCD + PCF8574 백팩(15·19장), 5) W5500 문서·시험 정리(30장의 유선 쪽), 6) W5500 UDP 수신 헤더 해석 + SNTP 클라이언트 + HTTP/1.1 GET 클라이언트 + DNS 이름 풀기(30장의 웹 클라이언트·NTP, [socket-apps.md](ethernet/socket-apps.md)). 근거는 각 문서에 적었고 W5500·MAX7219·PG144·LM35·HD44780 은 PDF 원문이 아니라 웹 가져오기 요약에서 옮긴 값입니다([VERIFICATION.md](VERIFICATION.md)).
+메운 것(모두 호스트 모델 시험까지, 보드에서 실행하지 않음): 1) MAX7219 드라이버(12~13장), 2) GPIO·타이머 기본 예제(6·7·9·10장), 3) LM35·CdS·가변저항·조이스틱 변환(8·16장), 4) HD44780 텍스트 LCD + PCF8574 백팩(15·19장), 5) W5500 문서·시험 정리(30장의 유선 쪽), 6) W5500 UDP 수신 헤더 해석 + SNTP 클라이언트 + HTTP/1.1 GET 클라이언트 + DNS 이름 풀기 + DHCP(30장의 웹 클라이언트·NTP, [socket-apps.md](ethernet/socket-apps.md)). 근거는 각 문서에 적었고 W5500·MAX7219·PG144·LM35·HD44780 은 PDF 원문이 아니라 웹 가져오기 요약에서 옮긴 값입니다([VERIFICATION.md](VERIFICATION.md)).
 
 남은 것:
-1. **소켓 위 응용의 나머지**(30장): HTTPS, 날씨 API 의 JSON 해석, NTP 왕복 지연 보정, 실제 서버와의 상호 동작 확인. DNS·NTP·HTTP 의 기본 동작과 W5500 UDP 수신 헤더는 [socket-apps.md](ethernet/socket-apps.md).
+1. **소켓 위 응용의 나머지**(30장): HTTPS, 날씨 API 의 JSON 해석, NTP 왕복 지연 보정, 실제 서버와의 상호 동작 확인. DHCP·DNS·NTP·HTTP 의 기본 동작과 W5500 UDP 수신 헤더는 [socket-apps.md](ethernet/socket-apps.md).
 2. **교재 6~9장 이후의 응용 예제**: 조이스틱·RGB 를 함께 쓰는 데모처럼 장치를 묶는 예제는 만들지 않았다.
 3. **자료가 막힌 것**: microSD 규격, HC-06, BLE/Wi-Fi 모듈 선정, 부저 사양, 책의 도형·이미지 수준 OLED, 스텝 모터 속도 제어.
 
