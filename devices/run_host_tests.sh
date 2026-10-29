@@ -16,6 +16,7 @@ cc -I i2c/sw i2c/tb/test_rtc_eeprom.c i2c/sw/rtc_eeprom.c -o "$T/rtce" && run rt
 cc -I i2c/sw i2c/tb/test_io_expander.c i2c/sw/io_expander.c -o "$T/ioe" && run io-expander "$T/ioe"
 cc -I i2c/sw i2c/tb/test_ads1115.c i2c/sw/ads1115.c -o "$T/ads" && run ads1115 "$T/ads"
 cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"
+cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp2515 "$T/mcp2515"
 cc -I spi/sw spi/tb/test_hc595.c spi/sw/spi_devices.c -o "$T/hc595" && run hc595 "$T/hc595"
 cc -I spi/sw spi/tb/test_spi_sensors.c spi/sw/spi_sensors.c -o "$T/spisen" && run spi-sensors "$T/spisen"
 cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/uartlite.c uart/sw/nmea.c uart/sw/hc05.c -o "$T/uart" && run uart "$T/uart"

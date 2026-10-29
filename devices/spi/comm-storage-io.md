@@ -11,7 +11,20 @@
 | 버퍼 | 수신 2개(RXB0, RXB1), 송신 3개(우선순위·중단 기능) |
 | 핀 | INT 1개 (PDIP/SOIC 12번) |
 | 동작 모드 | 설정(Configuration) 모드에서만 마스크·필터·비트 타이밍 변경, Sleep 대기 전류 1 µA(전형) |
-| SPI 명령 옵코드, CANCTRL 주소 | 열어본 발췌에 없음 — 미확인 |
+| SPI 명령 옵코드, CANCTRL 주소 | 데이터시트 PDF 텍스트가 87,709자에서 끝나 12장(SPI 명령 표)과 제어 레지스터 표가 통째로 빠져 있음. 일부는 2차 자료로 확인(아래) |
+
+**근거를 세 구역으로 나눈 상세** (드라이버 [`sw/mcp2515.h`](sw/mcp2515.h) 머리말과 동일)
+| 구역 | 내용 | 근거 |
+|---|---|---|
+| A 확인 | 비트 타이밍: CNF1 = SJW[7:6] BRP[5:0], CNF2 = BTLMODE[7] SAM[6] PHSEG1[5:3] PRSEG[2:0], CNF3 = SOF[7] WAKFIL[6] PHSEG2[2:0]; Tq = 2×(BRP+1)/Fosc, 구간 = (필드+1)×Tq, PHSEG2 최소 2 Tq (5.3절의 "2×BRP×TOSC" 와 불일치 — 레지스터 설명을 따름) | D1 |
+| A 확인 | 주소: CNF3 28h, CNF2 29h, CNF1 2Ah, TEC 1Ch, REC 1Dh, EFLG 2Dh, TXBnCTRL 30/40/50h, TXBnSIDH 31/41/51h … DLC 35/45/55h, 데이터 36~3Dh …, RXB0CTRL 60h, RXB1CTRL 70h, RXBnSIDH 61/71h, RXBnDLC 65/75h, 데이터 66~6Dh / 76~7Dh, BFPCTRL 0Ch, TXRTSCTRL 0Dh | D1 |
+| A 확인 | 필드: TXREQ = TXBnCTRL bit3, TXP[1:0] bit1:0; TXBnSIDL = SID[2:0] bit7:5, EXIDE bit3, EID[17:16] bit1:0; TXBnDLC = RTR bit6, DLC bit3:0 (8 초과도 8바이트만 전송); RXB0CTRL RXM[1:0] = bit6:5, RXM=11 → 필터 끔; CANINTF RX0IF bit0, RX1IF bit1; 수신 플래그는 MCU 가 지워야 다음 메시지가 들어옴 | D1 |
+| B 2차 자료 | SPI 옵코드 READ 03h, BIT MODIFY 05h, LOAD TX BUFFER 40h, RTS 80h(\|nnn: TXB0/1/2), READ STATUS A0h, RESET C0h | D3 (Zephyr mcp2515 드라이버 커밋) |
+| C 미확인 | WRITE, READ RX BUFFER 옵코드; CANCTRL/CANSTAT/CANINTE/CANINTF 주소(CANINTE/F 는 CNF1 2Ah 와 EFLG 2Dh 사이 두 칸이라는 계산만 가능); REQOP/OPMOD 모드 코드; TX0IF 비트; RXBnSIDL 의 IDE/SRR 비트; LOAD TX 의 abc 해석; 리셋 후 발진기 안정 시간 | 없음 — **DS21801 PDF 필요** |
+
+드라이버는 A·B 구역만 시험하고 C 구역은 `*_UNVERIFIED` 임시값으로 격리해 두었습니다(모드 전환·메시지 수신은 C 구역이 필요하므로 PDF 대조 전에는 완성되지 않음). 비트 타이밍 계산기는 8/16/20 MHz × 10개 속도에서 독립 전수 탐색과 해 존재 여부가 일치하고 비트레이트가 정확합니다([`tb/test_mcp2515.c`](tb/test_mcp2515.c)).
+
+**기존 CAN 과의 차이**: 이 저장소의 [AXI CAN](../can/README.md) 은 FPGA 안의 IP(PG096, 24 MHz 기준 BRPR 방식)이고, MCP2515 는 SPI 로 붙는 외부 컨트롤러(예: 8/16 MHz 수정 발진기, BRP 방식)라 타이밍 식이 다르다. 두 경우 모두 CAN 트랜시버(예: 외부 칩)가 따로 필요하다.
 
 CAN 버스에는 트랜시버가 별도로 필요합니다 (`../CATEGORIES.md`). SoC: 센서 버스 + CS + INT GPIO.
 
