@@ -12,6 +12,8 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `spi/` `uart/` `i2s/` `can/` `bluetooth/` `ethernet/` | 각 인터페이스 | 아직 없음 (`TODO.md` 참고) |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
+**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/` (시뮬레이션 전). 다음 후보: I2S, DHT22 단일선, PS/2, CAN.
+
 ## 근거 수준
 - **D1 데이터시트 열람**: 제조사 또는 제조사 문서 사본을 열어 값을 확인함. 사본 출처를 소자 문서에 적음.
 - **D3 판매처·2차 자료만**: 값이 판매처 페이지 등에서만 나옴.
@@ -29,4 +31,4 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | I2C | AXI IIC (PG090) | 100k/400k/1M, 마스터·슬레이브, 7/10비트, FIFO 16바이트 |
 | SPI | AXI Quad SPI (PG153) | 기능 요약만 확인 |
 | 타이머·캡처 | AXI Timer (PG079) | Generate / Capture / PWM / Cascade 모드 (오프셋 미확인) |
-| 1-Wire, I2S, CAN, Bluetooth, Ethernet | — | 열람한 AMD IP 없음 → 해당 폴더에서 설계안으로만 다룸 |
+| 1-Wire, I2S, CAN, Bluetooth, Ethernet | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성) |
