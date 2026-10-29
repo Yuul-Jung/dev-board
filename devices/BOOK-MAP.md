@@ -41,17 +41,17 @@
 | 25장 | DC 모터 | [L298](motor/l298.md), [TB6612FNG](motor/tb6612fng.md), 전용 RTL, [드라이버](motor/sw/dcmotor.c) | 일부(RTL 시뮬레이션 전) |
 | 26장 | 서보 | [SG90](motor/sg90.md), 전용 RTL | 일부(RTL 시뮬레이션 전) |
 | 27장 | 스텝 모터 | [28BYJ-48 + ULN2003](motor/28byj-48.md). 속도 제어 라이브러리 수준은 없음 | 문서 |
-| 28장 | 블루투스 클래식(HC-06) | [HC-05](uart/modules.md)(D3). 책이 쓰는 HC-06 은 없음 | 일부 |
-| 29장 | 저전력 블루투스(ESP32-S3) | [bluetooth/](bluetooth/README.md): 모듈 선정 전 | 없음 |
+| 28장 | 블루투스 클래식(HC-06) | [HC-06 AT 명령 드라이버](uart/modules.md)(D3, 같은 저자 2건, 제조사 데이터시트 미확인) + [HC-05](uart/modules.md). 연결 후 데이터 송수신은 UART Lite 그대로 | 완비(호스트 시험까지) |
+| 29장 | 저전력 블루투스(ESP32-S3) | [HM-10 계열 BLE UART 모듈 드라이버](uart/modules.md)(데이터시트 2건 요약 경유). 책의 ESP32-S3 자체는 모듈 선정 전 | 일부 |
 | 30장 | 인터넷·Wi-Fi(웹 클라이언트, 날씨, NTP) | Wi-Fi/ESP 없음. 유선 대안은 [ethernet/](ethernet/README.md)의 W5500([드라이버·모델 시험](spi/comm-storage-io.md), 요약 경유 D1+D3), 소켓 위 응용은 [DNS·NTP 시계 맞추기·HTTP GET](ethernet/socket-apps.md)(호스트 모델 시험까지, HTTPS·날씨 JSON 해석은 없음) | 일부 |
 | 31장 | 아두이노 클라우드 | 해당 없음 | 해당 없음 |
 
 ## 빈칸을 메운 기록과 남은 것
-메운 것(모두 호스트 모델 시험까지, 보드에서 실행하지 않음): 1) MAX7219 드라이버(12~13장), 2) GPIO·타이머 기본 예제(6·7·9·10장), 3) LM35·CdS·가변저항·조이스틱 변환(8·16장), 4) HD44780 텍스트 LCD + PCF8574 백팩(15·19장), 5) W5500 문서·시험 정리(30장의 유선 쪽), 6) W5500 UDP 수신 헤더 해석 + SNTP 클라이언트 + HTTP/1.1 GET 클라이언트 + DNS 이름 풀기 + DHCP + JSON 값 꺼내기(30장의 웹 클라이언트·날씨·NTP, [socket-apps.md](ethernet/socket-apps.md)). 근거는 각 문서에 적었고 W5500·MAX7219·PG144·LM35·HD44780 은 PDF 원문이 아니라 웹 가져오기 요약에서 옮긴 값입니다([VERIFICATION.md](VERIFICATION.md)).
+메운 것(모두 호스트 모델 시험까지, 보드에서 실행하지 않음): 1) MAX7219 드라이버(12~13장), 2) GPIO·타이머 기본 예제(6·7·9·10장), 3) LM35·CdS·가변저항·조이스틱 변환(8·16장), 4) HD44780 텍스트 LCD + PCF8574 백팩(15·19장), 5) W5500 문서·시험 정리(30장의 유선 쪽), 6) W5500 UDP 수신 헤더 해석 + SNTP 클라이언트 + HTTP/1.1 GET 클라이언트 + DNS 이름 풀기 + DHCP + JSON 값 꺼내기(30장의 웹 클라이언트·날씨·NTP, [socket-apps.md](ethernet/socket-apps.md)), 7) HC-06 와 HM-10(BLE) 의 AT 명령 드라이버 + 무음 구간으로 응답 끝을 판단하는 공통 송수신(28·29장, [uart/modules.md](uart/modules.md)). 근거는 각 문서에 적었고 W5500·MAX7219·PG144·LM35·HD44780 은 PDF 원문이 아니라 웹 가져오기 요약에서 옮긴 값입니다([VERIFICATION.md](VERIFICATION.md)).
 
 남은 것:
 1. **소켓 위 응용의 나머지**(30장): HTTPS, 실제 날씨 API 응답으로의 확인(JSON 해석 자체는 6절), NTP 왕복 지연 보정, 실제 서버와의 상호 동작 확인. DHCP·DNS·NTP·HTTP·JSON 의 기본 동작과 W5500 UDP 수신 헤더는 [socket-apps.md](ethernet/socket-apps.md).
 2. **교재 6~9장 이후의 응용 예제**: 조이스틱·RGB 를 함께 쓰는 데모처럼 장치를 묶는 예제는 만들지 않았다.
-3. **자료가 막힌 것**: microSD 규격, HC-06, BLE/Wi-Fi 모듈 선정, 부저 사양, 책의 도형·이미지 수준 OLED, 스텝 모터 속도 제어.
+3. **자료가 막힌 것**: microSD 규격, HC-06 제조사 데이터시트(2차 자료로 만들었음), 책의 ESP32-S3 BLE 와 Wi-Fi 모듈 선정, 부저 사양, 책의 도형·이미지 수준 OLED, 스텝 모터 속도 제어.
 
 <!-- nav-foot -->[devices 목차](README.md)

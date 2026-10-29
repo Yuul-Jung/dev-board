@@ -24,6 +24,8 @@ Basys3 USB-UART 콘솔과 NEO-6M(9600)·HC-05(38400)는 각각 별도 인스턴�
 | Basys3 USB-UART (TXD B18, RXD A18, RM 확인) | 임의 | - | 디버그 콘솔 |
 | NEO-6M GPS | 9600 (기본) | 8N1 | modules.md |
 | HC-05 | 38400 (기본) | 8N1 | modules.md, 2차 자료 |
+| HC-06 | 9600 (기본) | 8N1 | modules.md, 2차 자료(같은 저자 2건) |
+| HM-10 (BLE) | 9600 (기본) | 8N1 | modules.md, 데이터시트 2건(요약 경유) |
 | MAX485 | 용도별 | - | 최대 2.5 Mbps |
 UART Lite 인스턴스 소자당 1개, Pmod 핀은 TX/RX 2선. 보레이트가 합성 시 고정이면 소자별 인스턴스가 필요합니다(미확인이라 인스턴스를 나누는 쪽이 안전).
 
@@ -36,8 +38,13 @@ UART Lite 가 있으므로 소자 접근은 IP. 전용 RTL 후보는 RS-485 방�
 | uartlite.h/.c | PG142 레지스터 접근. Rx 가 비었으면 읽지 않음(빈 FIFO 읽기 = SLVERR), STAT 오류 비트(5~7)는 읽으면 지워지므로 읽을 때마다 누적 | 확인 (PG142) |
 | nmea.h/.c | 줄 조립, XOR 체크섬, RMC 파서 (위경도 1e-7도, 속도 0.01노트) | NMEA_Format_v0.1 (NavSpark) — 형식·XOR·RMC 필드 순서 확인 |
 | hc05.h/.c | AT 명령 문자열 생성과 `OK` 응답 확인 | D3 (2차 자료) |
+| btmod.h/.c | HC-06·HM-10 공통 송수신: AT 명령은 줄 끝이 없고 응답도 줄 끝이 없으므로 **무음 구간**(`quiet_ms`)으로 응답의 끝을 판단. 묵은 수신 바이트 버림(512개 상한), UART 오류 비트 보고, 정확한 버퍼 경계 | 설계안 (응답 대기 시간은 문서에 없어 호출자가 정함) |
+| hc06.h/.c | 명령 만들기(이름·PIN·보레이트·패리티·LED·역할), 응답 정확 일치 확인, 연산 5개 | D3 (Martyn Currey 2건) |
+| hm10.h/.c | 명령 만들기(조회·이름·보레이트·역할·모드·암호·유형·세기·알림·RESET 등), `OK+태그:값` 해석, 연산 4개 | D1 (요약 경유, 불일치 있음) |
 
+블루투스 모듈(HC-06·HM-10)의 미확인 항목은 [modules.md](modules.md) 각 절에 적었습니다. 모듈 시뮬레이터는 같은 문서 요약에서 옮긴 규칙이라 순환 검증입니다(코딩 오류만 잡음).
 미확인: 체크섬 XOR 범위에 `$`·`*` 포함 여부(문서가 명시 안 함, 관례대로 둘 사이로 계산). GGA 필드 순서(문서에서 확인하지 못해 GGA 파서 없음). RMC 위도 표기가 문서 안에서 ddmm/dddmm 으로 상충해 두 형식 모두 처리. NavSpark 문서이므로 NEO-6M 의 NMEA 2.3 출력과 같다는 보장은 없음. HC-05 의 AT 모드 보레이트·응답 형식.
+블루투스 모듈 시험: `cd devices && cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_bt.c uart/sw/uartlite.c uart/sw/btmod.c uart/sw/hc06.c uart/sw/hm10.c -o t && ./t`(퍼저 `uart/tb/fuzz_bt.c` 도 같은 소스).
 테스트: `cd devices && gcc -Wall -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/*.c -o t && ./t` → ALL PASS (모의 레지스터 기준이며 보드 동작 검증 아님).
 
 <!-- nav-foot -->← [spi](../spi/README.md) · [devices 목차](../README.md) · [i2s](../i2s/README.md) →

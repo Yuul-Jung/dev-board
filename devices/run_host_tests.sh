@@ -30,6 +30,7 @@ cc -I spi/sw spi/tb/test_mcp2515.c spi/sw/mcp2515.c -o "$T/mcp2515" && run mcp25
 cc -I spi/sw spi/tb/test_hc595.c spi/sw/spi_devices.c -o "$T/hc595" && run hc595 "$T/hc595"
 cc -I spi/sw spi/tb/test_spi_sensors.c spi/sw/spi_sensors.c -o "$T/spisen" && run spi-sensors "$T/spisen"
 cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_uart_mock.c uart/sw/uartlite.c uart/sw/nmea.c uart/sw/hc05.c -o "$T/uart" && run uart "$T/uart"
+cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/test_bt.c uart/sw/uartlite.c uart/sw/btmod.c uart/sw/hc06.c uart/sw/hm10.c -o "$T/bt" && run bt-modules "$T/bt"
 cc -include can/tb/mock_can.h -I can/sw can/tb/test_can_mock.c can/sw/axi_can.c -o "$T/can" && run can "$T/can"
 cc -include spi/tb/mock_qspi.h -I spi/sw spi/tb/test_qspi_mock.c spi/sw/axi_qspi.c spi/sw/spi_devices.c -o "$T/qspi" && run qspi "$T/qspi"
 cc -include spi/tb/mock_lcd.h -I spi/sw spi/tb/test_ili9341_sw.c spi/sw/ili9341.c -o "$T/lcd" && run ili9341 "$T/lcd"
@@ -52,6 +53,7 @@ if [ "${FUZZ:-0}" = 1 ]; then
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_dns.c ethernet/sw/dns.c -o "$T/f5" && run fuzz-dns "$T/f5"
   cc -I spi/sw -I ethernet/sw ethernet/tb/fuzz_dhcp.c ethernet/sw/dhcp.c -o "$T/f6" && run fuzz-dhcp "$T/f6"
   cc -I ethernet/sw ethernet/tb/fuzz_json.c ethernet/sw/json.c -o "$T/f7" && run fuzz-json "$T/f7"
+  cc -include uart/tb/mock_uart.h -I uart/sw uart/tb/fuzz_bt.c uart/sw/uartlite.c uart/sw/btmod.c uart/sw/hc06.c uart/sw/hm10.c -o "$T/f8" && run fuzz-bt "$T/f8"
   "$T/f7" dump | python3 -I ethernet/tb/json_diff.py > /dev/null && echo "PASS  json-vs-python" || { echo "FAIL  json-vs-python"; fail=1; }
 fi
 exit $fail

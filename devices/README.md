@@ -13,12 +13,12 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [`i2c/`](i2c/README.md) | I2C | BME280, MPU-6050, SHT31, BH1750, DS3231 (AXI IIC 본문 확인, 드라이버 `sw/`) |
 | [`motor/`](motor/README.md) | DC 모터, 서보, 스테퍼 구동 | L298, TB6612FNG, SG90, 28BYJ-48 |
 | [`spi/`](spi/README.md) | SPI 소자 14종 + AXI Quad SPI 버스 계획 | 작성됨 (PG153 본문 확인, QSPI·ILI9341 드라이버, ILI9341 전용 RTL; 일부 미확인) |
-| [`uart/`](uart/README.md) | UART 모듈 | NEO-6M, HC-05, MAX485 (UART Lite 본문 확인, 드라이버·NMEA RMC) |
+| [`uart/`](uart/README.md) | UART 모듈 | NEO-6M, HC-05, HC-06, HM-10(BLE), MAX485 (UART Lite 본문 확인, 드라이버·NMEA RMC·블루투스 AT 명령) |
 | [`i2s/`](i2s/README.md) | I2S 오디오 | INMP441, MAX98357A, AMD I2S IP(PG308) 일부 확인 |
 | [`can/`](can/README.md) | CAN 컨트롤러·트랜시버 | AXI CAN(PG096 본문 확인, 드라이버), MCP2515(데이터시트 PDF 로 명령·레지스터 확인, 드라이버는 spi/sw), SN65HVD230 |
 | [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
 | [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교, W5500 위 DHCP·DNS·NTP·HTTP·JSON 응용([socket-apps.md](ethernet/socket-apps.md)) | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
-| [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05 는 `uart/` 에 있음 |
+| [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05·HC-06·HM-10 은 `uart/` 에 있음 |
 | [`data/`](data/README.md) | 위 소자의 구조화 데이터 ([devices.json](data/devices.json)) | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.
@@ -35,7 +35,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 - **D1 데이터시트 열람**: 제조사 또는 제조사 문서 사본을 열어 값을 확인함. 사본 출처를 소자 문서에 적음.
 - **D3 판매처·2차 자료만**: 값이 판매처 페이지 등에서만 나옴.
 - **설계안**: 일반 지식이나 계산으로 세운 구현 제안. 실제 보드에서 검증 전.
-소자 문서의 "확인" 항목은 각 문서에 적힌 근거 수준을 따르며(D3 가 섞인 문서가 있음: HC-05, HC-SR501, 릴레이, PS/2, TTP223, 엔코더 등), 계산은 계산식을 함께 적었습니다.
+소자 문서의 "확인" 항목은 각 문서에 적힌 근거 수준을 따르며(D3 가 섞인 문서가 있음: HC-05, HC-06, HC-SR501, 릴레이, PS/2, TTP223, 엔코더 등), 계산은 계산식을 함께 적었습니다.
 
 ## 소자 문서 형식
 `TEMPLATE.md` 참고. 항목: 개요 / 전기 사양 / 인터페이스 / SoC 연결(Basys3) / 근거와 한계.

@@ -191,7 +191,9 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('SNTP',('ethernet','sw','ntp.h'),('ethernet','ref','ntp_facts.txt'),'NTP_'),
                              ('DNS',('ethernet','sw','dns.h'),('ethernet','ref','dns_facts.txt'),'DNS_'),
                              ('DHCP',('ethernet','sw','dhcp.h'),('ethernet','ref','dhcp_facts.txt'),'DH(?:CP|O)_'),
-                             ('JSON',('ethernet','sw','json.h'),('ethernet','ref','json_facts.txt'),'JSON_(?:CTRL|HEX|ESC)_')]:
+                             ('JSON',('ethernet','sw','json.h'),('ethernet','ref','json_facts.txt'),'JSON_(?:CTRL|HEX|ESC)_'),
+                             ('HC-06',('uart','sw','hc06.h'),('uart','ref','hc06_facts.txt'),'HC06_'),
+                             ('HM-10',('uart','sw','hm10.h'),('uart','ref','hm10_facts.txt'),'HM10_')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}

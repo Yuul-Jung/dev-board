@@ -358,6 +358,28 @@
   "evidence": "D3"
  },
  {
+  "id": "hc06",
+  "interface": "uart",
+  "category": "bluetooth",
+  "baud_default": 9600,
+  "format": "8N1",
+  "profile": "SPP",
+  "evidence": "D3"
+ },
+ {
+  "id": "hm10",
+  "interface": "uart",
+  "category": "bluetooth",
+  "baud_default": 9600,
+  "format": "8N1",
+  "profile": "BLE",
+  "vcc_v": [
+   2.5,
+   3.3
+  ],
+  "evidence": "D1"
+ },
+ {
   "id": "max485",
   "interface": "uart",
   "category": "rs485",

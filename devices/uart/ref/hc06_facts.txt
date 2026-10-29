@@ -1,0 +1,21 @@
+# HC-06 사실표 — uart/sw/hc06.h 의 상수를 대조하는 근거. 줄 형식은 ethernet/ref/dns_facts.txt 와 같다: def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모
+# 출처 A = Martyn Currey, HC-06 AT 명령 글 (https://martyncurrey.com/?p=12932) / 출처 B = 같은 저자의 다른 글 (?p=1571). 둘 다 WebFetch 요약 경유, D3.
+# 같은 저자의 글 두 편이라 서로 독립적이지 않다 → 아래에서 근거2 는 '-' 로 두고 B 와 겹치는 것은 메모에만 적는다. 제조사 데이터시트는 열지 못함(미확인).
+def|HC06_NAME_MAX|20|-|A: 이름 최대 20자
+def|HC06_PIN_LEN|4|-|A: PIN 은 숫자 4자리 (기본 1234)
+def|HC06_BAUD_DEFAULT|9600|-|A·B: 기본 보레이트 9600 (코드 4)
+def|HC06_BAUD_1|1200|-|A: AT+BAUD1 = 1200
+def|HC06_BAUD_2|2400|-|A: AT+BAUD2 = 2400
+def|HC06_BAUD_3|4800|-|A: AT+BAUD3 = 4800
+def|HC06_BAUD_4|9600|-|A: AT+BAUD4 = 9600 (기본)
+def|HC06_BAUD_5|19200|-|A: AT+BAUD5 = 19200
+def|HC06_BAUD_6|38400|-|A: AT+BAUD6 = 38400
+def|HC06_BAUD_7|57600|-|A: AT+BAUD7 = 57600
+def|HC06_BAUD_8|115200|-|A: AT+BAUD8 = 115200
+def|HC06_BAUD_9|230400|-|A: AT+BAUD9 = 230400
+def|HC06_BAUD_A|460800|-|A: AT+BAUDA = 460800 (16진수 한 자리 A)
+def|HC06_BAUD_B|921600|-|A: AT+BAUDB = 921600
+def|HC06_BAUD_C|1382400|-|A: AT+BAUDC = 1382400
+# 알려진 불일치·설계안 (실패로 세지 않음)
+!val|HC06 이름에 허용하는 문자: 문서는 "20자까지"만 말함, 이 코드는 0x21~0x7E 로 제한(설계안: 공백이 명령 끝을 모호하게 만들 수 있음)|20|20
+!val|HC06 AT+BAUD 대신 AT+UART 를 받는 모듈: 한 독자의 보고(A 의 댓글, 미확인), 이 코드는 AT+BAUD 만 보냄|1|0
