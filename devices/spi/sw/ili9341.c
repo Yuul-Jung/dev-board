@@ -1,30 +1,95 @@
-/* ILI9341 드라이버 스케치 (설계안, 미실행). 주소는 예시.
- * 초기화 순서와 대기 시간은 데이터시트 확인 전이므로 이 파일에 넣지 않았다.
- * 사용할 수 있는 명령 코드(확인): 01h SWRESET, 11h SLPOUT, 29h DISPON,
- * 2Ah 열 주소, 2Bh 페이지 주소, 2Ch 메모리 쓰기, 36h MADCTL, 3Ah COLMOD. */
-#include <stdint.h>
-#define LCD_BASE   0x44A10000u
-#define REG(o)     (*(volatile uint32_t *)(LCD_BASE + (o)))
-#define CTRL 0x00
-#define DIV  0x04
-#define TX   0x08   /* 쓰기: 송신, 읽기: STATUS */
-#define FILLCOLOR 0x0C
-#define FILLCNT   0x10
-#define ST_BUSY 1u
-#define ST_OVERRUN 2u
+#include "ili9341.h"
 
-static void lcd_wait(void){ while (REG(TX) & ST_BUSY) ; }
-void lcd_cmd(uint8_t c){ lcd_wait(); REG(TX) = c; }
-void lcd_data(uint8_t d){ lcd_wait(); REG(TX) = 0x100u | d; }
-void lcd_set_window(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1){
-    lcd_cmd(0x2A); lcd_data(x0>>8); lcd_data(x0); lcd_data(x1>>8); lcd_data(x1);
-    lcd_cmd(0x2B); lcd_data(y0>>8); lcd_data(y0); lcd_data(y1>>8); lcd_data(y1);
-    lcd_cmd(0x2C);
+static int wait_idle(lcd_t *l)
+{
+    unsigned t = l->timeout;
+    for (;;) {
+        uint32_t s = LCD_RD(l->base, LCD_TX);
+        if (s & LCD_ST_OVERRUN) return LCD_ERR_OVERRUN;
+        if (!(s & LCD_ST_BUSY)) return LCD_OK;
+        if (!t--) return LCD_ERR_TIMEOUT;
+    }
 }
-void lcd_fill_rect(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t rgb565){
-    lcd_set_window(x0,y0,x1,y1);
-    lcd_wait();
-    REG(FILLCOLOR) = rgb565;
-    REG(FILLCNT) = (uint32_t)(x1-x0+1) * (y1-y0+1);
-    lcd_wait();
+
+void lcd_attach(lcd_t *l, uintptr_t base, uint32_t div)
+{
+    l->base = base; l->timeout = 1000000;
+    LCD_WR(base, LCD_DIV, div);
+    LCD_WR(base, LCD_CTRL, LCD_CTRL_RESX | LCD_CTRL_CS);
+}
+
+void lcd_hw_reset(lcd_t *l, unsigned low_ms, unsigned after_ms)
+{
+    uint32_t c = LCD_RD(l->base, LCD_CTRL) & ~LCD_CTRL_RESX;
+    LCD_WR(l->base, LCD_CTRL, c);
+    lcd_delay_ms(low_ms);
+    LCD_WR(l->base, LCD_CTRL, c | LCD_CTRL_RESX);
+    lcd_delay_ms(after_ms);
+}
+
+void lcd_backlight(lcd_t *l, int on)
+{
+    uint32_t c = LCD_RD(l->base, LCD_CTRL) & ~LCD_CTRL_BL;
+    LCD_WR(l->base, LCD_CTRL, on ? (c | LCD_CTRL_BL) : c);
+}
+
+int lcd_cmd(lcd_t *l, uint8_t c)
+{
+    int r = wait_idle(l); if (r) return r;
+    LCD_WR(l->base, LCD_TX, c);
+    return LCD_OK;
+}
+int lcd_data(lcd_t *l, uint8_t d)
+{
+    int r = wait_idle(l); if (r) return r;
+    LCD_WR(l->base, LCD_TX, 0x100u | d);
+    return LCD_OK;
+}
+
+int lcd_run_table(lcd_t *l, const lcd_step_t *s)
+{
+    for (; !(s->cmd == 0xFF && s->n == 0xFF); s++) {
+        if (s->n > 16) return LCD_ERR_ARGS;
+        int r = lcd_cmd(l, s->cmd); if (r) return r;
+        for (unsigned i = 0; i < s->n; i++) { r = lcd_data(l, s->p[i]); if (r) return r; }
+        if (s->delay_ms) { r = wait_idle(l); if (r) return r; lcd_delay_ms(s->delay_ms); }
+    }
+    return wait_idle(l);
+}
+
+int lcd_set_window(lcd_t *l, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+    if (x0 > x1 || y0 > y1 || x1 >= LCD_W || y1 >= LCD_H) return LCD_ERR_ARGS;
+    const uint8_t cx[4] = { (uint8_t)(x0 >> 8), (uint8_t)x0, (uint8_t)(x1 >> 8), (uint8_t)x1 };
+    const uint8_t cy[4] = { (uint8_t)(y0 >> 8), (uint8_t)y0, (uint8_t)(y1 >> 8), (uint8_t)y1 };
+    int r;
+    if ((r = lcd_cmd(l, 0x2A))) return r;
+    for (int i = 0; i < 4; i++) if ((r = lcd_data(l, cx[i]))) return r;
+    if ((r = lcd_cmd(l, 0x2B))) return r;
+    for (int i = 0; i < 4; i++) if ((r = lcd_data(l, cy[i]))) return r;
+    return lcd_cmd(l, 0x2C);
+}
+
+int lcd_fill_rect(lcd_t *l, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c)
+{
+    int r = lcd_set_window(l, x0, y0, x1, y1); if (r) return r;
+    uint32_t n = (uint32_t)(x1 - x0 + 1) * (uint32_t)(y1 - y0 + 1);
+    if ((r = wait_idle(l))) return r;
+    LCD_WR(l->base, LCD_FILLCOLOR, c);
+    while (n) {
+        uint32_t k = n > LCD_FILL_MAX ? LCD_FILL_MAX : n;
+        LCD_WR(l->base, LCD_FILLCNT, k);
+        if ((r = wait_idle(l))) return r;
+        n -= k;
+    }
+    return LCD_OK;
+}
+
+int lcd_push_pixels(lcd_t *l, const uint16_t *px, size_t n)
+{
+    for (size_t i = 0; i < n; i++) {
+        int r = lcd_data(l, (uint8_t)(px[i] >> 8)); if (r) return r;
+        if ((r = lcd_data(l, (uint8_t)px[i]))) return r;
+    }
+    return LCD_OK;
 }
