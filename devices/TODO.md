@@ -9,3 +9,4 @@
 - Ethernet: Pmod NIC100 최대 SPI 클럭, W5500 모듈 사양, MicroBlaze V 에서 emaclite 동작
 - Bluetooth: BLE 모듈 선정
 각 항목은 제조사 문서를 열어 값을 확인한 뒤 해당 폴더에 추가.
+- PS/2: 송신 절차, 마우스 F4/응답, Basys3 핀 확인, Verilog 시뮬레이션

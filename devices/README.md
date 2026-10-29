@@ -18,7 +18,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | `bluetooth/` | Bluetooth | HC-05 는 `uart/` 에 있음 |
 | `data/devices.json` | 위 소자의 구조화 데이터 | |
 
-**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. 다음 후보: PS/2 (I2S, CAN 은 AMD IP 확인으로 대상에서 제외).
+**전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.
 
 전체 범주 목록과 상태는 `CATEGORIES.md`.
 
