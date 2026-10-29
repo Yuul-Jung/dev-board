@@ -28,3 +28,7 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 - **시뮬레이션과 합성은 하지 않았습니다.**
 - 사용자 노션의 `l298_distance_motor_controller`(CdS + 초음파 + 거리 비례 속도)는 응용 계층입니다. 이 레지스터 맵 위에서 소프트웨어로 만들 수도 있고, 노션 RTL을 그대로 쓸 수도 있습니다.
 - 전원·GND 분리(포토커플러), 환류 다이오드, 모터 전원 용량은 하드웨어 설계 몫입니다.
+
+## 서보 PWM (SG90 등)
+`servo_engine.v`, `servo_axil_regs.v`, `servo_axil_top.v` — 주기·폭을 µs 단위로 받는 PWM. 폭은 MIN/MAX 레지스터(기본 1000/2000 µs)로 제한하며, SG90 자료마다 펄스 범위가 달라서(500–2400 µs vs 1–2 ms) 소프트웨어가 안전한 범위를 정하도록 했습니다.
+레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기). 테스트벤치 `tb/tb_servo_engine.v`. 시뮬레이션 전.

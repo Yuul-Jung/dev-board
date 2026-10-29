@@ -443,5 +443,27 @@
   ],
   "bus": "AXI4-Lite",
   "evidence": "D1/D3 partial"
+ },
+ {
+  "id": "hc-sr501",
+  "interface": "gpio",
+  "category": "motion",
+  "vcc_v": [
+   4.5,
+   20
+  ],
+  "out_high_v": 3.3,
+  "warmup_s": 60,
+  "evidence": "D3"
+ },
+ {
+  "id": "srd-05vdc-sl-c",
+  "interface": "gpio",
+  "category": "relay",
+  "coil_v": 5,
+  "coil_ohm": 70,
+  "coil_mw": 360,
+  "contact": "SPDT",
+  "evidence": "D3"
  }
 ]
