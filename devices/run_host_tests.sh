@@ -39,6 +39,7 @@ cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_tach.c gpio/sw/axi_time
 cc -include gpio/tb/mock_gpio.h -I gpio/sw gpio/tb/test_axi_gpio.c gpio/sw/axi_gpio.c -o "$T/agpio" && run axi-gpio-model "$T/agpio"
 cc -include gpio/tb/mock_timer_b.h -I gpio/sw gpio/tb/test_basic_io.c gpio/sw/basic_io.c gpio/sw/axi_timer_pwm.c -o "$T/bio" -lm && run basic-io-model "$T/bio"
 cc -I gpio/sw gpio/tb/test_analog_sensors.c gpio/sw/analog_sensors.c -o "$T/anl" -lm && run analog-sensors "$T/anl"
+cc -include motor/tb/mock_motor.h -I motor/sw motor/tb/test_dcmotor.c motor/sw/dcmotor.c -o "$T/dcmotor" && run dcmotor "$T/dcmotor"
 cc -I ps2/sw ps2/tb/test_ps2_sw.c ps2/sw/ps2.c -o "$T/ps2" && run ps2-sw "$T/ps2"
 run ps2-model python3 ps2/tb/model_ps2_rx.py
 run quad-model python3 gpio/tb/model_quad.py
