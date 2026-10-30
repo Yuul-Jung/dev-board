@@ -1,0 +1,27 @@
+chapter,topic,part,status,where,note
+1-5,보드·IDE·Serial,기초,해당 없음,uart/sw/uartlite.c,Serial 에 해당하는 것이 UART Lite 드라이버
+6,디지털 출력,기초,완비,gpio/basic-io.md,
+7,디지털 입력,기초,완비,gpio/basic-io.md,
+8,아날로그 입력,기초,일부,gpio/analog-sensors.md,XADC 는 언급 수준
+9,아날로그 출력(PWM),기초,완비,gpio/sw/axi_timer_pwm.c,
+10,delay·millis,기초,완비,gpio/basic-io.md,
+11,7세그·74595,기초,일부,spi/comm-storage-io.md,보드 내장 7세그는 언급 수준
+12-13,4자리 7세그·LED 매트릭스,기초,완비,spi/display.md,MAX7219
+14,내장 LED 매트릭스,기초,해당 없음,,우노 R4 고유
+15,텍스트 LCD,기초,완비,i2c/lcd1602.md,
+16,센서 모음,기초,일부,gpio/hc-sr04.md,CdS lux 미확인
+17,소리·RTTTL·부저,기초,일부,gpio/rtttl.md,"이번 세션: RTTTL, 명세 충돌 3건·부저 사양 미확인"
+18,UART,통신,완비,uart/README.md,
+19,I2C + I2C LCD,통신,완비,i2c/README.md,
+20,SPI + SD 카드,통신,일부,spi/README.md,microSD 미확인
+21,CAN,통신,완비,can/README.md,
+22,RTC,통신,완비,i2c/clock.md,
+23,OLED 도형·이미지,통신,완비,i2c/ssd1306.md,"이번 세션 추가, 책의 비트맵 형식 미확인"
+24,MPU-6050,통신,완비,i2c/sensors.md,
+25,DC 모터,모터·무선,일부,motor/l298.md,RTL 시뮬레이션 전
+26,서보,모터·무선,일부,motor/sg90.md,RTL 시뮬레이션 전
+27,스텝 모터,모터·무선,완비,motor/28byj-48.md,"이번 세션 추가, IN 대응은 설계안"
+28,블루투스 클래식(HC-06),모터·무선,완비,uart/modules.md,
+29,BLE(ESP32-S3),모터·무선,일부,uart/modules.md,"HM-10 으로 대체, ESP32-S3 미선정"
+30,인터넷·Wi-Fi,모터·무선,일부,ethernet/socket-apps.md,"Wi-Fi 없음, 유선 W5500 대안, HTTPS·날씨 JSON 없음"
+31,아두이노 클라우드,모터·무선,해당 없음,,

@@ -26,6 +26,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 
 전체 범주 목록과 상태는 [CATEGORIES.md](CATEGORIES.md), 남은 일은 [TODO.md](TODO.md), 문서 형식은 [TEMPLATE.md](TEMPLATE.md).
 학습 순서로 보려면 아두이노 교재 목차에 맞춘 [BOOK-MAP.md](BOOK-MAP.md)(장별 대응과 빈칸).
+모듈 전체 현황(상태 기준·인터페이스별·빈틈 순서)은 [STATUS.md](STATUS.md), 원자료는 `data/module-status.csv` · `data/chapter-status.csv`.
 
 ## 검증 자료
 - [VERIFICATION.md](VERIFICATION.md): 적대적 검증 결과와 재현 방법 (원문 대조, 새니타이저, 퍼징, 링크 검사).

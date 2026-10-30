@@ -1,0 +1,73 @@
+id,group,name,interface,stage,book_ch,status,where,note
+G01,GPIO 입력,택트 스위치,GPIO,기초,7,완비,gpio/basic-io.md,디바운스·누른 횟수·길게 누름(모델 시험)
+G02,GPIO 입력,HC-SR501 PIR,GPIO,기초,16,문서,gpio/hc-sr501.md,전용 드라이버·시험 없음. 일반 GPIO 입력으로 읽는 문서만
+G03,GPIO 입력,TCRT5000 디지털,GPIO,기초,,없음,,"AXI GPIO 입력 경로로 재사용 가능(설계안), 전용 문서 없음"
+G04,GPIO 입력,리드 스위치,GPIO,기초,,없음,,"버튼과 같은 입력 경로, 문서 없음"
+G05,GPIO 입력,홀 스위치 A3144,GPIO,기초,,없음,,펄스 카운트는 타코(T03) 경로 재사용 가능
+G06,GPIO 입력,포토 인터럽터,GPIO,기초,,없음,,"펄스·회전수, 문서 없음"
+G07,GPIO 출력,LED·RGB LED,GPIO,기초,6,완비,gpio/basic-io.md,RGB·HSV 포함(모델 시험)
+G08,GPIO 출력,능동 부저,GPIO,기초,17,문서,gpio/buzzer.md,부저 사양 미확인
+G09,GPIO 출력,릴레이 모듈,GPIO,기초,6,문서,gpio/relay-srd05.md,전용 드라이버·시험 없음. 일반 GPIO 출력으로 구동하는 문서만
+G10,GPIO 출력,포토커플러 절연,GPIO,심화,,일부,motor/l298.md,L298 문서 안에 일부만
+A01,아날로그 입력,CdS 조도센서,ADC,기초,16,일부,gpio/analog-sensors.md,lux 환산은 셀 자료 필요(미확인)
+A02,아날로그 입력,가변저항,ADC,기초,8,완비,gpio/analog-sensors.md,"%·map 변환(설계안, 모델 시험)"
+A03,아날로그 입력,2축 조이스틱,ADC,기초,8,완비,gpio/analog-sensors.md,
+A04,아날로그 입력,토양 수분(아날로그),ADC,응용,,없음,,변환 함수 재사용 가능
+A05,아날로그 입력,MQ-2 가스,ADC,응용,,없음,,예열·보정 문서 없음
+A06,아날로그 입력,ACS712 전류,ADC,응용,,없음,,
+P01,PWM·모터,SG90 서보,PWM,기초,26,일부,motor/sg90.md,"전용 RTL 있음, 시뮬레이션 전"
+P02,PWM·모터,DC 모터 + L298N,PWM,기초,25,일부,motor/l298.md,"드라이버·시험 있음, RTL 시뮬레이션 전"
+P03,PWM·모터,TB6612FNG,PWM,응용,25,문서,motor/tb6612fng.md,
+P04,PWM·모터,DRV8833,PWM,응용,,없음,,
+P05,PWM·모터,MOSFET LED·팬 PWM,PWM,기초,9,일부,gpio/fan-pwm.md,AXI Timer PWM 드라이버
+P06,PWM·모터,28BYJ-48 + ULN2003,GPIO 4핀,응용,27,완비,motor/28byj-48.md,이번 세션 추가(모델 시험)
+T01,펄스·캡처,HC-SR04,GPIO,기초,16,일부,gpio/hc-sr04.md,"RTL+드라이버. 드라이버 C 시험 없음, Verilog tb는 시뮬레이터가 없어 미실행"
+T02,펄스·캡처,로터리 엔코더,GPIO,응용,,일부,gpio/rotary-encoder.md,"전용 RTL, 미시뮬레이션"
+T03,펄스·캡처,홀 속도센서(타코),GPIO,응용,,일부,gpio/fan-pwm.md,axi_timer_tach 드라이버
+T04,펄스·캡처,적외선 리모컨 수신,GPIO,응용,,없음,,
+U01,UART,HC-05 / HC-06,UART,기초,28,완비,uart/modules.md,AT 명령 드라이버(D3)
+U02,UART,NEO-6M GPS,UART,응용,,완비,uart/README.md,NMEA 파서
+U03,UART,DFPlayer Mini,UART,응용,,없음,,
+U04,UART,AS608 지문,UART,심화,,없음,,
+U05,UART,LD2410 레이더,UART,심화,,없음,,
+U06,UART,ESP-01 AT,UART,심화,30,없음,,"Wi-Fi 없음, 유선 W5500 이 대안"
+I01,I2C,BH1750,I2C,기초,16,완비,i2c/sensors.md,
+I02,I2C,BME280,I2C,응용,16,완비,i2c/bme280.md,데이터시트 예제와 온도 일치
+I03,I2C,BMP280,I2C,응용,,일부,i2c/bme280.md,BME280 드라이버로 압력·온도 부분 사용
+I04,I2C,MPU-6050,I2C,응용,24,완비,i2c/sensors.md,
+I05,I2C,DS3231 RTC,I2C,기초,22,완비,i2c/clock.md,
+I06,I2C,SSD1306 OLED,I2C,응용,23,완비,i2c/ssd1306.md,이번 세션: 선·원·삼각형·비트맵·5x7 글꼴
+I07,I2C,LCD1602 + PCF8574,I2C,응용,15,완비,i2c/lcd1602.md,백팩 핀 배치는 관례(미확인)
+I08,I2C,PCF8574 확장기,I2C,응용,19,완비,i2c/io-expander.md,
+I09,I2C,PCA9685 16채널 PWM,I2C,심화,,없음,,
+I10,I2C,ADS1115,I2C,심화,8,완비,i2c/ads1115.md,
+I11,I2C,INA219,I2C,심화,,없음,,
+I12,I2C,VL53L0X / L1X,I2C,심화,,없음,,
+S01,SPI,MFRC522 RFID,SPI,응용,,문서,spi/comm-storage-io.md,드라이버 없음
+S02,SPI,microSD (SPI),SPI,심화,20,문서,spi/comm-storage-io.md,조사 문서만. 규격 자료 막힘(미확인)
+S03,SPI,MAX7219 매트릭스,SPI,기초,12,완비,spi/display.md,"체인 8개, 8x8 (모델 시험)"
+S04,SPI,ILI9341 TFT,SPI,심화,,완비,spi/display.md,RTL+드라이버
+S05,SPI,MCP3008,SPI,응용,8,완비,spi/sensor-adc-dac.md,
+S06,SPI,MCP3208,SPI,심화,,없음,,MCP3008 과 프레임만 다름(설계안)
+S07,SPI,MCP4921 DAC,SPI,심화,9,완비,spi/sensor-adc-dac.md,
+S08,SPI,nRF24L01+,SPI,심화,,완비,spi/sw/nrf24l01.c,
+S09,SPI,W5500,SPI,심화,30,완비,spi/comm-storage-io.md,DHCP·DNS·NTP·HTTP·JSON 응용
+S10,SPI,ENC28J60,SPI,심화,,문서,ethernet/README.md,조사 문서만. 스택 직접 구현 필요
+S11,SPI,MCP2515,SPI,심화,21,완비,can/README.md,
+S12,SPI,ADXL345,SPI,응용,24,완비,spi/sensor-adc-dac.md,
+W01,1-Wire,DS18B20,1-Wire,응용,16,일부,1-wire/ds18b20.md,"RTL+드라이버. 드라이버 C 시험 없음, Verilog tb는 시뮬레이터가 없어 미실행"
+C01,전용 직렬,DHT11 / DHT22,단일선,응용,16,일부,gpio/dht22.md,"DHT22 만 확인, DHT11 은 별도 확인 필요. 드라이버 C 시험 없음, Verilog tb 미실행"
+C02,전용 직렬,HX711 로드셀,전용,응용,,없음,,
+C03,전용 직렬,WS2812 NeoPixel,전용,응용,,없음,,타이밍 엄격
+C04,전용 직렬,TM1637 4자리,전용,기초,12,없음,,MAX7219 로 대체 학습
+B01,병렬,LCD1602 병렬,병렬,기초,15,완비,i2c/lcd1602.md,HD44780 드라이버
+B02,병렬,4x4 키패드,GPIO 스캔,기초,,없음,,
+B03,병렬,직접 구동 LED 매트릭스,GPIO,응용,13,일부,spi/display.md,MAX7219 경유만
+B04,병렬,OV7670 카메라,병렬+SCCB,심화,,없음,,
+F01,산업용,MAX485 RS-485,UART,응용,,문서,uart/modules.md,드라이버 없음(DE/RE 제어)
+F02,산업용,MCP2515 + CAN 트랜시버,SPI,심화,21,완비,can/README.md,S11 과 같은 MCP2515 (중복 항목)
+F03,산업용,4-20mA 수신,ADC,심화,,없음,,
+F04,산업용,0-10V 계측,ADC,심화,,없음,,
+F05,산업용,Modbus RTU,UART,심화,,없음,,
+N01,네트워크,ESP32 보조 MCU,UART,응용,29,없음,,"책 29장은 ESP32-S3 BLE, HM-10 으로 대체"
+N02,네트워크,LoRa SX127x,SPI,심화,,없음,,
