@@ -33,3 +33,25 @@
 모든 소자 문서는 값마다 근거 수준(확인 / 계산 / 설계안 / 미확인, D1 = 데이터시트 열람, D3 = 2차 자료)을 적습니다. 코드는 호스트 모의 테스트까지만, Verilog 는 시뮬레이션 전입니다. 자세한 기준은 [devices/README.md](devices/README.md).
 
 내용은 폴더별로 계속 추가·갱신합니다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [atlas/](atlas/README.md) | atlas |
+| [catalog/](catalog/README.md) | catalog |
+| [devices/](devices/README.md) | devices — 인터페이스별 주변장치 자료 |
+| [soc-map/](soc-map/README.md) | soc-map |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [TODO.md](TODO.md) |  |
+
+<!-- index:end -->

@@ -54,3 +54,41 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | CAN | CAN (PG096 v5.1) | 본문 확인: 레지스터·초기화·비트 타이밍, 7 series, 라이선스는 카탈로그 확인 필요 |
 | Ethernet | AXI Ethernet Lite (PG135 v3.0) | 본문 확인: MII 18신호, 2 KB 버퍼, 무료, 레지스터 맵 |
 | PS/2, 1-Wire, Bluetooth | — | 열람한 AMD IP 없음 → 전용 RTL로 설계 (1-Wire 먼저 작성) |
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [1-wire/](1-wire/README.md) | 1-Wire |
+| [bluetooth/](bluetooth/README.md) | Bluetooth |
+| [can/](can/README.md) | CAN 소자와 SoC 연결 |
+| [data/](data/README.md) | 구조화 데이터(CSV·JSON) |
+| [ethernet/](ethernet/README.md) | 이더넷과 SoC 연결 |
+| [gpio/](gpio/README.md) | GPIO 소자와 PWM 부하 |
+| [i2c/](i2c/README.md) | I2C 소자와 SoC 연결 |
+| [i2s/](i2s/README.md) | I2S 소자와 SoC 연결 |
+| [motor/](motor/README.md) | 모터·서보·스테퍼 |
+| [ps2/](ps2/README.md) | PS/2 (키보드·마우스) 수신 |
+| [spi/](spi/README.md) | SPI 소자와 SoC 연결 |
+| [tools/](tools/README.md) | 검사·생성 스크립트 |
+| [uart/](uart/README.md) | UART 소자와 SoC 연결 |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [BOOK-MAP.md](BOOK-MAP.md) | 교재 목차 대응표 (아두이노 우노 R4 교재 ↔ 이 저장소) |
+| [CATEGORIES.md](CATEGORIES.md) | 주변장치 전체 분류 (필수 항목 목록) |
+| [SELECTION.md](SELECTION.md) | 주변장치 선정 기준과 분류별 대응 |
+| [STATUS.md](STATUS.md) | 아두이노 모듈 현황 (구조화·순서화) |
+| [TEMPLATE.md](TEMPLATE.md) | <부품명> |
+| [TODO.md](TODO.md) | 남은 일 (데이터시트·시뮬레이션 확인 전) |
+| [VERIFICATION.md](VERIFICATION.md) | 적대적 검증 결과 |
+| [run_host_tests.sh](run_host_tests.sh) | 호스트(gcc, python3)에서 모의 레지스터로 실행되는 테스트를 모두 돌린다. Verilog 는 포함하지 않는다(시뮬레이터 필요). |
+
+<!-- index:end -->

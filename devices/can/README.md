@@ -64,3 +64,17 @@ SRR 비트: 0 SRST, 1 CEN. 전원 인가 시 CEN=0, SR의 CONFIG=1.
 테스트: `cd devices && gcc -Wall -include can/tb/mock_can.h -I can/sw can/tb/test_can_mock.c can/sw/axi_can.c -o t && ./t` → ALL PASS.
 
 <!-- nav-foot -->← [i2s](../i2s/README.md) · [devices 목차](../README.md) · [ethernet](../ethernet/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [sw/](sw/README.md) | 드라이버 C 소스 |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+<!-- index:end -->

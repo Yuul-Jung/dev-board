@@ -25,3 +25,18 @@ AXI Quad SPI 로는 D/CX 선과 화면 채우기를 CPU 없이 처리할 수 없
 - 제공: `lcd_set_window`(2Ah → 2Bh → 2Ch, 범위 검사 240x320), `lcd_fill_rect`(FILLCNT 상한 2^20-1 초과 시 분할; 전체 화면 76,800 픽셀은 1회), `lcd_push_pixels`(상위 바이트 먼저, 16비트 색 가정), busy 대기 타임아웃과 OVERRUN 보고.
 - 테스트(`tb/test_ili9341_sw.c`): 윈도우 바이트열, 전체 화면 fill 개수·색, 표 실행·대기 호출, 리셋 대기 시 RESX 레벨, 오류 경로 → ALL PASS. 모의 레지스터는 내가 쓴 RTL 의 사양을 흉내낸 것이라 RTL 자체의 검증이 아님.
 - 막혀 있는 것: ILI9341 데이터시트 본문(표 19.3.4 타이밍, 8.2절 명령 파라미터, 12절 전원 시퀀스, 15.4 리셋 타이밍)을 열 수 있는 사본을 구하지 못했다(열린 사본은 목차와 일부 페이지뿐). 표에 채울 COLMOD·MADCTL 값, 대기 시간, DIV 한계가 모두 이 문서에 달려 있다 — 데이터시트 PDF 를 받으면 초기화 표를 만든다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [ili9341_axil_regs.v](ili9341_axil_regs.v) | ILI9341 엔진용 AXI4-Lite 레지스터. 버스 로직만 있다. |
+| [ili9341_axil_top.v](ili9341_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [ili9341_engine.v](ili9341_engine.v) | ILI9341 4선 SPI 바이트 송신 엔진 (SPI 모드 0, MSB 먼저). |
+
+<!-- index:end -->

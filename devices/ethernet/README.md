@@ -43,3 +43,24 @@ DHCP(IP·DNS 서버 자동 받기)·DNS·NTP 시계 맞추기·HTTP GET 클라�
 별도 IP 없이 UART 모듈(HC-05)로 처리합니다. `../uart/modules.md` 참고. `bluetooth/` 폴더는 HC-05 외 BLE 모듈이 정해질 때 채웁니다.
 
 <!-- nav-foot -->← [can](../can/README.md) · [devices 목차](../README.md) · [bluetooth](../bluetooth/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [ref/](ref/README.md) | 근거 자료와 사실표(교차 검증 대상) |
+| [sw/](sw/README.md) | 드라이버 C 소스 |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [socket-apps.md](socket-apps.md) | 소켓 위 응용: DNS, NTP 시계 맞추기, HTTP GET |
+
+<!-- index:end -->

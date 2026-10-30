@@ -39,3 +39,19 @@ AMD 쪽에서 열람한 1-Wire IP가 없어서 직접 설계합니다. AXI4-Lite
 - 읽기 샘플 시점은 풀업으로 올라오는 상승 시간을 고려하지 않았습니다. 실제 배선에서 파형 확인이 필요합니다.
 - 바이트 단위 명령, CRC 검사, 기생 전원용 강한 풀업 제어는 없습니다.
 - 핀 제약(XDC)은 연결할 Pmod 핀을 정한 뒤 작성합니다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [onewire_axil_regs.v](onewire_axil_regs.v) | AXI4-Lite 슬레이브 레지스터. 로직만 있고 버스 핀은 갖지 않는다. |
+| [onewire_axil_top.v](onewire_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [onewire_bit_engine.v](onewire_bit_engine.v) | 1-Wire 비트 엔진: 리셋/쓰기/읽기 한 동작을 µs 단위로 실행한다. |
+| [onewire_iobuf.v](onewire_iobuf.v) | 오픈 드레인 버스 핀. low=1이면 0을 출력하고, 아니면 Hi-Z로 풀업에 맡긴다. |
+
+<!-- index:end -->

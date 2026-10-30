@@ -34,3 +34,21 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 ## 서보 PWM (SG90 등)
 `servo_engine.v`, `servo_axil_regs.v`, `servo_axil_top.v` — 주기·폭을 µs 단위로 받는 PWM. 폭은 MIN/MAX 레지스터(기본 1000/2000 µs)로 제한하며, SG90 자료마다 펄스 범위가 달라서(500–2400 µs vs 1–2 ms) 소프트웨어가 안전한 범위를 정하도록 했습니다.
 레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기). 테스트벤치 `tb/tb_servo_engine.v`. 시뮬레이션 전. C 드라이버 `../sw/servo.[ch]`, 호스트 시험 `../tb/test_servo.c`.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [dcmotor_axil_regs.v](dcmotor_axil_regs.v) | DC 모터용 AXI4-Lite 레지스터. 버스 로직만 있다. |
+| [dcmotor_axil_top.v](dcmotor_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [dcmotor_engine.v](dcmotor_engine.v) | DC 모터 구동 엔진: PWM 1개 + 방향 2개. L298(ENA, IN1, IN2)과 TB6612FNG(PWM, IN1, IN2) 둘 다 이 출력으로 구동한다 |
+| [servo_axil_regs.v](servo_axil_regs.v) | 서보 PWM용 AXI4-Lite 레지스터. 버스 로직만 있다. |
+| [servo_axil_top.v](servo_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [servo_engine.v](servo_engine.v) | 서보 PWM 엔진: 주기 period_us, 펄스 폭 width_us (마이크로초 단위). |
+
+<!-- index:end -->

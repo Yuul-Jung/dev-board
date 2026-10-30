@@ -63,3 +63,31 @@
 RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를 확인했고 드라이버(`sw/`)는 호스트 모의 테스트까지만 했습니다(위 "드라이버" 절). BME280 드라이버는 [bme280.md](bme280.md). 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
 
 <!-- nav-foot -->← [1-wire](../1-wire/README.md) · [devices 목차](../README.md) · [spi](../spi/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [ref/](ref/README.md) | 근거 자료와 사실표(교차 검증 대상) |
+| [sw/](sw/README.md) | 드라이버 C 소스 |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [ads1115.md](ads1115.md) | ADS1115 (16비트 I2C ADC) |
+| [bme280.md](bme280.md) | BME280 습도·압력·온도 센서 |
+| [clock.md](clock.md) | I2C 시계: DS3231 — D1 |
+| [io-expander.md](io-expander.md) | I/O 확장기: PCF8574, MCP23017 |
+| [lcd1602.md](lcd1602.md) | 문자 LCD: HD44780 (16×2, 20×4) 과 PCF8574 I2C 백팩 |
+| [rtc-eeprom.md](rtc-eeprom.md) | DS1307 실시간 시계, 24xx256 I2C EEPROM |
+| [sensors.md](sensors.md) | I2C 센서: MPU-6050, SHT31, BH1750 |
+| [ssd1306.md](ssd1306.md) | SSD1306 OLED (I2C) 드라이버 |
+
+<!-- index:end -->

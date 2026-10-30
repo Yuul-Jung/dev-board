@@ -37,3 +37,16 @@ Basys3 는 클럭 관리 타일 5개(RM, 확인). 오디오 클럭 aud_mclk 를 
 소자당 3선(BCLK, LRCLK, 데이터) + 선택 핀(INMP441 L/R, MAX98357A SD_MODE·GAIN_SLOT). Pmod 한 포트(8신호)에 마이크 1 + 앰프 1 가능.
 
 <!-- nav-foot -->← [uart](../uart/README.md) · [devices 목차](../README.md) · [can](../can/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [devices.md](devices.md) | I2S 소자: INMP441, MAX98357A |
+
+<!-- index:end -->

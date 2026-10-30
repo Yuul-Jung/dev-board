@@ -107,3 +107,28 @@ Pmod 신호는 3.3 V 로 취급합니다(설계안). 문서 값:
 - microSD, ILI9341 시리얼 타이밍·리셋 타이밍·초기화 순서(재시도했으나 발췌에 본문 없음), SSD1306 SPI 타이밍은 이번에 열어본 문서에서 값을 얻지 못해 미확인으로 남겼습니다(MCP4921 명령 형식은 후속 작업에서 확인 완료, 아래 sensor-adc-dac.md).
 
 <!-- nav-foot -->← [i2c](../i2c/README.md) · [devices 목차](../README.md) · [uart](../uart/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [ref/](ref/README.md) | 근거 자료와 사실표(교차 검증 대상) |
+| [rtl/](rtl/README.md) | Verilog RTL 과 RTL 테스트벤치(시뮬레이터 없음, 미실행) |
+| [sw/](sw/README.md) | 드라이버 C 소스 |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [clock.md](clock.md) | SPI 시계: DS3234 |
+| [comm-storage-io.md](comm-storage-io.md) | SPI 통신·저장·I/O 확장 |
+| [display.md](display.md) | SPI 표시장치: ILI9341, SSD1306, MAX7219 |
+| [sensor-adc-dac.md](sensor-adc-dac.md) | SPI 센서·ADC·DAC: MAX31855, ADXL345, MCP3008, MCP4921 |
+
+<!-- index:end -->

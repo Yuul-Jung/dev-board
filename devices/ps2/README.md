@@ -35,3 +35,18 @@ AMD IP 없음(열람한 문서 범위) → 전용 RTL. 구분: 확인 / 계산 /
 - AXI 레지스터와 FIFO 는 눈으로만 검토했습니다.
 
 <!-- nav-foot -->← [bluetooth](../bluetooth/README.md) · [devices 목차](../README.md) · [motor](../motor/README.md) →
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [rtl/](rtl/README.md) | Verilog RTL 과 RTL 테스트벤치(시뮬레이터 없음, 미실행) |
+| [sw/](sw/README.md) | 드라이버 C 소스 |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+<!-- index:end -->

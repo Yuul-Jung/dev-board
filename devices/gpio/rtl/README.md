@@ -80,3 +80,25 @@ AMD IP로는 맞는 것이 없어 직접 설계했습니다. 구조는 1-Wire RT
 | quad_axil_regs.v | 0x00 COUNT(쓰면 0) · 0x04 STATUS([0] 버튼 [1] press* [2] err* [3] step* [4] 방향) · 0x08 CTRL([0] invert [1] irq_en) |
 | quad_axil_top.v | 배선만 |
 검증: `../tb/model_quad.py`(전이 표·필터 알고리즘의 파이썬 모델, ALL PASS). **Verilog 는 시뮬레이션하지 않았음.** 방향 규약·필터 시간·버튼 극성은 설계안(`../rotary-encoder.md`).
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [dht22_axil_regs.v](dht22_axil_regs.v) | DHT22용 AXI4-Lite 레지스터. 버스 로직만 있다. |
+| [dht22_axil_top.v](dht22_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [dht22_engine.v](dht22_engine.v) | DHT22(AM2302) 단일선 읽기 엔진. |
+| [dht22_iobuf.v](dht22_iobuf.v) | 오픈 드레인 핀. low=1이면 0을 출력하고, 아니면 Hi-Z로 외부 풀업에 맡긴다. |
+| [quad_axil_regs.v](quad_axil_regs.v) | 엔코더용 AXI4-Lite 레지스터. |
+| [quad_axil_top.v](quad_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+| [quad_engine.v](quad_engine.v) | 로터리 엔코더(직교 2상 A/B) 디코더 + 버튼. 입력 3개 모두 동기 + 안정 필터. |
+| [ultrasonic_distance_meter.v](ultrasonic_distance_meter.v) | 출처: 사용자 노션 'UART응용_05.초음파거리계+CDS+LED디밍 / PE.정병우' 의 ultrasonic_distance_meter. |
+| [us_axil_regs.v](us_axil_regs.v) | HC-SR04 거리계용 AXI4-Lite 레지스터. 버스 로직만 있다. |
+| [us_axil_top.v](us_axil_top.v) | 배선만 한다. 로직은 하위 모듈에 있다. |
+
+<!-- index:end -->
