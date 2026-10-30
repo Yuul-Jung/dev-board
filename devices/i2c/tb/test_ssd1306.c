@@ -64,6 +64,37 @@ int main(void)
     fail_after = -1;
     CHECK(oled_init(&o, &iic, 0x50, 0x12, 0) == IIC_ERR_ARGS);
     CHECK(oled_init(&o, &iic, 0x3D, 0x02, 1) == IIC_OK && last_addr == 0x3D);
+
+    /* ---- 변형 검사에서 살아남은 전송 부분 ---- */
+    /* 대비·표시·반전: 바이트와 주소 */
+    nlog = 0; CHECK(oled_contrast(&o, 0x5A) == IIC_OK && nlog == 1 && loglen[0] == 3 && log_[0][0] == 0x00 && log_[0][1] == 0x81 && log_[0][2] == 0x5A);
+    nlog = 0; CHECK(oled_display(&o, 0) == IIC_OK && nlog == 1 && loglen[0] == 2 && log_[0][0] == 0x00 && log_[0][1] == 0xAE);
+    nlog = 0; CHECK(oled_display(&o, 1) == IIC_OK && nlog == 1 && loglen[0] == 2 && log_[0][1] == 0xAF);
+    nlog = 0; CHECK(oled_invert(&o, 1) == IIC_OK && nlog == 1 && loglen[0] == 2 && log_[0][1] == 0xA7);
+    nlog = 0; CHECK(oled_invert(&o, 0) == IIC_OK && nlog == 1 && loglen[0] == 2 && log_[0][1] == 0xA6);
+    fail_after = 0; CHECK(oled_contrast(&o, 1) == IIC_ERR_NACK && oled_display(&o, 1) == IIC_ERR_NACK && oled_invert(&o, 1) == IIC_ERR_NACK); fail_after = -1;
+    /* clear: 모든 바이트가 on 에 따라 0x00 / 0xFF */
+    memset(o.fb, 0x5A, sizeof o.fb); oled_clear(&o, 0); { int ok = 1; for (int i = 0; i < OLED_FB_BYTES; i++) ok &= o.fb[i] == 0x00; CHECK(ok); }
+    memset(o.fb, 0x5A, sizeof o.fb); oled_clear(&o, 1); { int ok = 1; for (int i = 0; i < OLED_FB_BYTES; i++) ok &= o.fb[i] == 0xFF; CHECK(ok); }
+    /* flush: 프레임버퍼 내용이 페이지 순서 그대로 나가고, 창 설정이 정확함 */
+    for (int i = 0; i < OLED_FB_BYTES; i++) o.fb[i] = (uint8_t)(i * 7 + (i >> 7) * 31 + 1);
+    nlog = 0; CHECK(oled_flush(&o) == IIC_OK && nlog == 9);
+    { const uint8_t win[] = { 0x00, 0x21, 0, 127, 0x22, 0, 7 }; CHECK(loglen[0] == 7 && !memcmp(log_[0], win, 7)); }
+    for (int p = 0; p < 8; p++) { CHECK(loglen[1 + p] == 129 && log_[1 + p][0] == 0x40 && !memcmp(log_[1 + p] + 1, o.fb + p * 128, 128)); }
+    /* 전송 중 어느 트랜잭션에서 실패해도 그 오류를 돌려주고 그 뒤를 보내지 않음 */
+    for (int k = 0; k < 9; k++) { nlog = 0; fail_after = k; CHECK(oled_flush(&o) == IIC_ERR_NACK && nlog == (unsigned)k); }
+    fail_after = -1;
+    /* init: 인자 검사, flip, 각 단계 실패, 프레임버퍼 지움 */
+    memset(o.fb, 0xFF, sizeof o.fb);
+    CHECK(oled_init(NULL, &iic, 0x3C, 0x12, 0) == IIC_ERR_ARGS && oled_init(&o, NULL, 0x3C, 0x12, 0) == IIC_ERR_ARGS && oled_init(&o, &iic, 0x3B, 0x12, 0) == IIC_ERR_ARGS && oled_init(&o, &iic, 0x3E, 0x12, 0) == IIC_ERR_ARGS);
+    nlog = 0; CHECK(oled_init(&o, &iic, 0x3C, 0x02, 1) == IIC_OK);
+    { int ok = 1; for (int i = 0; i < OLED_FB_BYTES; i++) ok &= o.fb[i] == 0; CHECK(ok); }       /* init 은 화면을 지운 뒤 보낸다 */
+    { uint8_t fl[64]; unsigned n2 = 0; for (unsigned i = 0; i < 3; i++) { memcpy(fl + n2, log_[i] + 1, loglen[i] - 1); n2 += loglen[i] - 1; }
+      const uint8_t w2[] = {0xAE,0xD5,0x80,0xA8,0x3F,0xD3,0x00,0x40,0x8D,0x14,0x20,0x00,0xA0,0xC0,0xDA,0x02,0x81,0x7F,0xA4,0xA6};
+      CHECK(n2 == sizeof w2 && !memcmp(fl, w2, n2)); }                                            /* flip=1: A0/C0, com_pins 0x02 */
+    for (int k = 0; k < 13; k++) { nlog = 0; fail_after = k; CHECK(oled_init(&o, &iic, 0x3C, 0x12, 0) == IIC_ERR_NACK && nlog == (unsigned)k); }
+    fail_after = -1;
+    nlog = 0; CHECK(oled_init(&o, &iic, 0x3C, 0x12, 0) == IIC_OK && nlog == 13);
     if (!bad) puts("ALL PASS");
     return bad != 0;
 }

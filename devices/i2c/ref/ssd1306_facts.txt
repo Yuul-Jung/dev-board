@@ -1,0 +1,37 @@
+# SSD1306 사실표 — i2c/sw/ssd1306.h 의 SSD1306_ 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다: def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모
+# 근거1 DS = SSD1306(B) 데이터시트 Rev 1.1 (May 2014) 사본 (https://store.comet.bg/download-file.php?id=21565), 웹 가져오기(WebFetch) 요약 경유 → D1(요약 경유).
+#   요약이 "이 PDF 는 SSD1306B 이며 원본 SSD1306 과 다를 수 있다"고 밝혔다 → 원본 칩 문서가 아니다. 최대 I2C 클럭(Table 12-6)은 요약에 없었다.
+# 근거2 ASF = Microchip Advanced Software Framework ssd1306.h 의 SSD1306_CMD_* 매크로 (https://asf.microchip.com/docs/latest/samc21/html/ssd1306_8h.html), 요약 경유 D3 — 33개 매크로를 이번에 열었다.
+#   DS 요약에 없던 항목(START_LINE)은 근거1 자리에 ASF 값을 적고 메모에 표시한다. 인자 값(02/12/14/7F/80)은 ASF 에 없다('-').
+# ---- I2C 주소와 제어 바이트 (DS §7.1.5) ----
+def|SSD1306_ADDR_SA0_L|0x3C|-|DS: 슬레이브 주소 0111100 (SA0 = 0), 뒤에 R/W# 비트. 이전 문서는 nnarain 글(D3)도 0x3C 로 적었으나 이번에는 다시 열지 않음
+def|SSD1306_ADDR_SA0_H|0x3D|-|DS: 0111101 (SA0 = 1). D/C# 핀이 SA0 역할
+def|SSD1306_CTRL_CMD|0x00|-|DS: 제어 바이트 = Co, D/C#, 0 6개. Co=0, D/C#=0 → 0x00 (비트 배치에서 계산)
+def|SSD1306_CTRL_DATA|0x40|-|DS: Co=0, D/C#=1 → 0x40 (계산)
+# ---- 명령 (DS Table 8-1, ASF) ----
+def|SSD1306_CMD_MEM_MODE|0x20|0x20|DS: 인자 00 가로, 01 세로, 10 페이지(리셋), 11 무효
+def|SSD1306_MEM_HORIZONTAL|0x00|-|DS: 인자 00b = 가로 주소 지정
+def|SSD1306_CMD_COLUMN_ADDR|0x21|0x21|DS: 시작·끝 각 0~127, 리셋 0·127
+def|SSD1306_CMD_PAGE_ADDR|0x22|0x22|DS: 시작·끝 각 0~7, 리셋 0·7
+def|SSD1306_CMD_START_LINE|0x40|-|ASF 만(근거1 자리에 ASF 값): SET_DISPLAY_START_LINE(line) = 0x40 | line. DS 요약에는 없었음
+def|SSD1306_CMD_CONTRAST|0x81|0x81|DS: 인자 01~FF, 리셋 7F
+def|SSD1306_CMD_CHARGE_PUMP|0x8D|0x8D|DS: 인자 14h = 켬(7.5 V). 켜는 순서 8Dh → 14h → AFh
+def|SSD1306_CHARGE_PUMP_ON|0x14|-|DS: A[2]=1 이 켬, 14h = 7.5 V. 이전 문서의 nnarain 글(D3)도 0x14
+def|SSD1306_CMD_SEG_REMAP_0|0xA0|0xA0|DS: 열 0 = SEG0 (리셋)
+def|SSD1306_CMD_SEG_REMAP_127|0xA1|0xA1|DS: 열 127 = SEG0
+def|SSD1306_CMD_RAM_DISPLAY|0xA4|0xA4|DS: 출력이 RAM 내용을 따름 (리셋). A5 = 전체 켬
+def|SSD1306_CMD_NORMAL|0xA6|0xA6|DS: 정상 표시 (리셋)
+def|SSD1306_CMD_INVERSE|0xA7|0xA7|DS: 반전 표시
+def|SSD1306_CMD_MUX|0xA8|0xA8|DS: MUX 비율 N+1 (16~64), 리셋 111111b = 64 MUX. 인자 0~14 는 무효
+def|SSD1306_CMD_DISPLAY_OFF|0xAE|0xAE|DS: 표시 끔(슬립), 리셋
+def|SSD1306_CMD_DISPLAY_ON|0xAF|0xAF|DS: 표시 켬
+def|SSD1306_CMD_COM_SCAN_NORMAL|0xC0|0xC0|DS: 정상 COM 스캔 (리셋). ASF 이름 SET_COM_OUTPUT_SCAN_UP
+def|SSD1306_CMD_COM_SCAN_REMAP|0xC8|0xC8|DS: 반전 스캔. ASF 이름 SET_COM_OUTPUT_SCAN_DOWN
+def|SSD1306_CMD_DISPLAY_OFFSET|0xD3|0xD3|DS: 인자 0~63, 리셋 0
+def|SSD1306_CMD_CLOCK|0xD5|0xD5|DS: 인자 A[3:0] 분주비-1, A[7:4] 발진 주파수. 리셋 A[3:0]=0000b, A[7:4]=1000b
+def|SSD1306_CMD_COM_PINS|0xDA|0xDA|DS: 인자 A[4]=0 순차, A[4]=1 번갈아(리셋), A[5] 좌우 리맵
+def|SSD1306_COM_SEQUENTIAL|0x02|-|DS: 순차 COM 핀 = 데이터 02h
+def|SSD1306_COM_ALTERNATIVE|0x12|-|DS: 번갈아 COM 핀 = 12h, 리셋 값
+def|SSD1306_RESET_CONTRAST|0x7F|-|DS: 대비 리셋 값 7Fh
+def|SSD1306_RESET_CLOCK|0x80|-|DS: 클럭 리셋 값 A[7:4]=1000b, A[3:0]=0000b → 0x80
+# ---- 쓰지 않는 명령의 리셋 값(참고): D9 프리차지 phase1·2 = 2 DCLK, DB VCOMH = 0.77×VCC(20h). 스크롤은 2Eh 끄기/2Fh 켜기(미사용, 26/27/29/2A 인자 미확인).

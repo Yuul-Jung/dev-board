@@ -40,7 +40,7 @@
 | PCF8574 | 0x20~0x27 (A2A1A0) | 100 kHz (400 kHz 언급) | 2.5~6 V | [io-expander.md](io-expander.md) |
 | MCP23017 | 0x20~0x27 (A2A1A0) | 400 kHz (고속 1.7 MHz 는 4.5~5.5 V) | 1.8~5.5 V | [io-expander.md](io-expander.md) |
 | ADS1115 (ADC) | 0x48~0x4B (ADDR=GND/VDD/SDA/SCL) | 400 kHz (고속 3.4 MHz) | 2.0~5.5 V | [ads1115.md](ads1115.md) |
-| SSD1306 (OLED) | 0x3C, 0x3D | 미확인 | 로직 1.65~3.3 V | [ssd1306.md](ssd1306.md) (2차 자료 기반) |
+| SSD1306 (OLED) | 0x3C, 0x3D | 미확인 | 로직 1.65~3.3 V | [ssd1306.md](ssd1306.md) (데이터시트 요약 경유 D1, 선·원·삼각형·비트맵·5×7 글꼴) |
 | HD44780 문자 LCD (PCF8574 백팩) | PCF8574 주소(0x20~0x27, 백팩은 모듈별 확인) | 100 kHz 가정 | LCD 5 V 가 흔함(미확인) | [lcd1602.md](lcd1602.md) (요약 경유 D1 + 모델 시험) |
 
 ## 버스 계획 (설계안)
