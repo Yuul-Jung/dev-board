@@ -22,12 +22,24 @@ Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동
 | 07 | CdS 자동 조명 | [열기](examples/07_cds_auto_light/README.md) |
 | 08 | 조이스틱 RGB | [열기](examples/08_joystick_rgb/README.md) |
 
+## 09~16차시 실습 바로가기
+| 차시 | 실습 | 문서·코드 |
+|---|---|---|
+| 09 | millis 비차단 타이머 | [열기](examples/09_millis_timer/README.md) |
+| 10 | 버튼 + 수동 부저 | [열기](examples/10_button_buzzer/README.md) |
+| 11 | 74HC595 + 7세그먼트 | [열기](examples/11_hc595_7segment/README.md) |
+| 12 | MAX7219 LED 매트릭스 | [열기](examples/12_max7219_matrix/README.md) |
+| 13 | PIR 움직임 감지 | [열기](examples/13_pir_led/README.md) |
+| 14 | HC-SR04 거리 측정 | [열기](examples/14_hcsr04_distance/README.md) |
+| 15 | DHT22 온습도 | [열기](examples/15_dht22_temperature/README.md) |
+| 16 | DS18B20 + 거리 경고 | [열기](examples/16_dual_sensor_alarm/README.md) |
+
 ## 진행 현황
 | 산출물 | 상태 |
 |---|---|
 | 32차시 테크트리 | 교육과정 설계안 |
 | 기존 31장 교재/장치 자료 대응표 | 목차 기준 연결 |
-| 01~08차시 실습 문서 및 Sketch | 소스 작성, 컴파일·실물 확인 전 |
+| 01~16차시 실습 문서 및 Sketch | 소스 작성, 컴파일·실물 확인 전 |
 | 나머지 차시 Sketch | 미작성 |
 | Arduino UNO R4 보드 검증 | 미실시 |
 
