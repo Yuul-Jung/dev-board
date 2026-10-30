@@ -361,6 +361,10 @@
   "id": "hc06",
   "interface": "uart",
   "category": "bluetooth",
+  "vcc_v": [
+   3.6,
+   6
+  ],
   "baud_default": 9600,
   "format": "8N1",
   "profile": "SPP",
@@ -376,6 +380,10 @@
   "vcc_v": [
    2.5,
    3.3
+  ],
+  "breakout_vcc_v": [
+   3.6,
+   6
   ],
   "evidence": "D1"
  },
