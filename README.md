@@ -25,6 +25,8 @@
 | PS/2 | [ps2](devices/ps2/README.md) |
 | 모터·서보·스테퍼 | [motor](devices/motor/README.md) |
 
+**한눈에 보기: [모듈 현황 STATUS](devices/STATUS.md)**(72종 상태·빈틈 순서) · 교재 대응: [BOOK-MAP](devices/BOOK-MAP.md) · 선정 기준: [SELECTION](devices/SELECTION.md)
+
 범주 전체: [CATEGORIES](devices/CATEGORIES.md) · 남은 일: [TODO](devices/TODO.md) · **검증 결과: [VERIFICATION](devices/VERIFICATION.md)**
 
 ## 읽는 법
