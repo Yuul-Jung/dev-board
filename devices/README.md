@@ -19,6 +19,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
 | [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교, W5500 위 DHCP·DNS·NTP·HTTP·JSON 응용([socket-apps.md](ethernet/socket-apps.md)) | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
 | [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05·HC-06·HM-10 은 `uart/` 에 있음 |
+| [`SELECTION.md`](SELECTION.md) | 주변장치 선정 기준(1순위 아두이노, 2순위 디질런트)과 분류별 대응 | 모터·블루투스·문자 LCD 만 조사 |
 | [`data/`](data/README.md) | 위 소자의 구조화 데이터 ([devices.json](data/devices.json)) | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.

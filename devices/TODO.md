@@ -16,6 +16,7 @@
 - Ethernet: Pmod NIC100 최대 SPI 클럭, W5500 모듈 사양, MicroBlaze V 에서 emaclite 동작
 - I2S: 12.288 MHz 를 MMCM 으로 정확히 만들 수 있는지, 마스터 코덱 소자
 - 기타: 1-Wire DS2438 등, 책 29장의 ESP32-S3 BLE(HM-10 은 AT 명령 브리지만 다룸)
+- **선정 기준(1순위 아두이노, 2순위 디질런트)**: [SELECTION.md](SELECTION.md) 에서 모터·블루투스·문자 LCD 만 조사. 나머지 분류(센서·시계·저장·오디오·CAN·이더넷·GPS 등)의 아두이노/Pmod 대응 조사, Pmod BT2/BLE(RN-42·RN4871 명령 레퍼런스)·Pmod HB5·Pmod CLS 드라이버, 아두이노 Motor Shield Rev3 회로도 PDF 열람.
 - **모듈 회로도(사용자 확정본)**: L298 모듈, HC-06, HM-10, I2C LCD 백팩의 확정 회로도를 받으면 `motor/l298.md` 모듈 표, `uart/modules.md`, `i2c/lcd1602.md` 를 그 회로도로 다시 대조(전원·레벨·핀 배치·풀업·점퍼). 지금 표는 일반 시판 보드 기준.
 ## 사용자 쪽 실행이 필요한 것
 - Vivado 에서 모든 `tb/` Verilog 테스트벤치 실행(이 환경에는 시뮬레이터 없음), 합성·타이밍 확인
