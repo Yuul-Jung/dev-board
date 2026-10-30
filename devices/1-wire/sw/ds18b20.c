@@ -1,45 +1,112 @@
-/* MicroBlaze V 용 DS18B20 드라이버 예시. onewire_axil_top 레지스터를 비트 단위로 사용한다.
- * 주의: 컴파일과 실제 보드 시험은 아직 하지 않았다. 스크래치패드 바이트 순서와 CRC는 데이터시트로 확인 필요. */
-#include <stdint.h>
+#include "ds18b20.h"
 
-#define OW_BASE   0x44A00000u            /* Vivado 주소 편집기에서 정한 값으로 바꿀 것 */
-#define OW_CMD    (*(volatile uint32_t *)(OW_BASE + 0x00))
-#define OW_STAT   (*(volatile uint32_t *)(OW_BASE + 0x04))
-
-#define OP_RESET  0u
-#define OP_WRITE  1u
-#define OP_READ   2u
-#define ST_BUSY   (1u << 0)
-#define ST_DONE   (1u << 1)
-#define ST_PRES   (1u << 2)
-#define ST_RBIT   (1u << 3)
-
-static void ow_run(uint32_t cmd) {
-    while (OW_STAT & ST_BUSY) { }
-    OW_CMD = cmd;
-    while (!(OW_STAT & ST_DONE)) { }
+uint8_t ds18b20_crc8(const uint8_t *p, unsigned n)
+{
+    uint8_t crc = 0;
+    while (n--) {
+        uint8_t b = *p++;
+        for (int i = 0; i < 8; i++) {                 /* 반사형 0x8C = x^8+x^5+x^4+1 */
+            uint8_t mix = (uint8_t)((crc ^ b) & 1);
+            crc >>= 1;
+            if (mix) crc ^= DS_CRC_POLY_REFLECTED;
+            b >>= 1;
+        }
+    }
+    return crc;
 }
-static int ow_reset(void) { ow_run(OP_RESET); return (OW_STAT & ST_PRES) != 0; }
-static void ow_write_bit(int b) { ow_run(OP_WRITE | ((uint32_t)(b & 1) << 2)); }
-static int ow_read_bit(void) { ow_run(OP_READ); return (OW_STAT & ST_RBIT) != 0; }
 
-static void ow_write_byte(uint8_t v) { for (int i = 0; i < 8; i++) ow_write_bit((v >> i) & 1); }
-static uint8_t ow_read_byte(void) {
+unsigned ds18b20_resolution_bits(uint8_t config) { return 9u + ((config >> DS_CFG_RES_SHIFT) & 3u); }
+
+int32_t ds18b20_raw_to_uc(int16_t raw, unsigned bits)
+{
+    if (bits < 9 || bits > 12) bits = 12;
+    int32_t v = raw;
+    int undef = (int)(12 - bits);                       /* 하위 미정의 비트 수 */
+    v = (v >> undef) * (1 << undef);                    /* 산술 시프트: 음수도 내림 */
+    return v * 62500;                                   /* 1/16 °C = 62500 µ°C: 정수로 정확 */
+}
+
+uint32_t ds18b20_tconv_ms(unsigned bits)
+{
+    static const uint16_t t[4] = { DS_TCONV_MS_9, 188, 375, DS_TCONV_MS_12 };   /* 93.75 / 187.5 / 375 / 750 ms 를 올림 */
+    if (bits < 9 || bits > 12) bits = 12;
+    return t[bits - 9];
+}
+
+static int ow_run(uintptr_t b, uint32_t cmd)
+{
+    for (uint32_t i = 0; (OW_RD(b, OW_REG_STAT) & OW_ST_BUSY); i++) if (i >= DS_BUS_SPINS) return DS_ERR_BUS;
+    OW_WR(b, OW_REG_CMD, cmd);
+    for (uint32_t i = 0; !(OW_RD(b, OW_REG_STAT) & OW_ST_DONE); i++) if (i >= DS_BUS_SPINS) return DS_ERR_BUS;
+    return DS_OK;
+}
+static int ow_reset(uintptr_t b)
+{
+    int r = ow_run(b, OW_OP_RESET);
+    if (r < 0) return r;
+    return (OW_RD(b, OW_REG_STAT) & OW_ST_PRES) ? DS_OK : DS_ERR_NODEV;
+}
+static int ow_wbyte(uintptr_t b, uint8_t v)
+{
+    for (int i = 0; i < 8; i++) { int r = ow_run(b, OW_OP_WRITE | ((uint32_t)((v >> i) & 1) << 2)); if (r < 0) return r; }
+    return DS_OK;
+}
+static int ow_rbit(uintptr_t b)
+{
+    int r = ow_run(b, OW_OP_READ);
+    if (r < 0) return r;
+    return (OW_RD(b, OW_REG_STAT) & OW_ST_RBIT) ? 1 : 0;
+}
+static int ow_rbyte(uintptr_t b, uint8_t *out)
+{
     uint8_t v = 0;
-    for (int i = 0; i < 8; i++) v |= (uint8_t)(ow_read_bit() << i);
-    return v;
+    for (int i = 0; i < 8; i++) { int r = ow_rbit(b); if (r < 0) return r; v |= (uint8_t)(r << i); }
+    *out = v; return DS_OK;
 }
 
-/* 소자 1개만 연결된 버스에서 온도(1/16 °C 단위)를 읽는다. 응답이 없으면 0x7FFFFFFF를 돌려준다 */
-int32_t ds18b20_read_raw(void) {
-    if (!ow_reset()) return 0x7FFFFFFF;
-    ow_write_byte(0xCC);                 /* Skip ROM */
-    ow_write_byte(0x44);                 /* Convert T */
-    /* 12비트 변환은 최대 750 ms. 여기서는 타이머로 기다리는 부분을 생략했다. */
-    if (!ow_reset()) return 0x7FFFFFFF;
-    ow_write_byte(0xCC);
-    ow_write_byte(0xBE);                 /* Read Scratchpad */
-    uint8_t lo = ow_read_byte();
-    uint8_t hi = ow_read_byte();
-    return (int16_t)((hi << 8) | lo);    /* 12비트 분해능에서 1 LSB = 0.0625 °C */
+int ds18b20_read_scratchpad(uintptr_t base, uint8_t sp[9])
+{
+    if (!sp) return DS_ERR_ARGS;
+    int r = ow_reset(base); if (r < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_SKIP_ROM)) < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_READ_SP)) < 0) return r;
+    uint8_t t[9];
+    for (int i = 0; i < 9; i++) if ((r = ow_rbyte(base, &t[i])) < 0) return r;
+    if (ds18b20_crc8(t, 8) != t[8]) return DS_ERR_CRC;
+    for (int i = 0; i < 9; i++) sp[i] = t[i];
+    return DS_OK;
+}
+
+int ds18b20_set_resolution(uintptr_t base, unsigned bits, int8_t th, int8_t tl)
+{
+    if (bits < 9 || bits > 12) return DS_ERR_ARGS;
+    int r = ow_reset(base); if (r < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_SKIP_ROM)) < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_WRITE_SP)) < 0) return r;
+    if ((r = ow_wbyte(base, (uint8_t)th)) < 0) return r;
+    if ((r = ow_wbyte(base, (uint8_t)tl)) < 0) return r;
+    return ow_wbyte(base, (uint8_t)(DS_CFG_BASE | ((bits - 9) << DS_CFG_RES_SHIFT)));
+}
+
+int ds18b20_convert(uintptr_t base, uint32_t max_polls)
+{
+    int r = ow_reset(base); if (r < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_SKIP_ROM)) < 0) return r;
+    if ((r = ow_wbyte(base, DS_CMD_CONVERT)) < 0) return r;
+    for (uint32_t i = 0; i < max_polls; i++) {
+        r = ow_rbit(base);
+        if (r < 0) return r;
+        if (r == 1) return DS_OK;
+    }
+    return DS_ERR_TIMEOUT;
+}
+
+int ds18b20_read_uc(uintptr_t base, uint32_t max_polls, int32_t *uc)
+{
+    if (!uc) return DS_ERR_ARGS;
+    int r = ds18b20_convert(base, max_polls); if (r < 0) return r;
+    uint8_t sp[9];
+    if ((r = ds18b20_read_scratchpad(base, sp)) < 0) return r;
+    *uc = ds18b20_raw_to_uc((int16_t)(((unsigned)sp[1] << 8) | sp[0]), ds18b20_resolution_bits(sp[4]));
+    return DS_OK;
 }

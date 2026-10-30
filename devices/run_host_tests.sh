@@ -46,6 +46,9 @@ cc -I gpio/sw gpio/tb/test_analog_sensors.c gpio/sw/analog_sensors.c -o "$T/anl"
 cc -include motor/tb/mock_motor.h -I motor/sw motor/tb/test_dcmotor.c motor/sw/dcmotor.c -o "$T/dcmotor" && run dcmotor "$T/dcmotor"
 cc -include gpio/tb/mock_gpio.h -I gpio/sw -I motor/sw motor/tb/test_stepper.c motor/sw/stepper.c gpio/sw/axi_gpio.c -o "$T/stepper" -lm && run stepper "$T/stepper"
 cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_rtttl.c gpio/sw/rtttl.c gpio/sw/axi_timer_pwm.c -o "$T/rtttl" -lm && run rtttl "$T/rtttl"
+cc -include 1-wire/tb/mock_ow.h -I 1-wire/sw 1-wire/tb/test_ds18b20.c 1-wire/sw/ds18b20.c -o "$T/ds18b20" -lm && run ds18b20 "$T/ds18b20"
+cc -include gpio/tb/mock_dht.h -I gpio/sw gpio/tb/test_dht22.c gpio/sw/dht22.c -o "$T/dht22" && run dht22 "$T/dht22"
+cc -include gpio/tb/mock_us.h -I gpio/sw gpio/tb/test_ultrasonic.c gpio/sw/ultrasonic.c -o "$T/ultrasonic" && run ultrasonic "$T/ultrasonic"
 cc -I ps2/sw ps2/tb/test_ps2_sw.c ps2/sw/ps2.c -o "$T/ps2" && run ps2-sw "$T/ps2"
 run ps2-model python3 ps2/tb/model_ps2_rx.py
 run quad-model python3 gpio/tb/model_quad.py

@@ -1,26 +1,48 @@
-/* MicroBlaze V 용 DHT22 드라이버 예시. 컴파일과 보드 시험은 아직 하지 않았다. */
-#include <stdint.h>
+#include "dht22.h"
 
-#define DHT_BASE  0x44A20000u   /* Vivado 주소 편집기에서 정한 값으로 바꿀 것 */
-#define DHT_CMD   (*(volatile uint32_t *)(DHT_BASE + 0x00))
-#define DHT_STAT  (*(volatile uint32_t *)(DHT_BASE + 0x04))
-#define DHT_RH    (*(volatile uint32_t *)(DHT_BASE + 0x08))
-#define DHT_TEMP  (*(volatile uint32_t *)(DHT_BASE + 0x0C))
+int dht22_read_raw(uintptr_t b, uint16_t *rh_raw, uint16_t *temp_raw, uint8_t *chk)
+{
+    if (!rh_raw || !temp_raw) return DHT_ERR_ARGS;
+    for (uint32_t i = 0; DHT_RD(b, DHT_REG_STAT) & DHT_ST_BUSY; i++) if (i >= DHT_SPINS) return DHT_ERR_BUS;
+    DHT_WR(b, DHT_REG_CMD, 1);
+    uint32_t s;
+    for (uint32_t i = 0;; i++) {
+        s = DHT_RD(b, DHT_REG_STAT);
+        if (s & DHT_ST_DONE) break;
+        if (i >= DHT_SPINS) return DHT_ERR_BUS;
+    }
+    if (s & DHT_ST_ERR) return DHT_ERR_NORESP;
+    if (!(s & DHT_ST_CSUM)) return DHT_ERR_CSUM;
+    *rh_raw = (uint16_t)DHT_RD(b, DHT_REG_RH);
+    *temp_raw = (uint16_t)DHT_RD(b, DHT_REG_TEMP);
+    if (chk) *chk = (uint8_t)DHT_RD(b, DHT_REG_CHK);
+    return DHT_OK;
+}
 
-#define ST_BUSY  (1u << 0)
-#define ST_DONE  (1u << 1)
-#define ST_ERR   (1u << 2)
-#define ST_CSUM  (1u << 3)
+int32_t dht22_temp_x10(uint16_t raw)
+{
+    int32_t mag = raw & ~DHT_SIGN_BIT;
+    return (raw & DHT_SIGN_BIT) ? -mag : mag;
+}
 
-/* 성공하면 0. 읽기 간격은 2초보다 길게 두는 것은 호출하는 쪽 책임이다(데이터시트: 수집 주기 2초 초과). */
-int dht22_read(uint16_t *rh_raw, uint16_t *temp_raw) {
-    while (DHT_STAT & ST_BUSY) { }
-    DHT_CMD = 1;
-    while (!(DHT_STAT & ST_DONE)) { }
-    uint32_t s = DHT_STAT;
-    if (s & ST_ERR)     return -1;   /* 응답 없음 또는 시간 초과 */
-    if (!(s & ST_CSUM)) return -2;   /* 체크섬 불일치 */
-    *rh_raw = (uint16_t)DHT_RH;      /* 0.1 %RH 단위(분해능 0.1 %RH) */
-    *temp_raw = (uint16_t)DHT_TEMP;  /* 0.1 °C 단위. 음수 표현 방식은 데이터시트 미확인 */
-    return 0;
+int dht22_read(uintptr_t base, int32_t *rh_x10, int32_t *temp_x10)
+{
+    if (!rh_x10 || !temp_x10) return DHT_ERR_ARGS;
+    uint16_t rh, t;
+    int r = dht22_read_raw(base, &rh, &t, 0);
+    if (r < 0) return r;
+    int32_t tv = dht22_temp_x10(t);
+    if (rh > DHT_RH_MAX_X10 || tv > DHT_TEMP_MAX_X10 || tv < DHT_TEMP_MIN_X10) return DHT_ERR_RANGE;
+    *rh_x10 = rh; *temp_x10 = tv;
+    return DHT_OK;
+}
+
+void dht22_init(dht22_t *d, uintptr_t base) { if (!d) return; d->base = base; d->last_ms = 0; d->has_last = 0; }
+
+int dht22_read_paced(dht22_t *d, uint32_t now_ms, int32_t *rh_x10, int32_t *temp_x10)
+{
+    if (!d || !rh_x10 || !temp_x10) return DHT_ERR_ARGS;
+    if (d->has_last && (uint32_t)(now_ms - d->last_ms) <= DHT_MIN_PERIOD_MS) return DHT_ERR_TOOSOON;
+    d->last_ms = now_ms; d->has_last = 1;
+    return dht22_read(d->base, rh_x10, temp_x10);
 }

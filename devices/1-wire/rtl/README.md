@@ -12,7 +12,7 @@ AMD 쪽에서 열람한 1-Wire IP가 없어서 직접 설계합니다. AXI4-Lite
 | `onewire_bit_engine.v` | 리셋·쓰기·읽기 슬롯 타이밍 |
 | `onewire_iobuf.v` | 오픈 드레인 핀 (`SIMULATION` 정의 시 동작 모델) |
 | `../tb/tb_onewire_engine.v` | 엔진 단독 테스트벤치 |
-| `../sw/ds18b20.c` | MicroBlaze V 쪽 드라이버 예시 |
+| `../sw/ds18b20.c` | MicroBlaze V 쪽 드라이버 (비트 단위 모의 소자 시험 있음, `../tb/test_ds18b20.c`) |
 
 ## 레지스터
 | 오프셋 | 이름 | 비트 |

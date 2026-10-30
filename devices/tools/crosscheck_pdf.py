@@ -196,7 +196,10 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('HM-10',('uart','sw','hm10.h'),('uart','ref','hm10_facts.txt'),'HM10_'),
                              ('SSD1306',('i2c','sw','ssd1306.h'),('i2c','ref','ssd1306_facts.txt'),'SSD1306_'),
                              ('스테퍼 28BYJ-48',('motor','sw','stepper.h'),('motor','ref','stepper_facts.txt'),'STEPPER_(?:(?:MOTOR|GEAR|HZ|PAT)_|PHASE)'),
-                             ('RTTTL',('gpio','sw','rtttl.h'),('gpio','ref','rtttl_facts.txt'),'RTTTL_(?:NAME_M|DEFAULT_|OCT_|BPM_|A4_)')]:
+                             ('RTTTL',('gpio','sw','rtttl.h'),('gpio','ref','rtttl_facts.txt'),'RTTTL_(?:NAME_M|DEFAULT_|OCT_|BPM_|A4_)'),
+                             ('DS18B20',('1-wire','sw','ds18b20.h'),('1-wire','ref','ds18b20_facts.txt'),'(?:DS_(?:CRC|CFG|POWERON|TCONV|CMD)_|OW_(?:REG|OP|ST)_)'),
+                             ('DHT22',('gpio','sw','dht22.h'),('gpio','ref','dht22_facts.txt'),'DHT_(?:MIN|SIGN|RH|TEMP|REG|ST)_'),
+                             ('HC-SR04',('gpio','sw','ultrasonic.h'),('gpio','ref','ultrasonic_facts.txt'),'US_(?:US_PER|CM_|DIST_|REG_|ST_)')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}

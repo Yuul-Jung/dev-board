@@ -10,7 +10,7 @@
 | `us_axil_regs.v` | AXI4-Lite 레지스터와 인터럽트 (새로 작성) |
 | `us_axil_top.v` | 배선만 하는 상위 모듈 (새로 작성) |
 | `../tb/tb_ultrasonic.v` | 코어 테스트벤치 (10 cm, 100 cm, 타임아웃) |
-| `../sw/ultrasonic.c` | MicroBlaze V 드라이버 예시 |
+| `../sw/ultrasonic.c` | MicroBlaze V 드라이버 (호스트 모의 레지스터 시험 있음, `../tb/test_ultrasonic.c`) |
 
 ## 레지스터
 | 오프셋 | 이름 | 비트 |
@@ -41,7 +41,7 @@ AMD IP로는 맞는 것이 없어 직접 설계했습니다. 구조는 1-Wire RT
 | `dht22_engine.v` | 시작 신호, 응답 확인, 40비트 수신, 체크섬 |
 | `dht22_iobuf.v` | 오픈 드레인 핀 (`SIMULATION` 정의 시 동작 모델) |
 | `../tb/tb_dht22_engine.v` | 엔진 테스트벤치: 정상, 체크섬 오류, 소자 없음 |
-| `../sw/dht22.c` | MicroBlaze V 드라이버 예시 |
+| `../sw/dht22.c` | MicroBlaze V 드라이버 (호스트 모의 레지스터 시험 있음, `../tb/test_dht22.c`) |
 
 ## 레지스터
 | 오프셋 | 이름 | 내용 |

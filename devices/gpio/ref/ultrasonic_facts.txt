@@ -1,0 +1,16 @@
+# HC-SR04 사실표 — gpio/sw/ultrasonic.h 의 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다.
+# 근거 DS = gpio/hc-sr04.md 가 인용한 제조사 데이터시트 사본(D1). 근거 RTL = 이 저장소의 rtl/us_axil_regs.v 머리말(설계안 — 외부 문서가 아님).
+def|US_US_PER_CM|58|-|DS: 거리[cm] = High 시간[µs] / 58
+def|US_CM_MIN|2|-|DS: 측정 범위 최소 2 cm
+def|US_CM_MAX|400|-|DS: 측정 범위 최대 4 m
+def|US_DIST_MASK|0x3FF|-|RTL: DIST[9:0]
+def|US_REG_CTRL|0x00|-|RTL
+def|US_REG_STAT|0x04|-|RTL
+def|US_REG_DIST|0x08|-|RTL
+def|US_REG_BCD|0x0C|-|RTL
+def|US_REG_IRQEN|0x10|-|RTL
+def|US_ST_BUSY|1|-|RTL: STATUS[0]
+def|US_ST_VALID|2|-|RTL: STATUS[1]
+def|US_ST_TIMEOUT|4|-|RTL: STATUS[2] (1 을 쓰면 지움)
+def|US_ST_DONE|8|-|RTL: STATUS[3] (1 을 쓰면 지움)
+!val|데이터시트 사본의 "동작 주파수 40Hz" 표기: 40 kHz 초음파의 오기로 보고 쓰지 않음|40|40000|gpio/hc-sr04.md 에 이미 기록

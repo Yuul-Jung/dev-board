@@ -1,0 +1,20 @@
+# DHT22 사실표 — gpio/sw/dht22.h 의 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다.
+# 근거 DS = gpio/dht22.md 가 인용한 데이터시트 사본(D1). 근거 RIOT = RIOT-OS drivers/dht/dht.c (웹 가져오기 요약 경유 D3) — 온도 부호·체크섬은 데이터시트 사본에 없었다.
+# 근거 RTL = 이 저장소의 rtl/dht22_axil_regs.v 머리말(설계안 — 외부 문서가 아님).
+def|DHT_MIN_PERIOD_MS|2000|-|DS: 수집 주기 2 s 초과 ("초과"라 드라이버는 2000 ms 이하를 거부)
+def|DHT_SIGN_BIT|0x8000|-|RIOT: 온도 비트 15 가 1 이면 음수, 크기는 하위 15비트
+def|DHT_RH_MAX_X10|1000|-|DS: 습도 0~100 %RH, 0.1 단위
+def|DHT_TEMP_MAX_X10|800|-|DS: 온도 상한 80 °C, 0.1 단위
+def|DHT_TEMP_MIN_X10|-400|-|DS: 온도 하한 -40 °C, 0.1 단위
+def|DHT_REG_CMD|0x00|-|RTL
+def|DHT_REG_STAT|0x04|-|RTL
+def|DHT_REG_RH|0x08|-|RTL
+def|DHT_REG_TEMP|0x0C|-|RTL
+def|DHT_REG_CHK|0x10|-|RTL
+def|DHT_REG_IRQEN|0x14|-|RTL
+def|DHT_ST_BUSY|1|-|RTL: STATUS[0]
+def|DHT_ST_DONE|2|-|RTL: STATUS[1]
+def|DHT_ST_ERR|4|-|RTL: STATUS[2]
+def|DHT_ST_CSUM|8|-|RTL: STATUS[3]
+!val|온도 부호 표현과 체크섬 규칙의 근거 독립성: 데이터시트 사본에 없어 RIOT-OS 코드 한 곳으로만 확인|1|0|RIOT 가 데이터시트를 보고 쓴 것일 수 있음(독립 아님)
+!val|RIOT 는 체크섬 0 을 거부(checksum != 0)하지만 이 드라이버는 RTL 의 csum_ok 만 믿음|0|1|0 프레임(전부 0 + 체크섬 0)은 실제 센서가 내지 않는다고 보고 따로 거르지 않음(설계안)

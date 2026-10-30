@@ -1,0 +1,24 @@
+# DS18B20 사실표 — 1-wire/sw/ds18b20.h 의 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다.
+# 근거 DS = DS18B20 데이터시트(user-web.icecube.wisc.edu 의 PDF 사본, 웹 가져오기 요약 경유 D1 요약 경유 — 원문 PDF 는 직접 열지 못함).
+#   근거가 하나뿐이라 두 번째 칸은 '-'. 설정 바이트 값(1Fh/3Fh/5Fh/7Fh)은 요약이 "비트 배치에서 유도한 값, 문서에 직접 표기 없음"이라고 했다(계산).
+# 근거 RTL = 이 저장소의 rtl/README.md 와 onewire_axil_regs.v (설계안 — 우리가 정한 레지스터이지 외부 문서가 아님).
+def|DS_CRC_POLY_REFLECTED|0x8C|-|DS: 다항식 x^8+x^5+x^4+1 의 비트 반사형(계산)
+def|DS_CFG_BASE|0x1F|-|DS: 설정 바이트 비트 4:0 은 1, 비트 7 은 0
+def|DS_CFG_RES_SHIFT|5|-|DS: R1R0 = 비트 6:5
+def|DS_POWERON_RAW|0x0550|-|DS: 전원 투입 값 +85 °C (0550h)
+def|DS_TCONV_MS_9|94|-|DS: 93.75 ms 를 올림
+def|DS_TCONV_MS_12|750|-|DS: 12비트 최대 750 ms
+def|DS_CMD_SKIP_ROM|0xCC|-|DS: Skip ROM
+def|DS_CMD_CONVERT|0x44|-|DS: Convert T
+def|DS_CMD_READ_SP|0xBE|-|DS: Read Scratchpad
+def|DS_CMD_WRITE_SP|0x4E|-|DS: Write Scratchpad
+def|OW_REG_CMD|0x00|-|RTL: CMD (쓰기)
+def|OW_REG_STAT|0x04|-|RTL: STATUS (읽기)
+def|OW_OP_RESET|0|-|RTL: CMD[1:0] 0 = 리셋
+def|OW_OP_WRITE|1|-|RTL: 1 = 쓰기
+def|OW_OP_READ|2|-|RTL: 2 = 읽기
+def|OW_ST_BUSY|1|-|RTL: STATUS[0]
+def|OW_ST_DONE|2|-|RTL: STATUS[1]
+def|OW_ST_PRES|4|-|RTL: STATUS[2]
+def|OW_ST_RBIT|8|-|RTL: STATUS[3]
+!val|예약 바이트 5~7 값: 본문은 "모두 1", 메모리 표는 FFh,0Ch,10h|0xFFFFFF|0x100CFF|이 드라이버는 이 값을 읽지 않음
