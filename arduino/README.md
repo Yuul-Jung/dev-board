@@ -10,12 +10,24 @@ Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동
 - [`devices/`](../devices/README.md): 공통 센서·모듈의 기술자료와 근거/한계. 이곳의 MicroBlaze V 드라이버를 Arduino용으로 오인하지 않는다.
 - [`soc-map/`](../soc-map/README.md): 동일 부품의 FPGA/SoC 구현 경로
 
+## 01~08차시 실습 바로가기
+| 차시 | 실습 | 문서·코드 |
+|---|---|---|
+| 01 | LED와 버튼 | [열기](examples/01_led_button/README.md) |
+| 02 | 버튼 디바운스·토글 | [열기](examples/02_button_toggle/README.md) |
+| 03 | 버튼 2개와 RGB LED | [열기](examples/03_rgb_buttons/README.md) |
+| 04 | Serial 명령 LED | [열기](examples/04_serial_led/README.md) |
+| 05 | 가변저항 ADC | [열기](examples/05_pot_adc/README.md) |
+| 06 | 가변저항 PWM | [열기](examples/06_pot_pwm/README.md) |
+| 07 | CdS 자동 조명 | [열기](examples/07_cds_auto_light/README.md) |
+| 08 | 조이스틱 RGB | [열기](examples/08_joystick_rgb/README.md) |
+
 ## 진행 현황
 | 산출물 | 상태 |
 |---|---|
 | 32차시 테크트리 | 교육과정 설계안 |
 | 기존 31장 교재/장치 자료 대응표 | 목차 기준 연결 |
-| 01차시 LED+버튼 예제 | 소스 작성, 컴파일·실물 확인 전 |
+| 01~08차시 실습 문서 및 Sketch | 소스 작성, 컴파일·실물 확인 전 |
 | 나머지 차시 Sketch | 미작성 |
 | Arduino UNO R4 보드 검증 | 미실시 |
 
