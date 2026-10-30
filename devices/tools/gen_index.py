@@ -48,7 +48,7 @@ def nav(d):
 
 def block(d):
     dirs = sorted(x for x in os.listdir(d) if os.path.isdir(os.path.join(d, x)) and x not in SKIP and not x.startswith('.'))
-    files = sorted(x for x in os.listdir(d) if os.path.isfile(os.path.join(d, x)) and x != 'README.md')
+    files = sorted(x for x in os.listdir(d) if os.path.isfile(os.path.join(d, x)) and x not in ('README.md', 'index.html', '.nojekyll'))
     L = [B, '<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->', '']
     if dirs:
         L += ['### 하위 폴더', '', '| 폴더 | 내용 |', '|---|---|']
