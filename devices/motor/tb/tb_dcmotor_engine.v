@@ -3,7 +3,7 @@
 module tb_dcmotor_engine;
     reg clk = 0, rstn = 0;
     always #500 clk = ~clk;   // 1 MHz
-    reg enable = 0; reg [1:0] mode = 0; reg [15:0] duty = 25; reg [31:0] period = 100;
+    reg enable = 0; reg [1:0] mode = 0; reg [31:0] duty = 25; reg [31:0] period = 100;
     wire pwm, in1, in2, guard; wire [1:0] applied;
 
     dcmotor_engine #(.CLK_MHZ(1), .DEAD_US(20)) dut (

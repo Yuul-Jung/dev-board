@@ -28,7 +28,7 @@ module dcmotor_axil_top #(
 );
     wire        enable, guard;
     wire [1:0]  mode, applied_mode;
-    wire [15:0] duty;
+    wire [31:0] duty;
     wire [31:0] period;
 
     dcmotor_axil_regs #(.PERIOD_DEFAULT(PERIOD_DEFAULT)) u_regs (

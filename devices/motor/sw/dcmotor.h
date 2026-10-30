@@ -1,7 +1,7 @@
 /* DC 모터 드라이버 (L298N / TB6612FNG / Pmod HB5). AXI4-Lite 커스텀 RTL 경유.
  * 레지스터 맵 (dcmotor_axil_regs.v):
  *   0x00 CTRL   [0]=enable [2:1]=mode(0 코스트,1 정회전,2 역회전,3 브레이크)
- *   0x04 DUTY   [15:0] 켜짐 클럭 수
+ *   0x04 DUTY   [31:0] 켜짐 클럭 수 (예전 RTL 은 [15:0] — 기본 주기 100000 에서 66 % 넘는 듀티가 잘렸다. 이 드라이버는 쓴 값을 다시 읽어 확인한다)
  *   0x08 PERIOD [31:0] PWM 주기 클럭 수
  *   0x0C STATUS [1:0]=적용된 mode [2]=방향 전환 대기
  *
@@ -27,8 +27,13 @@
 
 enum mot_mode { MOT_COAST = 0, MOT_FWD = 1, MOT_REV = 2, MOT_BRAKE = 3 };
 
-/* percent: 0..100, 범위 밖은 클램프. period=0 이면 duty=0. */
-void motor_set(uintptr_t base, int mode, int percent);
+#define MOT_OK            0
+#define MOT_ERR_ARGS     (-1)   /* mode 가 0..3 이 아님 */
+#define MOT_ERR_DUTY     (-2)   /* DUTY 를 쓴 값이 그대로 읽히지 않음(예전 16비트 RTL 등). 안전을 위해 CTRL=0 으로 멈춘다 */
+
+/* percent: 0..100, 범위 밖은 클램프. period=0 이면 duty=0. 듀티는 mode 가 정/역회전일 때만 의미가 있다(코스트는 EN=Low, 브레이크는 EN=High 고정).
+ * 쓰기 순서: DUTY → (읽어서 확인) → CTRL. 방향 전환 보호는 RTL 이 한다(STATUS[2]). */
+int motor_set(uintptr_t base, int mode, int percent);
 void motor_stop(uintptr_t base);
 
 #endif /* DCMOTOR_H */

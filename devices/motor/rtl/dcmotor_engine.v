@@ -9,7 +9,7 @@ module dcmotor_engine #(
     input  wire        rstn,
     input  wire        enable,
     input  wire [1:0]  mode,
-    input  wire [15:0] duty,        // 0..period. period 이상이면 항상 켜짐
+    input  wire [31:0] duty,        // 0..period. period 이상이면 항상 켜짐
     input  wire [31:0] period,      // 클럭 수
     output reg         pwm,
     output reg         in1,
@@ -25,7 +25,7 @@ module dcmotor_engine #(
 
     wire [1:0]  want = enable ? mode : 2'd0;
     wire [31:0] per  = (period == 32'd0) ? 32'd1 : period;
-    wire        pwm_core = (cnt < {16'd0, duty});
+    wire        pwm_core = (cnt < duty);
 
     assign applied_mode = cur;
     assign guard = (dead != 32'd0);
