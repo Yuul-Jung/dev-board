@@ -23,6 +23,7 @@
 - DS18B20·DHT22·HC-SR04: 데이터시트 PDF 원문 대조(지금은 웹 요약 경유), DHT22 온도 부호·체크섬은 RIOT 코드 외의 독립 근거, HC-SR04 코어에서 enable 을 껐다 켜면 측정이 새로 시작하는지
 
 ## 검증을 뒤로 미룬 것 (사용자 요청)
+- CdS 상대 밝기·스위치(`analog_sensors.[ch]`): 변형 검사 후 STATUS 에서 「완비」로
 - SG90 서보 드라이버(`motor/sw/servo.[ch]`): 변형 검사, 사실표(`motor/ref/servo_facts.txt`) 작성·등록, 통과 후 STATUS 에서 「완비」로
 
 ## 전용 드라이버가 없는 GPIO 모듈 (STATUS.md 에서 「문서만」)

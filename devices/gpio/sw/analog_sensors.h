@@ -41,6 +41,16 @@ int ldr_ohms(int32_t v_mv, int32_t vcc_mv, uint32_t r_fixed_ohm, int ldr_top, ui
 int ldr_lux(uint32_t r_ldr_ohm, uint32_t r10_ohm, double gamma, double *lux);
 #endif
 
+/* CdS 상대 밝기 (사용자 결정: 조도 환산 없이 ADC 값 하나만 쓰고, 감도는 외부 고정 저항 R_fixed 값으로 조정한다).
+ * 밝을수록 LDR 저항이 작아지므로: ldr_top = 0 (LDR 이 GND 쪽)이면 밝을수록 전압이 내려가고, ldr_top = 1 이면 올라간다.
+ * 결과는 0..100 (밝을수록 큼). 비율(raw / raw_max)만 쓰므로 분압 전원이 ADC 기준 전압과 같으면 전원 전압에 상관없다(설계안).
+ * raw_max == 0 이면 AN_ERR_ARGS, raw 가 raw_max 를 넘으면 raw_max 로 자른다. 반올림. */
+int cds_brightness_pct(uint32_t raw, uint32_t raw_max, int ldr_top);
+/* 낮/밤 스위치: 슈미트 트리거. pct >= hi_pct 이면 밝음(1), pct <= lo_pct 이면 어두움(0), 그 사이는 이전 값을 유지. 처음에는 어두움. */
+typedef struct { uint8_t lo_pct, hi_pct, bright; } cds_switch_t;
+int cds_switch_init(cds_switch_t *s, unsigned lo_pct, unsigned hi_pct);       /* 0 <= lo < hi <= 100 아니면 AN_ERR_ARGS */
+int cds_switch_update(cds_switch_t *s, unsigned pct);                        /* 새 상태(1 밝음 / 0 어두움), 오류는 음수 */
+
 /* 가변저항·조이스틱 */
 int32_t an_map(int32_t x, int32_t in_lo, int32_t in_hi, int32_t out_lo, int32_t out_hi);   /* 아두이노 map() 과 같은 선형 사상이지만 반올림하고 in_lo == in_hi 를 오류로 취급(오류면 out_lo) */
 int an_percent(uint32_t raw, uint32_t raw_max);             /* 0..100, 반올림, raw 가 raw_max 를 넘으면 100 으로 자름. raw_max 가 0 이면 AN_ERR_ARGS */

@@ -92,6 +92,24 @@ int main(void)
         if (c + dz < 1023) CHK(joy_axis(1023, c, dz, 1023) == 100);
         if (c > dz) CHK(joy_axis(0, c, dz, 1023) == -100);
     }
+    /* ---- CdS 상대 밝기 ---- */
+    CHK(cds_brightness_pct(0, 1023, 1) == 0 && cds_brightness_pct(1023, 1023, 1) == 100 && cds_brightness_pct(512, 1023, 1) == 50);
+    CHK(cds_brightness_pct(0, 1023, 0) == 100 && cds_brightness_pct(1023, 1023, 0) == 0 && cds_brightness_pct(512, 1023, 0) == 50);
+    CHK(cds_brightness_pct(2000, 1023, 1) == 100 && cds_brightness_pct(2000, 1023, 0) == 0);        /* 초과는 raw_max 로 */
+    CHK(cds_brightness_pct(1, 3, 1) == 33 && cds_brightness_pct(2, 3, 1) == 67 && cds_brightness_pct(1, 3, 0) == 67);
+    CHK(cds_brightness_pct(5, 0, 1) == AN_ERR_ARGS && cds_brightness_pct(0, 0, 0) == AN_ERR_ARGS);
+    for (uint32_t r = 0; r <= 1023; r++) {                                                           /* 위쪽/아래쪽 배선은 서로 거울상, 단조 */
+        int a = cds_brightness_pct(r, 1023, 1), b = cds_brightness_pct(r, 1023, 0);
+        CHK(a + b == 100 && a >= 0 && a <= 100);
+        if (r) CHK(a >= cds_brightness_pct(r - 1, 1023, 1) && b <= cds_brightness_pct(r - 1, 1023, 0));
+    }
+    cds_switch_t sw;
+    CHK(cds_switch_init(&sw, 30, 60) == AN_OK && sw.bright == 0);
+    CHK(cds_switch_update(&sw, 45) == 0 && cds_switch_update(&sw, 59) == 0 && cds_switch_update(&sw, 60) == 1);     /* 60 이상이면 밝음 */
+    CHK(cds_switch_update(&sw, 45) == 1 && cds_switch_update(&sw, 31) == 1 && cds_switch_update(&sw, 30) == 0);     /* 30 이하이면 어두움 */
+    CHK(cds_switch_update(&sw, 59) == 0 && cds_switch_update(&sw, 100) == 1 && cds_switch_update(&sw, 0) == 0);
+    CHK(cds_switch_init(&sw, 50, 50) == AN_ERR_ARGS && cds_switch_init(&sw, 60, 30) == AN_ERR_ARGS && cds_switch_init(&sw, 0, 101) == AN_ERR_ARGS && cds_switch_init(0, 10, 20) == AN_ERR_ARGS);
+    CHK(cds_switch_init(&sw, 0, 100) == AN_OK && cds_switch_update(&sw, 0) == 0 && cds_switch_update(&sw, 100) == 1 && cds_switch_update(0, 5) == AN_ERR_ARGS);
     printf(fails ? "FAILED %d\n" : "ALL PASS (analog sensors)\n", fails);
     return fails != 0;
 }

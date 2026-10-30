@@ -9,7 +9,7 @@ chapter,topic,part,status,where,note
 12-13,4자리 7세그·LED 매트릭스,기초,완비,spi/display.md,MAX7219
 14,내장 LED 매트릭스,기초,해당 없음,,우노 R4 고유
 15,텍스트 LCD,기초,완비,i2c/lcd1602.md,
-16,센서 모음,기초,일부,gpio/hc-sr04.md,"HC-SR04·DHT22·DS18B20 드라이버 시험 완료. CdS lux 미확인, PIR 전용 드라이버 없음"
+16,센서 모음,기초,일부,gpio/hc-sr04.md,"HC-SR04·DHT22·DS18B20 시험 완료, CdS 는 상대 밝기로 결정(lux 환산 안 함, 변형 검사 미실시), PIR 전용 드라이버 없음"
 17,소리·RTTTL·부저,기초,일부,gpio/rtttl.md,"이번 세션: RTTTL, 명세 충돌 3건·부저 사양 미확인"
 18,UART,통신,완비,uart/README.md,
 19,I2C + I2C LCD,통신,완비,i2c/README.md,

@@ -9,7 +9,7 @@ G07,GPIO 출력,LED·RGB LED,GPIO,기초,6,완비,gpio/basic-io.md,RGB·HSV 포�
 G08,GPIO 출력,능동 부저,GPIO,기초,17,문서,gpio/buzzer.md,부저 사양 미확인
 G09,GPIO 출력,릴레이 모듈,GPIO,기초,6,문서,gpio/relay-srd05.md,전용 드라이버·시험 없음. 일반 GPIO 출력으로 구동하는 문서만
 G10,GPIO 출력,포토커플러 절연,GPIO,심화,,일부,motor/l298.md,L298 문서 안에 일부만
-A01,아날로그 입력,CdS 조도센서,ADC,기초,16,일부,gpio/analog-sensors.md,lux 환산은 셀 자료 필요(미확인)
+A01,아날로그 입력,CdS 조도센서,ADC,기초,16,일부,gpio/analog-sensors.md,"상대 밝기(0~100 %)+슈미트 스위치, lux 환산은 하지 않기로 결정(감도는 외부 R_fixed). 변형 검사 미실시(뒤로 미룸)"
 A02,아날로그 입력,가변저항,ADC,기초,8,완비,gpio/analog-sensors.md,"%·map 변환(설계안, 모델 시험)"
 A03,아날로그 입력,2축 조이스틱,ADC,기초,8,완비,gpio/analog-sensors.md,
 A04,아날로그 입력,토양 수분(아날로그),ADC,응용,,없음,,변환 함수 재사용 가능

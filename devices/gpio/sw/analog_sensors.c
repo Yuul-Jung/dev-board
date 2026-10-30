@@ -33,6 +33,29 @@ int lm35_read_uv(int variant, int32_t uv, int32_t *mdegc)
     return ok ? AN_OK : AN_ERR_RANGE;
 }
 
+int cds_brightness_pct(uint32_t raw, uint32_t raw_max, int ldr_top)
+{
+    if (raw_max == 0) return AN_ERR_ARGS;
+    if (raw > raw_max) raw = raw_max;
+    int p = an_percent(raw, raw_max);
+    return ldr_top ? p : 100 - p;
+}
+
+int cds_switch_init(cds_switch_t *s, unsigned lo_pct, unsigned hi_pct)
+{
+    if (!s || lo_pct >= hi_pct || hi_pct > 100) return AN_ERR_ARGS;
+    s->lo_pct = (uint8_t)lo_pct; s->hi_pct = (uint8_t)hi_pct; s->bright = 0;
+    return AN_OK;
+}
+
+int cds_switch_update(cds_switch_t *s, unsigned pct)
+{
+    if (!s) return AN_ERR_ARGS;
+    if (pct >= s->hi_pct) s->bright = 1;
+    else if (pct <= s->lo_pct) s->bright = 0;
+    return s->bright;
+}
+
 int ldr_ohms(int32_t v, int32_t vcc, uint32_t rf, int ldr_top, uint32_t *out)
 {
     if (!out || vcc <= 0 || rf == 0) return AN_ERR_ARGS;
