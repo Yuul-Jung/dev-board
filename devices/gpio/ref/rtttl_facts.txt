@@ -1,0 +1,17 @@
+# RTTTL 사실표 — gpio/sw/rtttl.h 의 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다:
+#   def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모   /   !val|설명|값1|값2 (알려진 불일치, 실패로 세지 않음)
+# 근거 MF = mobilefish RTTTL 명세 페이지, 근거 JS = 1j01/rtttl.js 문서, 근거 WK = Wikipedia "Ring Tone Text Transfer Language" — 모두 웹 가져오기 요약 경유 D3.
+#   Nokia 원문(독립 원 명세)은 열지 못했다. 세 자료가 서로 베낀 것일 수 있어 일치가 독립 근거라고 보기 어렵다.
+def|RTTTL_NAME_MAX|10|10|MF, WK: 이름 최대 10자
+def|RTTTL_DEFAULT_DUR|4|4|MF, JS: 기본 길이 4
+def|RTTTL_DEFAULT_OCT|6|6|MF, WK: 기본 옥타브 6 (JS 는 4 로 적어 아래 !val)
+def|RTTTL_DEFAULT_BPM|63|63|MF, JS: 기본 b=63
+def|RTTTL_OCT_MIN|4|4|MF: 옥타브 4~7
+def|RTTTL_OCT_MAX|7|7|MF: 옥타브 4~7
+def|RTTTL_BPM_MIN|25|25|MF: 박자 목록의 최솟값 25
+def|RTTTL_BPM_MAX|900|900|MF: 박자 목록의 최댓값 900
+def|RTTTL_A4_HZ|440|440|MF, WK: 옥타브 4(명세 번호)의 A = 440 Hz로 읽는 해석
+!val|기본 옥타브|6|4|MF·WK 는 6, JS 문서는 4 — 드라이버는 6
+!val|1박의 기준|4|8|명세에 박자→시간 식이 없음. 드라이버는 1박 = 4분음표(관례). JS 예제는 d=8 을 1박으로 읽히게 적음 — 설계안
+!val|옥타브 4 의 A 주파수|440|220|WK 는 "A below middle C" 라 220 Hz 로도 읽힘. MF·JS 는 440 — 드라이버는 440
+# ---- 설계안 (문서 근거 없음, 사실표에 넣지 않음): RTTTL_NAME_LIMIT 15, RTTTL_BEATS_PER_WHOLE 4, RTTTL_GAP_PCT_DEFAULT 10

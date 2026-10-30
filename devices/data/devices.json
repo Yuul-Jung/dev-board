@@ -100,7 +100,12 @@
    7,
    15
   ],
-  "evidence": "D1 partial"
+  "evidence": "D1 요약 경유(SSD1306B Rev 1.1 사본: 명령·주소·리셋값) + D3(ASF 명령 코드); 최대 SCL 미확인",
+  "i2c_addr7": [
+   "0x3C",
+   "0x3D"
+  ],
+  "driver": "i2c/sw/ssd1306.c (보드 미실행)"
  },
  {
   "id": "max7219",
@@ -717,5 +722,47 @@
   "category": "light",
   "evidence": "설계안 (분압식은 회로 이론, 조도 환산은 셀 데이터시트 필요 — 미확인)",
   "driver": "gpio/sw/analog_sensors.c"
+ },
+ {
+  "id": "28byj-48",
+  "interface": "gpio",
+  "category": "stepper",
+  "vcc_v": 5,
+  "phases": 4,
+  "gear_nominal": 64,
+  "gear_measured": 63.68395,
+  "freq_hz": {
+   "operating": 100,
+   "pull_in_min": 600,
+   "pull_out_min": 1000
+  },
+  "coil_order": "A-AB-B-BC-C-CD-D-DA",
+  "coil_to_in": "A..D = IN1..IN4 (설계안)",
+  "driver": "motor/sw/stepper.c (보드 미실행)",
+  "evidence": "D1 요약 경유(사양) + D3(여자 순서)"
+ },
+ {
+  "id": "rtttl",
+  "interface": "gpio",
+  "category": "sound",
+  "freq_range_hz": [
+   262,
+   3951
+  ],
+  "bpm_range": [
+   25,
+   900
+  ],
+  "octave_range": [
+   4,
+   7
+  ],
+  "conflicts": [
+   "기본 옥타브 6 대 4",
+   "1박의 기준",
+   "옥타브 4 의 A 440 대 220"
+  ],
+  "driver": "gpio/sw/rtttl.c (부저 PWM 위, 보드 미실행)",
+  "evidence": "D3 요약 경유(명세 3건, 서로 충돌) + 계산"
  }
 ]

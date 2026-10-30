@@ -193,7 +193,10 @@ for tag,hdr,facts,prefix in [('MAX7219',('spi','sw','max7219.h'),('spi','ref','m
                              ('DHCP',('ethernet','sw','dhcp.h'),('ethernet','ref','dhcp_facts.txt'),'DH(?:CP|O)_'),
                              ('JSON',('ethernet','sw','json.h'),('ethernet','ref','json_facts.txt'),'JSON_(?:CTRL|HEX|ESC)_'),
                              ('HC-06',('uart','sw','hc06.h'),('uart','ref','hc06_facts.txt'),'HC06_'),
-                             ('HM-10',('uart','sw','hm10.h'),('uart','ref','hm10_facts.txt'),'HM10_')]:
+                             ('HM-10',('uart','sw','hm10.h'),('uart','ref','hm10_facts.txt'),'HM10_'),
+                             ('SSD1306',('i2c','sw','ssd1306.h'),('i2c','ref','ssd1306_facts.txt'),'SSD1306_'),
+                             ('스테퍼 28BYJ-48',('motor','sw','stepper.h'),('motor','ref','stepper_facts.txt'),'STEPPER_(?:(?:MOTOR|GEAR|HZ|PAT)_|PHASE)'),
+                             ('RTTTL',('gpio','sw','rtttl.h'),('gpio','ref','rtttl_facts.txt'),'RTTTL_(?:NAME_M|DEFAULT_|OCT_|BPM_|A4_)')]:
     hp=os.path.join(HERE,'..',*hdr); fp=os.path.join(HERE,'..',*facts)
     if os.path.exists(hp) and os.path.exists(fp): facts_check(tag,hp,fp,prefix)
 PDFTAGS={'MCP2515','PG079','PG090','PG096','PG142','PG153','nRF24'}

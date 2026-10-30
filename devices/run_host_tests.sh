@@ -16,6 +16,7 @@ cc -I i2c/sw i2c/tb/test_rtc_eeprom.c i2c/sw/rtc_eeprom.c -o "$T/rtce" && run rt
 cc -I i2c/sw i2c/tb/test_io_expander.c i2c/sw/io_expander.c -o "$T/ioe" && run io-expander "$T/ioe"
 cc -I i2c/sw i2c/tb/test_ads1115.c i2c/sw/ads1115.c -o "$T/ads" && run ads1115 "$T/ads"
 cc -I i2c/sw i2c/tb/test_ssd1306.c i2c/sw/ssd1306.c -o "$T/oled" && run ssd1306 "$T/oled"
+cc -I i2c/sw i2c/tb/test_oled_gfx.c i2c/sw/ssd1306.c -o "$T/oledg" -lm && run oled-gfx "$T/oledg"
 cc -I i2c/sw i2c/tb/test_hd44780.c i2c/sw/hd44780.c i2c/sw/hd44780_pcf8574.c -o "$T/hd44780" && run hd44780-model "$T/hd44780"
 cc -I spi/sw spi/tb/test_mcp2515_model.c spi/sw/mcp2515.c -o "$T/mcm" && run mcp2515-model "$T/mcm"
 cc -I spi/sw spi/tb/test_nrf24_model.c spi/sw/nrf24l01.c -o "$T/nrf" && run nrf24-model "$T/nrf"
@@ -43,6 +44,8 @@ cc -include gpio/tb/mock_gpio.h -I gpio/sw gpio/tb/test_axi_gpio.c gpio/sw/axi_g
 cc -include gpio/tb/mock_timer_b.h -I gpio/sw gpio/tb/test_basic_io.c gpio/sw/basic_io.c gpio/sw/axi_timer_pwm.c -o "$T/bio" -lm && run basic-io-model "$T/bio"
 cc -I gpio/sw gpio/tb/test_analog_sensors.c gpio/sw/analog_sensors.c -o "$T/anl" -lm && run analog-sensors "$T/anl"
 cc -include motor/tb/mock_motor.h -I motor/sw motor/tb/test_dcmotor.c motor/sw/dcmotor.c -o "$T/dcmotor" && run dcmotor "$T/dcmotor"
+cc -include gpio/tb/mock_gpio.h -I gpio/sw -I motor/sw motor/tb/test_stepper.c motor/sw/stepper.c gpio/sw/axi_gpio.c -o "$T/stepper" -lm && run stepper "$T/stepper"
+cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_rtttl.c gpio/sw/rtttl.c gpio/sw/axi_timer_pwm.c -o "$T/rtttl" -lm && run rtttl "$T/rtttl"
 cc -I ps2/sw ps2/tb/test_ps2_sw.c ps2/sw/ps2.c -o "$T/ps2" && run ps2-sw "$T/ps2"
 run ps2-model python3 ps2/tb/model_ps2_rx.py
 run quad-model python3 gpio/tb/model_quad.py

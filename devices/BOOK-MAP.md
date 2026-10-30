@@ -22,7 +22,7 @@
 | 14장 | 내장 LED 매트릭스 | 우노 R4 고유 | 해당 없음 |
 | 15장 | 텍스트 LCD | [HD44780 드라이버](i2c/lcd1602.md): 16×2·20×4, 사용자 글자, 백라이트(모델 시험, 요약 경유 D1). 백팩 핀 배치는 모듈 관례(미확인) | 완비(모델 시험, 보드 미실행) |
 | 16장 | 센서(LM35, CdS, PIR, 초음파, 온습도) | [PIR](gpio/hc-sr501.md), [HC-SR04](gpio/hc-sr04.md), [DHT22](gpio/dht22.md), LM35·CdS 변환([analog-sensors.md](gpio/analog-sensors.md), LM35 는 요약 경유 D1, CdS 조도 환산은 셀 자료 필요) | 일부(CdS lux 미확인) |
-| 17장 | 소리(tone, RTTTL, 버저) | [부저](gpio/buzzer.md)(사양 미확인), PWM 드라이버. RTTTL 없음. I2S 오디오 [INMP441·MAX98357A](i2s/devices.md)는 책 밖 추가 | 일부 |
+| 17장 | 소리(tone, RTTTL, 버저) | [부저](gpio/buzzer.md)(사양 미확인), PWM 드라이버, [RTTTL 플레이어](gpio/rtttl.md)(해석기+비차단 재생, 명세 충돌 3건 미해결). I2S 오디오 [INMP441·MAX98357A](i2s/devices.md)는 책 밖 추가 | 일부 |
 
 ## 4~5부 통신·고급 입출력 (18~24장)
 | 책 | 주제 | 이 저장소 | 상태 |
@@ -32,7 +32,7 @@
 | 20장 | SPI + SD 카드 | [spi/](spi/README.md) 완비(AXI Quad SPI, 14종+). microSD 는 [미확인](spi/comm-storage-io.md) | 일부 |
 | 21장 | CAN | [can/](can/README.md): AXI CAN, MCP2515(드라이버·모델 테스트), SN65HVD230 | 완비 |
 | 22장 | RTC | [DS3231·DS1307](i2c/clock.md), [DS3234](spi/clock.md). 내장 RTC 는 해당 없음 | 완비 |
-| 23장 | OLED(도형·이미지) | [SSD1306 드라이버](i2c/ssd1306.md). 책의 도형·이미지 수준까지 가는지는 확인 안 함 | 일부 |
+| 23장 | OLED(도형·이미지) | [SSD1306 드라이버](i2c/ssd1306.md): 점·선·사각형·원(외곽/채움)·삼각형(외곽/채움)·비트맵(MSB 우선)·5×7 글꼴 문자열·반전(성질 기반 모델 시험, 명령은 SSD1306B 데이터시트 요약 D1+ASF D3). 책의 비트맵 형식·하드웨어 스크롤은 미확인/없음 | 완비(모델 시험, 보드 미실행) |
 | 24장 | 가속도·각속도(MPU-6050) | [MPU-6050](i2c/sensors.md) 드라이버. ADXL345 는 책 밖 추가 | 완비 |
 
 ## 6~7부 모터·무선 (25~31장)
@@ -40,7 +40,7 @@
 |---|---|---|---|
 | 25장 | DC 모터 | [L298](motor/l298.md), [TB6612FNG](motor/tb6612fng.md), 전용 RTL, [드라이버](motor/sw/dcmotor.c) | 일부(RTL 시뮬레이션 전) |
 | 26장 | 서보 | [SG90](motor/sg90.md), 전용 RTL | 일부(RTL 시뮬레이션 전) |
-| 27장 | 스텝 모터 | [28BYJ-48 + ULN2003](motor/28byj-48.md). 속도 제어 라이브러리 수준은 없음 | 문서 |
+| 27장 | 스텝 모터 | [28BYJ-48 + ULN2003](motor/28byj-48.md): [드라이버](motor/sw/stepper.c) — 풀·하프·웨이브, 속도(rpm)·각도 이동, 비차단 `poll`, 정지·해제(모델 시험, 요약 경유 D1+D3). 가감속 곡선·AccelStepper 수준은 없음. 코일 순서의 IN 대응은 설계안 | 완비(모델 시험, 보드 미실행) |
 | 28장 | 블루투스 클래식(HC-06) | [HC-06 AT 명령 드라이버](uart/modules.md)(D3, 같은 저자 2건, 제조사 데이터시트 미확인) + [HC-05](uart/modules.md). 연결 후 데이터 송수신은 UART Lite 그대로 | 완비(호스트 시험까지) |
 | 29장 | 저전력 블루투스(ESP32-S3) | [HM-10 계열 BLE UART 모듈 드라이버](uart/modules.md)(데이터시트 2건 요약 경유). 책의 ESP32-S3 자체는 모듈 선정 전 | 일부 |
 | 30장 | 인터넷·Wi-Fi(웹 클라이언트, 날씨, NTP) | Wi-Fi/ESP 없음. 유선 대안은 [ethernet/](ethernet/README.md)의 W5500([드라이버·모델 시험](spi/comm-storage-io.md), 요약 경유 D1+D3), 소켓 위 응용은 [DNS·NTP 시계 맞추기·HTTP GET](ethernet/socket-apps.md)(호스트 모델 시험까지, HTTPS·날씨 JSON 해석은 없음) | 일부 |
@@ -52,6 +52,6 @@
 남은 것:
 1. **소켓 위 응용의 나머지**(30장): HTTPS, 실제 날씨 API 응답으로의 확인(JSON 해석 자체는 6절), NTP 왕복 지연 보정, 실제 서버와의 상호 동작 확인. DHCP·DNS·NTP·HTTP·JSON 의 기본 동작과 W5500 UDP 수신 헤더는 [socket-apps.md](ethernet/socket-apps.md).
 2. **교재 6~9장 이후의 응용 예제**: 조이스틱·RGB 를 함께 쓰는 데모처럼 장치를 묶는 예제는 만들지 않았다.
-3. **자료가 막힌 것**: microSD 규격, HC-06 제조사 데이터시트(2차 자료로 만들었음), 책의 ESP32-S3 BLE 와 Wi-Fi 모듈 선정, 부저 사양, 책의 도형·이미지 수준 OLED, 스텝 모터 속도 제어.
+3. **자료가 막힌 것**: microSD 규격, HC-06 제조사 데이터시트(2차 자료로 만들었음), 책의 ESP32-S3 BLE 와 Wi-Fi 모듈 선정, 부저 사양, 책이 쓰는 OLED 비트맵 형식·하드웨어 스크롤.
 
 <!-- nav-foot -->[devices 목차](README.md)
