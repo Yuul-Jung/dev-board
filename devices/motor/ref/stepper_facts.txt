@@ -1,0 +1,28 @@
+# 28BYJ-48 스테퍼 사실표 — motor/sw/stepper.h 의 상수를 대조하는 근거. 줄 형식은 gpio/ref/axi_gpio_facts.txt 와 같다:
+#   def|헤더 매크로 이름|근거1 값|근거2 값(없으면 -)|메모   /   !val|설명|값1|값2 (알려진 불일치, 실패로 세지 않음)
+# 근거1 DS = 28BYJ-48 데이터시트 사본 (https://pdf.direnc.net/upload/28byj-48-reduktorlu-step-motor-datasheet.pdf), 웹 가져오기(WebFetch) 요약 경유 → D1(요약 경유).
+#   그 사본에는 코일 여자 순서표(1~8 단계)와 4단계/8단계 설명이 없다고 요약이 밝힘 → 순서는 아래 SEQ 에서 가져옴.
+# 근거2 CS = 교육용 PDF (https://ocw.cs.pub.ro/courses/_media/pm/prj2023/alucaci/control_28byj-48_stepper_motor_with_uln2003_driver.pdf) 요약 경유 D3: 풀스텝 32 스텝/회전, 감속 1/63.68395, 주파수 100 Hz, 4상. 순서표는 없다고 밝힘.
+# 근거 SEQ1 = Arduino Stepper 라이브러리 Stepper.cpp 사본 (https://ccrma.stanford.edu/~fgeorg/250a/lab2/arduino-0019/libraries/Stepper/Stepper.cpp, 요약 경유 D3): 4선 case 0..3 = 1010, 0110, 0101, 1001 (핀 1..4).
+# 근거 SEQ2 = CheapStepper README (https://github.com/drp0/CheapStepper, 요약 경유 D3): 반스텝 "A-AB-B-BC-C-CD-D-DA", 4096 미니스텝/회전, 감속 64:1(표기)·63.68395:1(실측). 배선 그림은 못 읽음.
+# 대응(설계안): A..D = IN1..IN4, 비트 0 = IN1. SEQ1 은 핀 순서 (1,3,2,4) = (IN1,IN3,IN2,IN4) 로 읽을 때 SEQ2 의 AB,BC,CD,DA 와 일치(시험 t_tables 가 계산으로 확인) — 두 자료는 서로 독립이므로 일관성은 근거가 되지만 IN 번호와 실제 코일의 대응은 회로도로 확인하지 못했다.
+# ---- 기계적 수치 ----
+def|STEPPER_MOTOR_STEPS_FULL|32|32|DS: 스텝각 5.625°/64 → 하프 64, 풀 32 (계산). CS: "32 steps per revolution", 11.25°
+def|STEPPER_MOTOR_STEPS_HALF|64|64|DS: 5.625° 표기에서 360/5.625 = 64 (계산). SEQ2: 4096 미니스텝 = 64 × 64:1 (계산)
+def|STEPPER_GEAR_NOMINAL_MICRO|64000000|64000000|DS: 감속비 1/64. SEQ2: 64:1 (제조사 표기)
+def|STEPPER_GEAR_MEASURED_MICRO|63683950|63683950|SEQ2: 63.68395:1 실측. CS: 1/63.68395
+!val|출력축 풀 스텝 수/회전: 표기 감속비(64) 기준 2048 대 실측 기준 약 2038|2048|2038|CS: 32 × 63.68395 ≈ 2037.89. 둘이 다른 것은 감속비 가정 차이이므로 드라이버는 감속비를 설정 가능하게 둠
+# ---- 주파수 (무부하 값; 부하가 있으면 더 낮아진다 — 부하 값은 미확인) ----
+def|STEPPER_HZ_OPERATING|100|100|DS: Operating frequency 100 Hz. CS: Frequency 100 Hz
+def|STEPPER_HZ_PULL_IN|600|-|DS: Idle in-traction (pull-in) frequency > 600 Hz — 드라이버의 기본 한계로 사용
+def|STEPPER_HZ_PULL_OUT|1000|-|DS: Idle out-traction (pull-out) frequency > 1000 Hz — 사용자가 올릴 수 있는 상한
+def|STEPPER_PHASES|4|4|DS: 4상. CS: 4 phases (중앙 탭 공통)
+# ---- 코일 상태 (비트 0 = IN1 ... 비트 3 = IN4) ----
+def|STEPPER_PAT_A|0x1|-|SEQ2: 단일 코일 A (SEQ1 에는 단일 상태가 없음)
+def|STEPPER_PAT_AB|0x3|0x3|SEQ2: AB. SEQ1: case 0 = 1010 → 핀1,핀3 = IN1,IN2
+def|STEPPER_PAT_B|0x2|-|SEQ2: B
+def|STEPPER_PAT_BC|0x6|0x6|SEQ2: BC. SEQ1: case 1 = 0110 → 핀2,핀3 = IN3,IN2
+def|STEPPER_PAT_C|0x4|-|SEQ2: C
+def|STEPPER_PAT_CD|0xC|0xC|SEQ2: CD. SEQ1: case 2 = 0101 → 핀2,핀4 = IN3,IN4
+def|STEPPER_PAT_D|0x8|-|SEQ2: D
+def|STEPPER_PAT_DA|0x9|0x9|SEQ2: DA. SEQ1: case 3 = 1001 → 핀1,핀4 = IN1,IN4
