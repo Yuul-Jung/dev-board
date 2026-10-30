@@ -22,6 +22,9 @@
 - **모듈 회로도(사용자 확정본)**: L298 모듈, HC-06, HM-10, I2C LCD 백팩의 확정 회로도를 받으면 `motor/l298.md` 모듈 표, `uart/modules.md`, `i2c/lcd1602.md` 를 그 회로도로 다시 대조(전원·레벨·핀 배치·풀업·점퍼). 지금 표는 일반 시판 보드 기준.
 - DS18B20·DHT22·HC-SR04: 데이터시트 PDF 원문 대조(지금은 웹 요약 경유), DHT22 온도 부호·체크섬은 RIOT 코드 외의 독립 근거, HC-SR04 코어에서 enable 을 껐다 켜면 측정이 새로 시작하는지
 
+## 하지 않기로 한 것 (사용자 결정 2026-10-31, AMD IP 와 중복)
+- MCP3208, ENC28J60 모듈, 자체 I²C·SPI·UART 마스터 RTL(AMD AXI IIC·QSPI·UART Lite 사용). STATUS.md 에서 「제외」
+
 ## 검증을 뒤로 미룬 것 (사용자 요청)
 - CdS 상대 밝기·스위치(`analog_sensors.[ch]`): 변형 검사 후 STATUS 에서 「완비」로
 - SG90 서보 드라이버(`motor/sw/servo.[ch]`): 변형 검사, 사실표(`motor/ref/servo_facts.txt`) 작성·등록, 통과 후 STATUS 에서 「완비」로
