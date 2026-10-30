@@ -44,6 +44,7 @@ cc -include gpio/tb/mock_gpio.h -I gpio/sw gpio/tb/test_axi_gpio.c gpio/sw/axi_g
 cc -include gpio/tb/mock_timer_b.h -I gpio/sw gpio/tb/test_basic_io.c gpio/sw/basic_io.c gpio/sw/axi_timer_pwm.c -o "$T/bio" -lm && run basic-io-model "$T/bio"
 cc -I gpio/sw gpio/tb/test_analog_sensors.c gpio/sw/analog_sensors.c -o "$T/anl" -lm && run analog-sensors "$T/anl"
 cc -include motor/tb/mock_motor.h -I motor/sw motor/tb/test_dcmotor.c motor/sw/dcmotor.c -o "$T/dcmotor" && run dcmotor "$T/dcmotor"
+cc -include motor/tb/mock_servo.h -I motor/sw motor/tb/test_servo.c motor/sw/servo.c -o "$T/servo" && run servo "$T/servo"
 cc -include gpio/tb/mock_gpio.h -I gpio/sw -I motor/sw motor/tb/test_stepper.c motor/sw/stepper.c gpio/sw/axi_gpio.c -o "$T/stepper" -lm && run stepper "$T/stepper"
 cc -include gpio/tb/mock_timer.h -I gpio/sw gpio/tb/test_rtttl.c gpio/sw/rtttl.c gpio/sw/axi_timer_pwm.c -o "$T/rtttl" -lm && run rtttl "$T/rtttl"
 cc -include 1-wire/tb/mock_ow.h -I 1-wire/sw 1-wire/tb/test_ds18b20.c 1-wire/sw/ds18b20.c -o "$T/ds18b20" -lm && run ds18b20 "$T/ds18b20"
