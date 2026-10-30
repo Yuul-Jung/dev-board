@@ -33,4 +33,4 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 
 ## 서보 PWM (SG90 등)
 `servo_engine.v`, `servo_axil_regs.v`, `servo_axil_top.v` — 주기·폭을 µs 단위로 받는 PWM. 폭은 MIN/MAX 레지스터(기본 1000/2000 µs)로 제한하며, SG90 자료마다 펄스 범위가 달라서(500–2400 µs vs 1–2 ms) 소프트웨어가 안전한 범위를 정하도록 했습니다.
-레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기). 테스트벤치 `tb/tb_servo_engine.v`. 시뮬레이션 전.
+레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기). 테스트벤치 `tb/tb_servo_engine.v`. 시뮬레이션 전. C 드라이버 `../sw/servo.[ch]`, 호스트 시험 `../tb/test_servo.c`.
