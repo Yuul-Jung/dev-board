@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_event_fifo2.v](tb_event_fifo2.v) |  |
+| [tb_event_fifo2.v](tb_event_fifo2.v) | RTL30 2-엔트리 이벤트 FIFO 검증(2차 보강). 임의 push/pop/Reset 을 TB 안의 2칸 큐 모델과 매 클럭 비교. |
 
 <!-- index:end -->

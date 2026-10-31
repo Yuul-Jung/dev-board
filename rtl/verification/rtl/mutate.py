@@ -9,7 +9,8 @@ v2 개선(ChatGPT 피드백 4-d 반영):
 import glob, hashlib, os, re, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 root = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
-DRY = '--dry' in sys.argv
+DRY = '--dry' in sys.argv or '--list' in sys.argv
+LIST = '--list' in sys.argv
 EXTRA = {'rtl05_xadc_pwm': ['rtl04_pwm_led/src/pwm_core.v'], 'rtl07_buzzer_melody': ['rtl06_timer_led/src/switch_sync.v']}
 CAP = 60
 PASS_RE = re.compile(r'^PASS', re.M)
@@ -103,14 +104,15 @@ for tb in sorted(glob.glob(os.path.join(root, 'rtl', 'rtl*', 'tb', 'tb_*.v'))):
                 if h in seen: continue
                 seen.add(h)
                 c = cnt[tag]; c['n'] += 1
+                line = raw.count('\n', 0, a) + 1; col = a - raw.rfind('\n', 0, a)
+                key = '%s %s:%d:%d %s->%s' % (ln, os.path.basename(f), line, col, raw[a:b].strip(), rep.strip() or '(제거)')
+                if LIST: print('%s [%s] | %s' % (key, tag, raw.splitlines()[line - 1].strip()[:90]))
                 if DRY: continue
-                line = raw.count('\n', 0, a) + 1
                 with tempfile.TemporaryDirectory() as td:
                     mf = os.path.join(td, os.path.basename(f)); open(mf, 'w', encoding='utf-8').write(new)
                     res, why = evaluate(top, [mf if x == f else x for x in own] + extra, tb, td)
-                if res == 'compile': c['inv'] += 1; kinds['compile'] += 1
+                if res == 'compile': c['kill'] += 1; kinds['compile'] += 1   # 기준선은 컴파일되는데 변형은 거부 = 변형이 TB 의 파라미터 구성에서 무효(검출)
                 elif res == 'survive':
-                    key = '%s %s:%d %s->%s' % (ln, os.path.basename(f), line, raw[a:b].strip(), rep.strip() or '(제거)')
                     if key in equiv: c['eq'] += 1
                     c['surv'] += 1
                     srcline = raw.splitlines()[line - 1].strip()[:90]
@@ -125,9 +127,9 @@ for r in rows: print('\t'.join(map(str, r)))
 for t in 'AB':
     s = S[t]; valid = s['kill'] + s['surv']
     eff = valid - s['eq']
-    print('집합 %s: 변형 %d 잡힘 %d 생존 %d (동치 판정 %d) 컴파일불가 %d' % (t, s['n'], s['kill'], s['surv'], s['eq'], s['inv']))
+    print('집합 %s: 변형 %d 잡힘 %d 생존 %d (동치 판정 %d) 컴파일거부(검출로 계산) %d' % (t, s['n'], s['kill'], s['surv'], s['eq'], kinds['compile'] if t=='A' else 0))
     if valid: print('  검출률(잡힘/유효) = %.1f %%' % (100.0 * s['kill'] / valid) + ('   실질(동치 제외) = %.1f %%' % (100.0 * s['kill'] / eff) if eff else ''))
-print('잡은 방식: 실행실패 %(runfail)d, 시간초과 %(timeout)d, PASS줄없음 %(nopass)d' % kinds)
+print('잡은 방식: 실행실패 %(runfail)d, 시간초과 %(timeout)d, PASS줄없음 %(nopass)d, 컴파일 거부 %(compile)d' % kinds)
 if bad_base: print('기준선 실패: ' + '; '.join(bad_base))
 outd = os.path.join(HERE, 'results'); os.makedirs(outd, exist_ok=True)
 open(os.path.join(outd, 'mutation_survivors.txt'), 'w', encoding='utf-8').write('\n'.join(surv_lines) + '\n')

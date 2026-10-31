@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_button_led.v](tb_button_led.v) | 교육용 시뮬레이션: 작은 카운트 값으로 디바운스/한 번 누름 검증 |
+| [tb_button_led.v](tb_button_led.v) | RTL01 버튼 이벤트/LED 토글 검증(2차 보강). |
 
 <!-- index:end -->

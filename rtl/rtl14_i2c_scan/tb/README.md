@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_i2c_scan_controller.v](tb_i2c_scan_controller.v) |  |
+| [tb_i2c_scan_controller.v](tb_i2c_scan_controller.v) | RTL14 I2C 주소 스캔 컨트롤러 검증(2차 보강). 컨트롤러만 검증하며 실제 I2C 버스/IP/PHY 는 없다(미검증). |
 
 <!-- index:end -->

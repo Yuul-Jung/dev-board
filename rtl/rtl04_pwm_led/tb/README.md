@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_pwm_core.v](tb_pwm_core.v) | 한 PWM 주기 동안 High 카운트로 Duty=0,128,256 검증. |
+| [tb_pwm_core.v](tb_pwm_core.v) | RTL04 PWM 검증(2차 보강). 구성: |
 
 <!-- index:end -->

@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_timer_led.v](tb_timer_led.v) | 축소된 4클럭 Tick의 간격과 LED 상태 확인 (셀프체크). |
+| [tb_timer_led.v](tb_timer_led.v) | RTL06 타이머 LED 검증(2차 보강). |
 
 <!-- index:end -->

@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_buzzer_melody.v](tb_buzzer_melody.v) | 작은 파라미터로 3음 순환, disable, 출력 토글 검증. |
+| [tb_buzzer_melody.v](tb_buzzer_melody.v) | RTL07 멜로디/톤 생성 검증(2차 보강). |
 
 <!-- index:end -->

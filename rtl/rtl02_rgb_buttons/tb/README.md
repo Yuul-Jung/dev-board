@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_rgb_buttons.v](tb_rgb_buttons.v) | Reset, 단일 버튼, 두 버튼, 해제 및 바운스 무시를 검증한다. |
+| [tb_rgb_buttons.v](tb_rgb_buttons.v) | RTL02 RGB 버튼 검증(2차 보강). |
 
 <!-- index:end -->
