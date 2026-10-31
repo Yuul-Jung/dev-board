@@ -19,6 +19,7 @@
 | [rtl04_pwm_led/](rtl04_pwm_led/README.md) | Arduino 06차시 대응: 스위치 기반 PWM LED | RTL·Testbench 작성, 시뮬레이션 전 |
 | [rtl05_xadc_pwm/](rtl05_xadc_pwm/README.md) | ADC 샘플을 기존 PWM에 연결 | Controller·Testbench 작성, XADC 실제 IP 연결 전 |
 | [rtl06_timer_led/](rtl06_timer_led/README.md) | Arduino 09차시 대응: 0.5초 Tick과 LED 점멸 | RTL·Testbench 작성, 시뮬레이션 전 |
+| [rtl07_buzzer_melody/](rtl07_buzzer_melody/README.md) | Arduino 10차시 대응: 3음 멜로디와 주파수 발생기 | RTL·Testbench 작성, 시뮬레이션 전 |
 
 ## 필수 안전 확인
 - 비동기 외부 입력은 동기화 후 사용. 동기화 플립플롭 사이의 타이밍 예외는 실제 제약에 근거할 때만 적용.
