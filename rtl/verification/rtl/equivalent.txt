@@ -1,0 +1,22 @@
+# 사람이 근거와 함께 「동치」로 판정한 생존 변형. 형식: <과제> <파일>:<줄>:<열> <원본>-><변형> | <근거>
+# 키는 mutate.py --list 출력과 같다. 판정은 논리 추론이며 형식 증명이 아니다. src 줄이 바뀌면 키를 다시 확인할 것.
+rtl01_button_led button_event.v:28:26 1'b0->1'b1 | Reset 직후 sync 레지스터는 대기(비눌림) 값이라 첫 클럭에 pressed==stable → count 가 0 으로 덮임. Reset 때 count 값은 포트로 관측 불가
+rtl01_button_led button_event.v:19:12 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl02_rgb_buttons button_level.v:23:24 1'b0->1'b1 | 위와 동일(sync1/sync2 Reset 값이 대기 상태라 첫 클럭에 value==pressed → cnt=0 으로 덮임)
+rtl02_rgb_buttons button_level.v:17:12 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl04_pwm_led pwm_core.v:29:38 >->>= | duty_in==256 에서 '>=' 는 256 을 고르고 이는 duty_in 과 같다 → 함수 동일
+rtl04_pwm_led pwm_core.v:29:40 9'd256->9'd257 | duty_in==257 이 그대로 duty_reg=257 이 되지만 phase 는 최대 255 라 (phase<257)=항상 1 = 256 과 같다. 출력 포트는 pwm_out 뿐(duty_reg 는 내부)
+rtl04_pwm_led pwm_core.v:29:50 9'd256->9'd257 | 클램프 값 257 도 위와 같은 이유로 pwm_out 동일
+rtl04_pwm_led pwm_core.v:12:15 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl04_pwm_led pwm_core.v:29:40 9'd256->9'd255 | 비교 상수 255: duty_in>255 면 256 선택 → duty_in==256 은 256, 그 외 동일 → 함수 동일
+rtl06_timer_led tick_generator.v:12:12 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl07_buzzer_melody melody_sequencer.v:14:41 >->>= | NOTE_CLOCKS=1 일 때 CW=0 → reg [-1:0](2비트, 합법). elapsed 는 항상 0 이고 elapsed==NOTE_CLOCKS-1(=0) 이 매 클럭 참이라 동작 동일. 2 이상에서는 식 자체가 같다
+rtl07_buzzer_melody melody_sequencer.v:15:12 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl07_buzzer_melody tone_generator.v:11:30 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl07_buzzer_melody tone_generator.v:14:23 -->+ | 카운터 폭을 +2 로 넓힌 변형: 값이 항상 2^CW 미만이라 상위 비트는 0, 비교·리셋(0 확장) 결과 동일(폭 확장 동치)
+rtl08_hc595_7seg hc595_7seg.v:9:79 1'b0->1'b1 | 채워 넣는 비트는 8번 시프트 뒤에야 bits[7] 에 도달하는데 전송은 그 전에 끝나고 다음 전송은 bits 를 재적재 → 포트 불변
+rtl08_hc595_7seg hc595_7seg.v:9:89 +->- | n 은 4비트: k번 시프트 뒤 n=16-k, n==8 은 k=8 에서 참 → 종료 시점 동일(모듈로 대칭의 우연; 전송 길이가 바뀌면 동치 아님)
+rtl09_max7219 max7219_tx.v:9:63 1'b0->1'b1 | 위와 동일(16번 시프트)
+rtl09_max7219 max7219_tx.v:9:73 +->- | n 은 5비트: n=32-k, n==16 은 k=16 에서 참 → 동일(우연; 전송 길이 변경 시 동치 아님)
+rtl23_servo_pulse servo_target.v:9:34 >->>= | angle==180 에서 '>=' 는 180 을 고르고 이는 angle 과 같다 → 함수 동일
+rtl23_servo_pulse servo_target.v:9:35 8'd180->8'd179 | 비교 상수 179: angle>179 면 180 → angle==180 은 180, 그 외 동일 → 함수 동일
