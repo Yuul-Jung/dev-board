@@ -21,6 +21,11 @@ for tb in rtl/rtl*/tb/tb_*.v; do
   else
     printf '%s\tFAIL\t%s\n' "$top" "$log" >> "$summary"
     failed=$((failed+1))
+    # 로그 파일을 못 내려받는 환경에서도 원인을 읽을 수 있게 실패 로그 앞부분을 주석(annotation)으로 남긴다.
+    if [ "$failed" -le 10 ]; then
+      msg="$(head -c 1800 "$log" | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+      printf '::error title=FAIL %s::%s\n' "$top" "$msg"
+    fi
   fi
   rm -f "$out"
   total=$((total+1))
