@@ -7,8 +7,8 @@
 | 01~02 버튼 LED | 2FF 동기화 + 디바운스 Counter + LED 토글 Register | **[rtl01](rtl01_button_led/README.md) 소스 작성** |
 | 03 RGB LED | 복수 버튼 입력 필터 + RGB 출력 Controller | **[rtl02](rtl02_rgb_buttons/README.md) 소스 작성** |
 | 04 Serial LED | UART RX + 명령 디코더 + 상태 Register | **[rtl03](rtl03_uart_led/README.md) Controller 작성**, UART 코어 연동 전 |
-| 05 ADC | XADC 출력값 수신 후 Register/표시 | AMD XADC IP |
-| 06~08 PWM·CdS·조이스틱 | PWM Counter + Duty Register + XADC 샘플 | **[rtl04](rtl04_pwm_led/README.md) PWM 작성**, XADC 연결 전 |
+| 05 ADC | XADC 출력값 수신 후 Duty Register/표시 | **[rtl05](rtl05_xadc_pwm/README.md) 샘플 Controller 작성**, AMD XADC IP 연결 전 |
+| 06~08 PWM·CdS·조이스틱 | PWM Counter + Duty Register + XADC 샘플 | **[rtl04](rtl04_pwm_led/README.md) PWM + [rtl05](rtl05_xadc_pwm/README.md) 샘플 Controller 작성**, 센서·XADC 연결 전 |
 | 09 비차단 타이머 | Free-running Counter + Compare + Tick pulse | Counter 재사용 |
 | 10 부저 | 주파수 Divider + 음계 Sequencer | PWM/Timer 재사용 |
 | 11~12 7세그·매트릭스 | 시프트 출력·스캔 Counter·Font ROM | 출력 Controller |
