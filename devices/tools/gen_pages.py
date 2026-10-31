@@ -61,7 +61,7 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}"""
+footer{margin-top:40px;font-size:13px;color:var(--mut)}\npre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}"""
 
 STAT = ['완비', '일부', '문서', '없음', '제외']
 LABEL = {'완비': '완비', '일부': '일부', '문서': '문서만', '없음': '없음', '제외': '제외(AMD 중복)'}
@@ -79,6 +79,43 @@ def modtable(rows):
         if w and os.path.exists(os.path.join(root, 'devices', w)): nm = f'<a href="{GH}/blob/main/devices/{e(w)}">{nm}</a>'
         h += f'<tr><td>{e(r["id"])}</td><td>{nm}</td><td>{e(r["interface"])}</td><td>{e(r["book_ch"])}</td><td class="s-{r["status"]}"><span class="dot"></span>{LABEL.get(r["status"], r["status"])}</td><td>{e(r["note"])}</td></tr>'
     return h + '</table></div>'
+
+def lesson_content(d):
+    """Arduino 실습 README 및 .ino를 정적 페이지 안에 직접 표시한다."""
+    rd = read(os.path.join(d, 'README.md'))
+    if not rd: return ''
+    blocks = []; in_list = False
+    for line in rd.splitlines():
+        t = line.strip()
+        if t.startswith('<!-- index:begin -->'): break
+        if t.startswith('# '): continue
+        if t.startswith('## '):
+            if in_list: blocks.append('</ul>'); in_list = False
+            blocks.append('<h2>' + e(t[3:]) + '</h2>'); continue
+        if t.startswith(('- ', '1. ', '2. ', '3. ', '4. ')):
+            if not in_list: blocks.append('<ul>'); in_list = True
+            blocks.append('<li>' + inline_md(re.sub(r'^(?:- |[1-4]\\. )', '', t)) + '</li>')
+            continue
+        if in_list: blocks.append('</ul>'); in_list = False
+        if t: blocks.append('<p>' + inline_md(t) + '</p>')
+    if in_list: blocks.append('</ul>')
+    for fn in sorted(os.listdir(d)):
+        if fn.endswith('.ino'):
+            code = read(os.path.join(d, fn))
+            blocks.append('<h2>전체 스케치 — ' + e(fn) + '</h2>')
+            blocks.append('<pre class="code"><code>' + e(code) + '</code></pre>')
+            blocks.append('<p><a href="' + GH + '/blob/main/' +
+                          e(os.path.relpath(os.path.join(d, fn), root).replace(os.sep, '/')) +
+                          '">원본 소스 보기</a></p>')
+    return '\\n'.join(blocks)
+
+def inline_md(s):
+    s = e(s)
+    s = re.sub(r'\\[([^\\]]+)\\]\\(([^)]+)\\)', lambda m:
+               '<a href="' + e(m.group(2), quote=True) + '">' + m.group(1) + '</a>', s)
+    s = re.sub(r'`([^`]+)`', r'<code>\\1</code>', s)
+    s = re.sub(r'\\*\\*([^*]+)\\*\\*', r'<strong>\\1</strong>', s)
+    return s
 
 def page(d):
     rel = os.path.relpath(d, root); rel = '' if rel == '.' else rel
@@ -107,8 +144,7 @@ def page(d):
             t = title(r); t = ROLE.get(x) or t or ''
             o.append(f'<a class="card" href="{e(x)}/index.html"><b>{e(x)}/</b><span>{e(t)}</span></a>')
         o.append('</div>')
-    if rel == 'devices':
-        o.append('<h2>모듈 전체 목록</h2>' + modtable(MODS))
+    if rel.startswith('arduino/examples/') and len(parts) == 3:\n        o.append(lesson_content(d))\n    if rel == 'devices':\n        o.append('<h2>모듈 전체 목록</h2>' + modtable(MODS))
     if files:
         o.append('<h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>')
         for x in files:
