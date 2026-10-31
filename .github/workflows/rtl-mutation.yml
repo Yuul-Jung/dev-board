@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'rtl/verification/rtl/mutate.py'
+      - 'rtl/rtl*/src/**'
+      - 'rtl/rtl*/tb/**'
       - '.github/workflows/rtl-mutation.yml'
   workflow_dispatch:
 permissions:
