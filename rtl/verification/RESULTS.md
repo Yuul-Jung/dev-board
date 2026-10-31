@@ -50,3 +50,5 @@
 - [UVM 검증 파이프라인](../../.github/workflows/rtl-uvm.yml)
 
 UVM은 Accellera 표준 라이브러리 기반의 **SystemVerilog UVM**이며, 일반적인 Verilog 테스트벤치를 UVM이라고 부르지 않는다.
+
+인계 보고서: [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md)

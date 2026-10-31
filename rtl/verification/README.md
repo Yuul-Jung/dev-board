@@ -1,6 +1,6 @@
 # RTL/UVM 독립 검증
 
-[RTL 검증](rtl/README.md) · [SystemVerilog UVM 검증](uvm/README.md) · [검증 결과](RESULTS.md)
+[RTL 검증](rtl/README.md) · [SystemVerilog UVM 검증](uvm/README.md) · [검증 결과](RESULTS.md) · [Claude 인계](CLAUDE_HANDOFF.md)
 
 **원칙:** 같은 RTL 소스를 수정 없이 검증하며, 서로 다른 시뮬레이터·검증 방법의 결과를 분리한다.
 
@@ -28,6 +28,7 @@
 
 | 파일 | 설명 |
 |---|---|
+| [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md) | CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF) |
 | [RESULTS.md](RESULTS.md) | 검증 방법별 결과 기록 |
 | [lint_widths.py](lint_widths.py) | 간이 폭 검사(시뮬레이터 없이 소스만 읽음). 사용: python3 rtl/verification/lint_widths.py [루트] |
 
