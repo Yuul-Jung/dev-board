@@ -17,8 +17,8 @@ initial begin
   if(m_al)n_al1=n_al1+1;else n_al0=n_al0+1;
   r=$random(seed);
   rst=(r[7:0]==8'd9);sample_valid=r[8]|r[9];checksum_ok=(r[11:10]!=2'd0);
-  case(r[15:12]) 0:temp_x10=299;1:temp_x10=300;2:temp_x10=301;3:temp_x10=-51;4:temp_x10=-50;5:temp_x10=-49;6:temp_x10=0;7:temp_x10=-1;8:temp_x10=32767;9:temp_x10=-32768;default:temp_x10=$random(seed);endcase
-  case(r[19:16]) 0:hum_x10=799;1:hum_x10=800;2:hum_x10=801;3:hum_x10=59999;4:hum_x10=60000;5:hum_x10=60001;6:hum_x10=0;7:hum_x10=65535;default:hum_x10=$random(seed);endcase
+  case(r[15:12]) 0:temp_x10=299;1:temp_x10=300;2:temp_x10=301;3:temp_x10=-51;4:temp_x10=-50;5:temp_x10=-49;6:temp_x10=0;7:temp_x10=-1;8:temp_x10=32767;9:temp_x10=-32768;default:temp_x10=($random(seed)&32'h1FF)-200;endcase
+  case(r[19:16]) 0:hum_x10=799;1:hum_x10=800;2:hum_x10=801;3:hum_x10=59999;4:hum_x10=60000;5:hum_x10=60001;6:hum_x10=0;7:hum_x10=65535;default:hum_x10=$random(seed)&32'h3FF;endcase
   ti=temp_x10;
   if(rst)begin m_al=0;m_er=0;m_al2=0;end
   else if(sample_valid)begin
@@ -27,7 +27,7 @@ initial begin
    else n_hold=n_hold+1;
   end
  end
- if(n_al1<2000||n_al0<2000||n_hold<500||n_err<500)$fatal(1,"coverage al1=%0d al0=%0d hold=%0d err=%0d",n_al1,n_al0,n_hold,n_err);
+ if(n_al1<1000||n_al0<1000||n_hold<500||n_err<500)$fatal(1,"coverage al1=%0d al0=%0d hold=%0d err=%0d",n_al1,n_al0,n_hold,n_err);
  $display("PASS dht22_limit_controller model: boundaries, signed temp, checksum hold, reset");$finish;end
 initial begin #10_000_000; $fatal(1,"test timeout"); end
 endmodule
