@@ -52,6 +52,10 @@
 | [RTL31](rtl31_register_map/README.md) | Register Map | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
 | [RTL32](rtl32_capstone_control/README.md) | 캡스톤 Controller | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
 
+## 적대적 검증
+- [2026-10-31 적대적 검증 보고서](ADVERSARIAL_REVIEW_20261031.md): 우선순위별 오류·수정·통합 미완료 항목.
+- [검증 상태 대장](VERIFICATION_STATUS.md): 32개 소스 등록과 실제 시뮬레이션/하드웨어 검증을 구분.
+
 ## 필수 안전 확인
 - 비동기 외부 입력은 동기화 후 사용. 동기화 플립플롭 사이의 타이밍 예외는 실제 제약에 근거할 때만 적용.
 - 외부 5V 출력은 Basys3 GPIO로 직접 연결하지 말고 레벨 시프터 또는 분압 검토.
