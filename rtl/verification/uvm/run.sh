@@ -6,6 +6,9 @@ command -v verilator
 mkdir -p rtl/verification/uvm/results
 LOG="rtl/verification/uvm/results/rtl03-uvm.log"
 set -o pipefail
+# 실패하면 로그 앞·뒤를 ::error 주석으로 남긴다(로그 파일을 내려받지 못하는 환경에서도 원인 확인).
+esc() { sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g'; }
+trap 'rc=$?; if [ "$rc" -ne 0 ] && [ -f "$LOG" ]; then printf "::error title=UVM head::%s\n" "$(head -c 2500 "$LOG" | esc)"; printf "::error title=UVM tail::%s\n" "$(tail -c 2500 "$LOG" | esc)"; fi' EXIT
 verilator --binary --timing --assert -Wno-fatal -j 2 \
   --top-module tb_top --Mdir rtl/verification/uvm/results/obj_dir \
   +incdir+"${UVM_HOME}" +define+UVM_NO_DPI \
