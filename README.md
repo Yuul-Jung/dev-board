@@ -10,6 +10,9 @@
 | [`soc-map/`](soc-map/README.md) | Basys3 SoC 주변장치 구현 맵 ([soc_map.html](soc-map/soc_map.html)) |
 | [`devices/`](devices/README.md) | 인터페이스별 외부 소자(센서·모듈) 자료, 전용 RTL, 드라이버 |
 | [`arduino/`](arduino/README.md) | Arduino UNO R4 32차시 학습 테크트리, 공통 부품 대응표, 전용 스케치 |
+| [`rtl/`](rtl/README.md) | Arduino 실습과 대응하는 Basys3 순수 RTL 32차시 설계 트랙 |
+
+**RTL 전용 바로가기:** [RTL 학습 트랙](rtl/README.md) · [RTL 대응 테크트리](rtl/ROADMAP.md) · [01과제](rtl/rtl01_button_led/README.md)
 
 **Arduino 전용 바로가기:** [32차시 테크트리](arduino/ROADMAP.md) · [Arduino ↔ FPGA 대응표](arduino/CROSSWALK.md) · [첫 실습](arduino/examples/01_led_button/01_led_button.ino)
 
@@ -52,6 +55,7 @@
 | [devices/](devices/README.md) | devices — 인터페이스별 주변장치 자료 |
 | [examples/](examples/README.md) | examples |
 | [soc-map/](soc-map/README.md) | soc-map |
+| [rtl/](rtl/README.md) | Arduino 대응 순수 RTL 학습 트랙 |
 
 ### 파일
 
