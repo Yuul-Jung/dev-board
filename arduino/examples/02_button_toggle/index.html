@@ -12,13 +12,56 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">arduino</a> › <a href="../index.html">examples</a> › 02_button_toggle</nav>
-<h1>02차시 — 디바운스와 토글</h1>
-<p class="lede">Arduino 전체 목차 · 32차시 테크트리</p>
-<p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/arduino/examples/02_button_toggle">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/02_button_toggle/README.md">README</a></p>
-<h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
-<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/02_button_toggle/02_button_toggle.ino">02_button_toggle.ino</a></td><td>버튼 디바운스 + 누를 때마다 LED 토글 (millis 비차단)</td></tr>
-<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/02_button_toggle/README.md">README.md</a></td><td>02차시 — 디바운스와 토글</td></tr>
-</table></div>
-<footer>자동 생성 페이지(devices/tools/gen_pages.py). 근거 수준과 한계는 각 문서에 적혀 있습니다.</footer></main></body></html>
+<h1>02차시 — 디바운스와 토글</h1><p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/02_button_toggle/README.md">README 원본</a> · <a href="../index.html">전체 실습 목록</a></p>
+<p><a href="../../README.md">Arduino 전체 목차</a> · <a href="../../ROADMAP.md">32차시 테크트리</a></p>
+<h2>개요</h2>
+<p>입력 신호를 읽고 출력 장치를 제어한다. 이전 차시와 비교하여 늘어난 입출력 기능을 확인한다.</p>
+<h2>준비</h2>
+<ul>
+<li>대상 보드: Arduino UNO R4 Minima 또는 WiFi. 사용 보드와 포트는 Arduino IDE에서 직접 선택한다.</li>
+<li>택트 스위치·점퍼선</li>
+<li>부품·모듈 회로도를 확인하고 외부 전원과 GND를 연결한다. LED에는 전류 제한 저항을 넣는다.</li>
+</ul>
+<h2>배선</h2>
+<p>D2 ↔ 버튼 ↔ GND; 내장 LED 사용</p>
+<h2>전체 소스</h2>
+<p><a href="02_button_toggle.ino">02_button_toggle.ino</a></p>
+<p>소스 파일은 이 폴더에서 열어 그대로 업로드한다. (README와 .ino를 같은 디렉터리에 배치함)</p>
+<h2>실행 절차</h2>
+<ul>
+<li>Arduino IDE에서 보드와 USB 포트를 선택한다.</li>
+<li>스케치 파일을 열어 컴파일(검증)하고 업로드한다.</li>
+<li>입력값을 변화시키면서 출력의 변화를 관찰한다.</li>
+</ul>
+<h2>예상 결과</h2>
+<p>30ms 동안 안정된 누름만 감지해 LED 상태를 한 번 전환한다.</p>
+<h2>확인 및 주의</h2>
+<ul>
+<li>상태: <strong>소스 작성 / 컴파일 미검증 / 실물 미검증</strong></li>
+<li>실제 컴파일 성공 또는 보드 동작을 아직 주장하지 않는다.</li>
+<li>모듈의 전원 정격과 실제 배선을 확인한 후 전원을 넣는다.</li>
+<li>공통 부품 자료: <a href="../../../devices/README.md">devices/</a></li>
+</ul>
+<h2>이 폴더의 목록</h2>
+<h2>전체 스케치 — 02_button_toggle.ino</h2><pre class="code"><code>// 버튼 디바운스 + 누를 때마다 LED 토글 (millis 비차단)
+const byte BTN = 2;
+bool ledOn = false, stable = HIGH, previous = HIGH;
+unsigned long changedAt = 0;
+void setup() { pinMode(BTN, INPUT_PULLUP); pinMode(LED_BUILTIN, OUTPUT); }
+void loop() {
+  bool reading = digitalRead(BTN);
+  if (reading != previous) changedAt = millis();
+  if (millis() - changedAt &gt;= 30 &amp;&amp; reading != stable) {
+    stable = reading;
+    if (stable == LOW) {
+      ledOn = !ledOn;
+      digitalWrite(LED_BUILTIN, ledOn ? HIGH : LOW);
+    }
+  }
+  previous = reading;
+}
+</code></pre><p><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/02_button_toggle/02_button_toggle.ino">원본 소스 보기</a></p>
+<footer>코드 작성 상태. Arduino IDE 컴파일 및 실물 검증은 별도입니다.</footer></main></body></html>
