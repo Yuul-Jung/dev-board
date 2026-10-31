@@ -19,6 +19,7 @@ GitHub Actions CI는 이 스크립트를 실행하며 결과를 Artifact로 보�
 | 파일 | 설명 |
 |---|---|
 | [annot.py](annot.py) | 파일을 GitHub 주석(::notice)으로 쪼개 출력(로그·artifact 를 못 내려받는 환경용). |
+| [equivalent.txt](equivalent.txt) | 사람이 근거와 함께 「동치」로 판정한 생존 변형. 형식: <과제> <파일>:<줄>:<열> <원본>-><변형> / <근거> |
 | [mutate.py](mutate.py) | RTL 변형 검사 v2 — 각 과제 src/*.v 를 한 곳씩 망가뜨려 그 과제 TB 가 잡는지 본다. |
 | [run.sh](run.sh) |  |
 

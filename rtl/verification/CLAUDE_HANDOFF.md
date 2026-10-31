@@ -1,162 +1,69 @@
-# CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF)
+# CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF) — 2차
 
-작성: 2026-10-31 (KST 19시대). 저장소 `Yuul-Jung/dev-board`, 브랜치 `main`. 요약 색인은 [RESULTS.md](RESULTS.md), 구조는 [README.md](README.md).
-**검증 완료 보고와 실제 검증 완료는 다르다.** 아래 PASS 는 표의 런·커밋에 한정되며, 실행 로그 원문은 열람이 막혀 있어 **실행 단계 성공 여부와 `::error/::notice` 주석 본문**으로 판정했다(로그 파일·artifact zip 은 내려받지 못함).
+작성: 2026-10-31 (KST 저녁). 저장소 `Yuul-Jung/dev-board`, 브랜치 `main`. 요약 색인 [RESULTS.md](RESULTS.md), 생존 변형 전수 분류 [MUTATION_CLASSIFICATION.md](MUTATION_CLASSIFICATION.md), 이전 피드백 [CHATGPT_FEEDBACK.md](CHATGPT_FEEDBACK.md).
+**검증 완료 보고와 실제 검증 완료는 다르다.** 모든 PASS 는 아래 표의 커밋·런에 한정된다. 실행 로그 파일과 artifact zip 은 내려받을 수 없어 **실행 단계 성공/실패와 `::notice`/`::error` 주석 본문**으로 판정했다(주석 본문은 약 4 KB 에서 잘리므로 덩어리를 3.2 KB 로 나눠 출력함).
 
 ## A. 검증 요약
 
-- 검증 대상 SHA: `d6bd7e8`(세션 시작 시 main 헤드, 문서만 변경됨) 및 그 위에 Claude 가 올린 `3d259fa`, `7979c6b`.
-- 검증 완료 SHA: RTL·변형은 `3d259fa`(런 41191680387 / 41191680348). UVM 은 `841a3a6`(런 41190695277)이며 이후 `rtl03_uart_led/`·`uvm/`·`rtl-uvm.yml` 무변경(`git diff` 빈 결과)이라 `3d259fa` 에도 유효하다고 **판단**(재실행은 안 함).
-- 도구/버전: Icarus Verilog = Ubuntu `apt install iverilog`(버전 **미기록**), Verilator 5.052 + accellera-official/uvm-core(커밋 **미기록**), Python 3.
-- RTL 검증 결과(런 41191680387, `3d259fa`): 32/32 PASS. 개수 검사 `total==32`, 폭 검사(lint_widths) 통과. 과제별 PASS 행은 `results/rtl-summary.tsv` artifact 에 있으나 **내려받지 못해** 개별 확인은 못 함(런 성공 = 스크립트가 32건 모두 PASS 로 끝났다는 간접 증거).
-- UVM 검증 결과: RTL03 `uart_led_controller`, 테스트 `led_test`, PASS(런 41190695277). UVM_ERROR/FATAL 개수와 `UVM_SCOREBOARD_PASS` 는 `run.sh` 가 판정하며 성공 종료. 수치 원문은 미열람.
-- Mutation 검증 결과(런 41191680348, `3d259fa`): 변형 222(컴파일 불가 0), 검출 127, 생존 95, 검출률 **57.2 %**. 동치 변형 수동 판정은 **미실시**.
-- Lint: 비트 폭/리터럴 잘림만 검사(`lint_widths.py`). **Latch·Multiple Driver·조합 루프 검사는 하지 않았다.**
-- 미검증: Vivado 합성/Implementation/Timing/XDC/Basys3 실물 전부, Latch·다중구동 정적 검사, RTL03 외 UVM, 생존 변형 동치 판정.
+- 검증 대상 SHA: 세션 시작 시 main 헤드 `febb112`(ChatGPT 피드백) → Claude 가 올린 커밋으로 진행.
+- 검증 완료 SHA(RTL·변형): `aef57f4` (RTL `4ae45f8`, 이후 변경은 `equivalent.txt` 뿐). UVM 은 `4ae45f8` 에서 **재실행**함(과거 PASS 전용 아님).
+- 도구/버전: Icarus Verilog 12.0 (stable), Verilator 5.032(Debian apt, lint), Verilator 5.052(소스 빌드, UVM), Accellera uvm-core(accellera-official, 커밋 **미기록**), Python 3.14.4.
+- RTL 검증 결과: 32/32 PASS (런 41195651503, `aef57f4`; 같은 TB 로 41195505544 `4ae45f8`). 과제별 PASS 행(`rtl-summary.tsv`)은 artifact 라 못 읽음 — `run.sh` 가 개수 32 와 **줄 시작 `PASS`** 를 요구하고 종료 코드 0 일 때만 PASS 로 센다.
+- UVM 검증 결과: DUT `uart_led_controller`(RTL03), 테스트 `led_test`, PASS (런 41195555029, `4ae45f8`, workflow_dispatch). UVM_ERROR/FATAL 수치 원문은 미열람(스크립트가 판정).
+- Mutation 검증 결과(런 41195651507, `aef57f4`): 집합 A 213/222 = 95.9 %, 집합 B 61/72 = 84.7 %, 생존 20건 전부 동치 판정 → 동치 제외 실질 100 %/100 %. 기준선 실패 0. 잡은 방식: 실행 실패 270, 컴파일 거부 4, 시간 초과 0, PASS 줄 없음 0.
+- Lint 결과(Verilator 5.032 `--lint-only -Wall`, 런 41195043489): LATCH·MULTIDRIVEN·UNOPTFLAT·BLKANDNBLK·COMBDLY 0건, 비-조건식 WIDTHTRUNC 0건. 경고 20건은 모두 스타일(WIDTHEXPAND 13, 파라미터를 조건식으로 쓴 WIDTHTRUNC 6, RTL29 의 신호명 `near` 예약어 1). 이 단계는 `lint_widths.py` 와 별개로 CI 에서 실패 조건을 가진다.
+- 미검증 항목: Vivado 합성·Implementation·Timing·XDC·Basys3 실물 전부(실행 증거 없음). RTL03 외 UVM. 변형 연산자 밖의 결함(문장 삭제, 포트 오연결, 상태 인코딩). 100 MHz 실제 파라미터(RTL01·02 TICKS=2,000,000 등)와 `basys3_*_top` 배선 대부분.
 
-### 실행 이력(커밋별로 구분)
-| 커밋 | 워크플로 | 런 | 결과 |
-|---|---|---|---|
-| adb50e7 | RTL directed | 41189056034 | **FAIL**(RTL08·09 타임아웃) |
-| 248f08e | RTL directed | 41189209256 | PASS (RTL08·09 폭 수정 후) |
-| a5535b7 | UVM | 41189224402 | **FAIL**(컴파일: `env.agent.scoreboard`) |
-| b6b6111 | UVM | 41189772574 | PASS |
-| 841a3a6 | UVM | 41190695277 | PASS |
-| 3050551 | mutation | 41190240306 | 51.4 %(114/222) |
-| 8c13ce3 | mutation | 41191096201 | 54.5 %(121/222), 5개 TB 보강 후 |
-| d6bd7e8 | RTL directed | 41191564680 | PASS |
-| 3d259fa | RTL directed | 41191680387 | PASS |
-| 3d259fa | mutation | 41191680348 | 57.2 %(127/222) |
+### 실행 이력 (커밋 단위로 구분)
+| 커밋 | 워크플로 | 런 | 결과 | 비고 |
+|---|---|---|---|---|
+| adb50e7 | directed | 41189056034 | FAIL | RTL08·09 상태 폭 결함(수정 248f08e) |
+| 3d259fa | directed / mutation | 41191680387 / 41191680348 | PASS / A 57.2 % | 1차 인계 시점 |
+| e8630da | directed / mutation v2 / lint | 41194273140 / 41194273037 / 41194273028 | PASS / A 127/222·B 46/72 / PASS | v2 도구, 생존 121건 전수 확보 |
+| 2f2f4eb | directed / mutation | 41195043490 / 41195043505 | **FAIL** / 종료 1(주석: 「기준선 실패: rtl02, rtl14」) | **TB 결함 2건**(아래 B). 변형 검사의 기준선 가드가 의도대로 동작 |
+| 898ac8b | directed / mutation | 41195172214 / 41195172195 | PASS / A 184/222(82.9 %)·B 56/72 | |
+| 61aca81 | directed / mutation | 41195453824 / 41195453934 | **FAIL** / 종료 1(주석: 「기준선 실패: rtl12_dht22_alarm」) | **TB 결함**: RTL12 임의값 편향으로 커버리지 미달 |
+| 4ae45f8 | directed / mutation / UVM | 41195505544 / 41195505539 / 41195555029 | PASS / A 213/222(95.9 %)·B 61/72(84.7 %) / PASS | |
+| aef57f4 | directed / mutation | 41195651503 / 41195651507 | PASS / 실질 100 % | 동치 20건 반영 |
 URL 형식: `https://github.com/Yuul-Jung/dev-board/actions/runs/<런 번호>`.
 
 ## B. 발견 오류
 
 | RTL | 문제 | 심각도 | 오류 근거 | 수정 여부 |
 |---|---|---|---|---|
-| 08, 09 | `reg [1:0] state` 에 상태 4·5 대입 → 0·1 로 잘려 `done` 도달 불가 | 높음(기능 정지) | 런 41189056034 타임아웃, 3비트 수정 뒤 PASS | 수정함(248f08e) |
-| 03(UVM) | `led_test` 가 존재하지 않는 `env.agent.scoreboard` 참조 | 중(검증 환경 결함) | 런 41189224402 컴파일 실패 | 수정함(b6b6111) |
-| 08, 09 | TB 가 에지 수만 검사 → 데이터 순서·래치·주기 변형 5 중 4 생존 | 중(TB 공백) | 런 41191096201 생존 목록 | 수정함(3d259fa), 1/5→4/5 검출 |
-| 전체 | TB 검출력 낮음(57.2 %) | 중 | 런 41191680348 | **미해결** |
-| 도구 | `gen_pages.py` 리터럴 `\n`·이중 역슬래시로 실행 불가 | 낮음(문서 생성) | 로컬 실행 SyntaxError/PatternError | 수정함(841a3a6) |
-| 전체 | 문서가 "미검증/로그 없음" 로 낡음 | 낮음 | 열람 | 수정함(b0c3382 등) |
+| 08, 09 | `state` 2비트에 상태 4·5 | 높음(RTL, 이전) | 런 41189056034 | 수정함(248f08e) |
+| 01·02·04·06 | 작은 파라미터(TICKS/N/CLK_DIV=1)를 시험한 적이 없어 CW 계산 `>`→`>=` 변형이 살아남음 | 중(검증 공백) | 1차 생존 목록, 보강 뒤 컴파일 거부로 검출 | TB 보강 |
+| 01·02·04·06·07 외 다수 | 1차 TB 가 에지 수·단일 시나리오만 검사(검출률 57.2 %) | 중 | 런 41194273037 | 2차에서 TB 19개 보강(+3d259fa 의 RTL08·09), 95.9 % |
+| TB(RTL02) | 조합논리 진리표 첫 입력 00 이 입력 변화가 없어 X → 오탐 | 낮음(TB 결함) | 런 41195043490 FATAL `truth table ab=00 got xxx` | TB 수정(898ac8b) |
+| TB(RTL14) | 스캔 루프에 클럭 진행이 없어 같은 시각에 재진입 → 오탐 | 낮음(TB 결함) | 같은 런 FATAL `cmd_valid high while waiting` | TB 수정(898ac8b) |
+| TB(RTL12) | 임의값이 한쪽(알람=1)으로 쏠려 해제 구간 커버리지 미달 | 낮음(TB 결함) | 런 41195453824 FATAL `coverage al1=18107 al0=1893` | 임의 범위 조정(4ae45f8) |
+| 도구 | 주석 4 KB 절단으로 생존 목록 88/95 | 낮음 | 1차 인계 | 3.2 KB 덩어리로 해결 |
+| RTL 소스 | **RTL 본문 결함은 이번 2차에서 새로 발견하지 못함** | — | 32/32·UVM PASS | 소스 무수정 |
 
 ## C. 수정 이력
 
 | 파일 | 기존 문제 | 수정 내용 | 재검증 결과 |
 |---|---|---|---|
-| `rtl/rtl08_hc595_7seg/src/hc595_7seg.v`, `rtl/rtl09_max7219/src/max7219_tx.v` | state 2비트 | 3비트 | directed PASS(41189209256 이후 연속) |
-| `rtl/verification/lint_widths.py`, `rtl-tests.yml` | 폭 잘림 정적 검사 없음 | 리터럴≥2^폭 대입 검출 단계 추가 | 변형(강제 잘림)으로 확인, CI 통과 |
-| `rtl/verification/uvm/uart_led_uvm_pkg.sv` | 잘못된 계층 경로 | `env.scoreboard` | UVM PASS |
-| `rtl/verification/uvm/run.sh`, `rtl/verification/rtl/run.sh` | 실패 원인을 로그 없이 볼 수 없음 | 실패 시 `::error` 주석 출력 | 실제 실패에서 원인 확인에 사용 |
-| `rtl/verification/rtl/mutate.py`, `.github/workflows/rtl-mutation.yml` | 변형 검사 없음 | 연산자·상수·부정 변형 CI 도입 | 런 41190240306 등 |
-| `rtl/rtl08.../tb/tb_hc595_7seg.v`, `rtl/rtl09.../tb/tb_max7219_tx.v` | 에지 수만 검사 | 데이터(MSB 먼저)·래치/cs_n·주기 3×DIV·2회 전송 | directed PASS, 변형 4/5 |
-| `devices/tools/gen_pages.py` | 실행 불가 | 이스케이프 수정 | 생성·`--check` 통과 |
-
-(RTL10·11·13·15·25 TB 보강 `dcc6410` 은 ChatGPT 작업, Claude 는 CI 결과만 확인.)
+| `rtl/verification/rtl/mutate.py` | 부분 문자열 `PASS`, 기준선 미확인, 실패 유형 미구분, 동치 미반영 | 기준선 필수, `^PASS` 줄, 컴파일/시간초과/실행실패/PASS없음 구분, 열 번호 키, 동치 목록(`equivalent.txt`), 집합 B(+ − & \| << >> 상수−1) 추가, `--list` | 런 41194273037 이후 매번 기준선 32/32 유효 |
+| `rtl/verification/rtl/annot.py`, `rtl-mutation.yml` | 생존 목록 절단 | 3.2 KB 단위 notice 출력, 도구 버전 notice | 121건 전수 확보 |
+| `rtl/verification/rtl/run.sh` | 종료코드만으로 PASS 판정 | 로그의 줄 시작 `PASS` 도 요구 | 32/32 PASS 유지 |
+| `rtl/verification/lint_verilator.sh`, `rtl-lint.yml` | 폭 외 정적 검사 없음 | Verilator `--lint-only -Wall`, LATCH/MULTIDRIVEN/대입 잘림 실패 | 런 41194273028, 41195043489 PASS |
+| `rtl/rtl{01,02,04,06,07,14,30}/tb/*.v` | 단일 시나리오 | 독립 참조 모델/스코어보드, 임의 자극, Reset, 작은 파라미터, 경계 | directed PASS, 해당 변형 대부분 검출 |
+| `rtl/rtl{12,16,18,19,21,22,23,26,27,29,31,32}/tb/*.v` | 경계 1~2점 | 경계값·임의 자극·모델 비교(RTL23 은 각도 0..255 전수) | directed PASS, 변형 검출 |
+| `rtl/verification/rtl/equivalent.txt` | 동치 판정이 없음 | 최종 생존 20건 + 근거 | 런 41195651507 실질 100 % |
+| RTL 소스 `src/*.v` | — | **이번 2차에서 수정 없음** | |
 
 ## D. 남은 문제
 
-- 미해결 오류: 생존 변형 95건의 동치/실결함 미분류. 과제별 생존 수: RTL04 18, RTL07 13, RTL02 12, RTL01 10, RTL32 5, RTL14 5, RTL06 4, RTL29 3, RTL27 3, RTL23 3, RTL18 3, RTL16 3, RTL26 2, RTL21 2, RTL12 2, RTL31 2, RTL08 1, RTL09 1, RTL19 1, RTL22 1, RTL30 1.
-- 미검증 기능: RTL05 는 실제 XADC 가 아님, RTL14/18/19/26/27/28 은 PHY·버스 IP 없는 컨트롤러, RTL32 는 장치 전체 통합이 아님(ChatGPT 자체 감사 기준).
-- 개선이 필요한 TB: RTL04(PWM 경계 `>`/`>=`, 카운터 상수), RTL07(멜로디 시퀀서·톤 분주), RTL01/02(리셋값·디바운스 경계), RTL14(주소 범위 0x08~0x77 경계), RTL16/18/29(`&&`→`||` 조건 결합).
-- 실물 검증 필요: Vivado 합성·타이밍·XDC·Basys3 보드, 5 V/3.3 V 레벨, 실제 센서 타이밍. 현재 **전부 0**.
-- 해당 파일 `rtl/**/src/*.v` 에 `timescale` 없음(경고 수준).
-
-### 생존 변형 목록(런 41191680348, `파일:줄 원본->변형`, 주석 길이 제한으로 **88/95건만 확보**; RTL31·RTL32 분 7건 누락)
-```
-rtl01_button_led button_event.v:14 >->>=
-rtl01_button_led button_event.v:25 1'b1->1'b0
-rtl01_button_led button_event.v:25 1'b0->1'b1
-rtl01_button_led button_event.v:26 1'b1->1'b0
-rtl01_button_led button_event.v:26 1'b0->1'b1
-rtl01_button_led button_event.v:28 1'b0->1'b1
-rtl01_button_led button_event.v:35 1'b0->1'b1
-rtl01_button_led button_event.v:36 ==->!=
-rtl01_button_led button_event.v:37 1'b0->1'b1
-rtl01_button_led button_event.v:41 + 1'b1->- 1'b1
-rtl02_rgb_buttons button_level.v:14 >->>=
-rtl02_rgb_buttons button_level.v:18 ~->(제거)
-rtl02_rgb_buttons button_level.v:21 1'b1->1'b0
-rtl02_rgb_buttons button_level.v:21 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:22 1'b1->1'b0
-rtl02_rgb_buttons button_level.v:22 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:23 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:24 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:28 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:29 ==->!=
-rtl02_rgb_buttons button_level.v:30 1'b0->1'b1
-rtl02_rgb_buttons button_level.v:32 +1'b1->- 1'b1
-rtl04_pwm_led pwm_core.v:11 >->>=
-rtl04_pwm_led pwm_core.v:21 1'b0->1'b1
-rtl04_pwm_led pwm_core.v:22 8'd0->8'd1
-rtl04_pwm_led pwm_core.v:23 9'd0->9'd1
-rtl04_pwm_led pwm_core.v:25 1'b0->1'b1
-rtl04_pwm_led pwm_core.v:26 + 1'b1->- 1'b1
-rtl04_pwm_led pwm_core.v:27 ==->!=
-rtl04_pwm_led pwm_core.v:27 8'hFF->8'h100
-rtl04_pwm_led pwm_core.v:29 >->>=
-rtl04_pwm_led pwm_core.v:29 9'd256->9'd257
-rtl04_pwm_led pwm_core.v:29 9'd256->9'd257
-rtl04_pwm_led pwm_core.v:32 + 1'b1->- 1'b1
-rtl04_pwm_led switch_duty_controller.v:13 8'd0->8'd1
-rtl04_pwm_led switch_duty_controller.v:14 8'd0->8'd1
-rtl04_pwm_led switch_duty_controller.v:20 ==->!=
-rtl04_pwm_led switch_duty_controller.v:20 8'hFF->8'h100
-rtl04_pwm_led switch_duty_controller.v:20 9'd256->9'd257
-rtl04_pwm_led switch_duty_controller.v:20 1'b0->1'b1
-rtl06_timer_led switch_sync.v:12 1'b0->1'b1
-rtl06_timer_led switch_sync.v:13 1'b0->1'b1
-rtl06_timer_led tick_generator.v:10 >->>=
-rtl06_timer_led tick_generator.v:15 1'b0->1'b1
-rtl07_buzzer_melody melody_sequencer.v:14 >->>=
-rtl07_buzzer_melody melody_sequencer.v:20 2'd1->2'd2
-rtl07_buzzer_melody melody_sequencer.v:25 ||->&&
-rtl07_buzzer_melody melody_sequencer.v:31 ==->!=
-rtl07_buzzer_melody melody_sequencer.v:31 2'd2->2'd3
-rtl07_buzzer_melody melody_sequencer.v:31 2'd0->2'd1
-rtl07_buzzer_melody melody_sequencer.v:31 + 1'b1->- 1'b1
-rtl07_buzzer_melody melody_sequencer.v:31 1'b1->1'b0
-rtl07_buzzer_melody tone_generator.v:16 ||->&&
-rtl07_buzzer_melody tone_generator.v:16 ||->&&
-rtl07_buzzer_melody tone_generator.v:19 ==->!=
-rtl07_buzzer_melody tone_generator.v:19 - 1'b1->+ 1'b1
-rtl07_buzzer_melody tone_generator.v:19 1'b1->1'b0
-rtl08_hc595_7seg hc595_7seg.v:9 1'b0->1'b1
-rtl09_max7219 max7219_tx.v:9 1'b0->1'b1
-rtl12_dht22_alarm dht22_limit_controller.v:4 >=->>
-rtl12_dht22_alarm dht22_limit_controller.v:4 >=->>
-rtl14_i2c_scan i2c_scan_controller.v:4 7'h08->7'h9
-rtl14_i2c_scan i2c_scan_controller.v:6 &&->||
-rtl14_i2c_scan i2c_scan_controller.v:8 &&->||
-rtl14_i2c_scan i2c_scan_controller.v:9 &&->||
-rtl14_i2c_scan i2c_scan_controller.v:11 7'h77->7'h78
-rtl16_lcd1602 lcd_message_tx.v:6 &&->||
-rtl16_lcd1602 lcd_message_tx.v:7 &&->||
-rtl16_lcd1602 lcd_message_tx.v:7 &&->||
-rtl18_spi_request spi_request_controller.v:6 &&->||
-rtl18_spi_request spi_request_controller.v:8 &&->||
-rtl18_spi_request spi_request_controller.v:9 &&->||
-rtl19_sd_logger sample_logger.v:5 &&->||
-rtl21_imu_level imu_tilt_alert.v:4 >->>=
-rtl21_imu_level imu_tilt_alert.v:4 <-><=
-rtl22_dc_motor motor_dir_controller.v:18 &&->||
-rtl23_servo_pulse servo_target.v:9 >->>=
-rtl23_servo_pulse servo_target.v:9 8'd180->8'd181
-rtl23_servo_pulse servo_target.v:9 8'd180->8'd181
-rtl26_bt_command bt_command_controller.v:5 &&->||
-rtl26_bt_command bt_command_controller.v:8 8'h73->8'h74
-rtl27_rs485_packet rs485_tx_direction.v:6 &&->||
-rtl27_rs485_packet rs485_tx_direction.v:8 &&->||
-rtl27_rs485_packet rs485_tx_direction.v:9 &&->||
-rtl29_integration integrated_alarm.v:4 >->>=
-rtl29_integration integrated_alarm.v:4 <-><=
-rtl29_integration integrated_alarm.v:4 16'd20->16'd21
-rtl30_event_fifo event_fifo2.v:13 -1'
-```
+- 미해결 오류: RTL 소스 오류로 확인된 것은 없음(소스 무수정).
+- 미검증 기능: Vivado 합성·Timing·XDC·보드. RTL05 는 실제 XADC 가 아님, RTL14/18/19/26/27/28 은 PHY·버스 IP 없는 컨트롤러, RTL32 는 장치 전체 통합이 아님(ChatGPT 감사 기준 유지).
+- 개선이 필요한 TB: ① 변형이 0~2개인 과제 RTL11·15·17·20·24·25·28 은 변형 검사가 정보를 거의 주지 못함(연산자 확장 또는 문장 삭제 변형 필요), RTL10·13·17·24 등은 TB 를 읽고 모델/경계 보강 여부 판단 필요. ② 새 TB 의 「모델」은 RTL 의 직역에 가까워 사양 오류는 못 잡는다(회귀·변형 검출용). 사양 수준 검사는 RTL14 스코어보드, RTL23 전수, RTL04 주기 High 수, RTL07 top 반주기 정도뿐. ③ RTL08·09 TB 의 `3×DIV`, `edge==8×latch` 는 마이크로아키텍처 계약 — 외부 계약(74HC595/MAX7219)과 분리 권고(ChatGPT 4-c)는 아직 미반영.
+- 실물 검증이 필요한 항목: 모든 센서·액추에이터 타이밍과 전압(DHT22, HC-SR04 5 V→3.3 V, L298 전류, 서보, MAX7219, LCD), Basys3 XDC, 100 MHz 실제 분주.
+- 설계 관찰(결함으로 단정하지 않음): ① RTL07 `tone_generator`: 카운트 도중 `half_period_clks` 를 현재 카운트 이하로 줄이면 32비트가 한 바퀴 돌 때까지 토글하지 않음 — 현재 배선은 `note_change` 로 카운터를 같이 비우므로 안전하나 재사용 시 제약. ② RTL14: `reply_valid` 가 명령 수락과 같은 클럭에 오면 무시됨(`waiting` 이 아직 0) — TB 는 1클럭 이상 뒤를 가정. ③ RTL22: 정방향→역방향 전환에 데드타임이 없음. ④ RTL32: `led_alarm` 은 항상 `motor_enable` 의 반대(중복 출력). ⑤ RTL29: 신호명 `near` 는 Windows/C++ 매크로와 충돌 가능(Verilator SYMRSVDWORD). ⑥ RTL01·02: 100 MHz·20 ms 에서 `count` 21비트(Verilator WIDTHEXPAND 는 스타일).
 
 ## E. ChatGPT 검토 요청
 
-- Claude 의 판단 중 재검토: ① UVM 이 `841a3a6` 이후 무변경이라 `3d259fa` 에 유효하다는 판단(재실행 안 함) ② 생존 변형 중 `1'b0↔1'b1` 리셋값·`>`↔`>=` 를 동치로 볼지(미판정) ③ RTL10·11·13·15·25 의 100 % 는 변형 1~2개라 무의미하다는 평가.
-- 회귀 위험: RTL08·09 TB 가 `3×DIV` 주기와 `edge_count==8*latch_count` 를 하드코딩했다. DUT 를 정당하게 바꾸면(예: 래치 시점 변경) TB 가 실패한다. 의도된 엄격성이지만 DUT 변경 시 같이 갱신해야 한다.
-- 추가 경계조건: DIV=1·DIV 큰 값, 전송 중 `start` 재입력(무시되는가), 전송 중 `rst`, RTL14 주소 0x07/0x08/0x77/0x78, RTL23 서보 펄스 범위 끝값, RTL30 FIFO full/empty 동시 push/pop.
-- 기술적 의문: ① 변형 검사 판정이 `vvp 종료코드 0 && 'PASS' 출력` 인데 TB 가 `$fatal` 후에도 PASS 를 찍는 경우는 없는지 ② `mutate.py` 변형은 과제당 상한 60·연산자 위주라 상태 레지스터 폭·case 분기 누락 같은 결함은 못 만든다(폭은 별도 lint) ③ 합성 관점: `delay_count` 32비트 카운터, 상태 case 에 `default` 없음(래치 가능성은 순차 always 라 낮으나 미검사), 비동기 입력 동기화는 RTL별로 확인 필요. ④ Latch·Multiple Driver 검사는 Verilator `--lint-only` 또는 Yosys 로 추가 가능하나 이번에 실행하지 않았다.
+- Claude 의 판단 중 재검토가 필요한 사항: ① 최종 생존 20건의 동치 판정(근거는 [MUTATION_CLASSIFICATION.md](MUTATION_CLASSIFICATION.md) §3, 형식 증명 아님) — 특히 RTL04 duty 클램프 3건(pwm_out 만 출력이라는 전제), RTL08·09 `n+1→n-1`(우연의 일치). ② ChatGPT 4-a 표의 CW `>`→`>=` 동치 판정에 대한 반박(X=1 에서 `$clog2(1)=0`, 컴파일 거부로 확인; RTL07 만 동치). 직접 diff 로 재확인 바람. ③ RTL03 UVM 은 이번에 `4ae45f8` 에서 재실행했으므로 「추정」이 아니라 실행 결과임.
+- 수정 코드의 회귀 위험: 새 TB 가 계층 참조(`tb_pwm_core.chk_on`, `c2.m_phase`, `tb_buzzer_melody.chk_on`)와 고정 임계(커버리지 횟수)에 의존 — 모듈명 변경·클럭 수 조정 시 깨짐. RTL04 top 시험은 약 30만 클럭, RTL07 top 은 약 34만 클럭(검사기를 끄고 실행).
+- 추가로 검증해야 할 경계조건: DIV=1·큰 DIV(RTL08·09), 전송 중 start·Reset(RTL08·09), RTL23 의 PWM 코어 연결, RTL30 이 아닌 상위 FIFO 와의 backpressure, 100 MHz 실제 TICKS 에서 한 번이라도 눌림 시험(약 2×10^6 클럭).
+- RTL 구조 또는 합성 관점의 기술적 의문: ① `delay_count`/`timer` 32비트(자원 낭비, 합성 오류 아님). ② clocked `case` 의 `default` 부재는 래치를 만들지 않으나 비정상 상태 복구가 없음(RTL08·09 state 3비트 중 6·7). ③ Verilator 경고 WIDTHEXPAND 13건은 의도적 비교인지 확인. ④ 변형 연산자에 「문장 삭제/조건 반전」 같은 구조 변형을 추가하면 RTL11·15·20·25 의 정보량이 늘어날지.

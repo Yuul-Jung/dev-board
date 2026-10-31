@@ -7,7 +7,7 @@
 | Icarus RTL Directed Test | RTL01~RTL32 | 실행함(GitHub Actions) | 런 41189209256·41189224440·41189772658·41189891691 success(32/32 PASS). 최초 런 41189056034 는 실패였고 RTL08·RTL09 상태폭 결함 때문(수정 248f08e) | **호스트 모의 시험 통과(좁은 지향 시험)** |
 | SystemVerilog UVM | RTL03 단일 과제 | 실행함(Verilator 5.052) | 런 41189772574 success (b6b6111). 앞선 a5535b7 은 `env.agent.scoreboard` 경로 오류로 컴파일 실패 | **RTL03 UVM 통과(단일 과제)** |
 | SystemVerilog UVM | RTL01~02, RTL04~32 | UVM 환경 미작성 | 해당 없음 | **미착수** |
-| RTL 변형 검사(TB 검출력) | RTL01~32 | 실행함(런 41190240306) | 변형 222개 중 114 잡힘·108 살아남음, 검출률 51.4 %. 살아남은 것에는 동치 변형(리셋값 등)이 섞임 → 사람 판독 필요 | **TB 약함: 절반 가까이 못 잡음** |
+| RTL 변형 검사(TB 검출력) | RTL01~32 | 실행함(런 41195651507, aef57f4) | 집합 A 213/222(95.9 %)·B 61/72(84.7 %), 생존 20건 전부 동치 판정 → 실질 100 %. 이전 51.4 %(런 41190240306)·57.2 % 는 과거 기준값 | **TB 대폭 개선, 연산자 집합 한정** |
 | Vivado Synthesis/Timing | RTL01~RTL32 | 미실행 | 보고서 없음 | **미검증** |
 
 ## 2026-10-31 추가 적대적 검증·보강
@@ -40,9 +40,31 @@
 - **남은 생존:** 각 1건(`hc595_7seg.v:9` 시프트에 넣는 `1'b0→1'b1` 등 마지막 비트 이후 관측 불가 → 동치 후보). 사람이 판정해야 하며 아직 하지 않음.
 
 ### 아직 미검증
-- 변형 생존 95건 전체의 동치/실결함 분류(주로 RTL01·02·04·07·32 의 `1'b0/1'b1` 리셋값·`>`→`>=` 경계). 일부는 실제 TB 공백일 수 있음.
+- (1차 기록) 변형 생존 95건 전체의 동치/실결함 분류 → 2차에서 121건 전수 분류 완료(MUTATION_CLASSIFICATION.md)(주로 RTL01·02·04·07·32 의 `1'b0/1'b1` 리셋값·`>`→`>=` 경계). 일부는 실제 TB 공백일 수 있음.
 - Vivado 합성·Timing·XDC·Basys3 실물: 실행 증거 없음 → **미검증**.
 - UVM 은 RTL03 한 과제뿐.
+
+## 2차 적대적 검증 결과 (커밋 SHA 별, 2026-10-31 저녁 KST)
+
+상세: [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md) · 생존 변형 전수 분류: [MUTATION_CLASSIFICATION.md](MUTATION_CLASSIFICATION.md). 도구: Icarus Verilog 12.0, Verilator 5.032(lint)/5.052(UVM), Python 3.14.4.
+
+| 커밋 | 검증 | 런 | 판정 | 핵심 수치 / 원인 |
+|---|---|---|---|---|
+| 2f2f4eb | RTL directed | 41195043490 | **FAIL** | TB 결함: RTL02 진리표 첫 입력 X, RTL14 스캔 루프 클럭 진행 누락 |
+| 2f2f4eb | mutation | 41195043505 | 종료 1 | 기준선 가드: rtl02·rtl14 기준선 실패 |
+| 898ac8b | RTL directed | 41195172214 | PASS | 32/32 |
+| 898ac8b | mutation | 41195172195 | 실행 성공 | A 184/222 = 82.9 %, B 56/72 |
+| 61aca81 | RTL directed | 41195453824 | **FAIL** | TB 결함: RTL12 임의값 편향으로 커버리지 미달 |
+| 4ae45f8 | RTL directed | 41195505544 | PASS | 32/32 |
+| 4ae45f8 | mutation | 41195505539 | 실행 성공 | A 213/222 = **95.9 %**, B 61/72 = 84.7 %, 생존 20 |
+| 4ae45f8 | UVM (RTL03, 재실행) | 41195555029 | PASS | workflow_dispatch, 과거 PASS 전용 아님 |
+| aef57f4 | RTL directed | 41195651503 | PASS | 32/32 |
+| aef57f4 | mutation | 41195651507 | 실행 성공 | 동치 20건 반영: 실질(동치 제외) A·B 100 % |
+| 2f2f4eb | Verilator lint | 41195043489 | PASS | LATCH·MULTIDRIVEN 0, 스타일 경고 20 |
+
+- RTL 소스는 2차에서 수정하지 않았다. 발견한 결함은 모두 **TB 쪽**(3건)이며 해당 TB 만 수정했다.
+- ChatGPT 4-a 의 CW `>`→`>=` 동치 판정은 RTL01·02·04·06 에서 **틀렸다**(X=1 에서 `$clog2(1)=0` → 컴파일 거부). 근거는 MUTATION_CLASSIFICATION.md §4.
+- 한계: 연산자 집합 한정, 동치 판정은 논리 추론, 새 TB 의 모델은 RTL 직역에 가까움, 변형이 0~2개뿐인 과제 존재, Vivado·보드 미검증. 로그/artifact 는 내려받지 못해 주석으로만 확인.
 
 ### 온라인 실행
 - [GitHub Actions](https://github.com/Yuul-Jung/dev-board/actions)

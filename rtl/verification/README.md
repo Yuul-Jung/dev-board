@@ -1,13 +1,13 @@
 # RTL/UVM 독립 검증
 
-[RTL 검증](rtl/README.md) · [SystemVerilog UVM 검증](uvm/README.md) · [검증 결과](RESULTS.md) · [Claude 인계](CLAUDE_HANDOFF.md)
+[RTL 검증](rtl/README.md) · [SystemVerilog UVM 검증](uvm/README.md) · [검증 결과](RESULTS.md) · [Claude 인계](CLAUDE_HANDOFF.md) · [생존 변형 분류](MUTATION_CLASSIFICATION.md)
 
 **원칙:** 같은 RTL 소스를 수정 없이 검증하며, 서로 다른 시뮬레이터·검증 방법의 결과를 분리한다.
 
 | 검증 방법 | 구현 | 범위 | 결과 |
 |---|---|---|---|
-| RTL Directed Test | Icarus Verilog | 기존 32개 과제의 tb 자동 검색 및 각 DUT 실행 | 32/32 PASS (CI 런 41189772658) |
-| SystemVerilog UVM | Verilator 5.052 + Accellera UVM | RTL03 UART LED Controller에 대한 UVM Test/Driver/Monitor/Scoreboard | PASS (CI 런 41189772574) |
+| RTL Directed Test | Icarus Verilog | 기존 32개 과제의 tb 자동 검색 및 각 DUT 실행 | 32/32 PASS (CI 런 41195651503, aef57f4; 2차 TB 보강 후) |
+| SystemVerilog UVM | Verilator 5.052 + Accellera UVM | RTL03 UART LED Controller에 대한 UVM Test/Driver/Monitor/Scoreboard | PASS (CI 런 41195555029, 4ae45f8 재실행) |
 | Synthesis/Timing | Vivado | 별도 하드웨어 검증 | 미실시 |
 
 자동 생성된 로그는 GitHub Actions Artifacts에서 확인한다. CI 실행 기록이 없는 경우 PASS로 표기하지 않는다.
@@ -29,7 +29,8 @@
 | 파일 | 설명 |
 |---|---|
 | [CHATGPT_FEEDBACK.md](CHATGPT_FEEDBACK.md) | ChatGPT 독립 적대적 검증 피드백 — 2026-10-31 |
-| [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md) | CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF) |
+| [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md) | CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF) — 2차 |
+| [MUTATION_CLASSIFICATION.md](MUTATION_CLASSIFICATION.md) | 변형 검사 생존 변형 전수 분류 (2차 적대적 검증) |
 | [RESULTS.md](RESULTS.md) | 검증 방법별 결과 기록 |
 | [lint_verilator.sh](lint_verilator.sh) | Verilator 정적 검사(--lint-only -Wall) — 과제별로 src 만 검사, 경고 종류별 개수를 모은다. |
 | [lint_widths.py](lint_widths.py) | 간이 폭 검사(시뮬레이터 없이 소스만 읽음). 사용: python3 rtl/verification/lint_widths.py [루트] |
@@ -54,7 +55,7 @@
 - RTL: [41189772658](https://github.com/Yuul-Jung/dev-board/actions/runs/41189772658) — 당시 32/32 PASS 기록.
 - UVM: [41189772574](https://github.com/Yuul-Jung/dev-board/actions/runs/41189772574) — 당시 RTL03 PASS 기록.
 - Mutation: [41190240306](https://github.com/Yuul-Jung/dev-board/actions/runs/41190240306) — 222개 중 114개 검출, 108개 생존(51.4%) 기록.
-- 이후 RTL10·11·13·15·25 테스트벤치를 수정했으므로 Mutation 검출률은 **재실행 전 미확정**.
+- 2차 검증 이후 최신: Mutation 집합 A 213/222(95.9 %), 동치 20건 제외 실질 100 % — 런 [41195651507](https://github.com/Yuul-Jung/dev-board/actions/runs/41195651507)(aef57f4). 위 과거 수치(51.4 %, 57.2 %)는 기준값일 뿐이다. 상세는 [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md).
 
 ### 검증 결과 기재 규칙
 1. 날짜, 대상 커밋 SHA, workflow run ID/URL, 검증 도구·버전 기록.
