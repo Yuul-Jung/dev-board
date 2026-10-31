@@ -14,7 +14,13 @@
 | 범위 | 작성 수준 | 남은 핵심 작업 |
 |---|---|---|
 | RTL01~RTL07 | 기능 RTL, 전용 TB 작성 | 실제 시뮬레이션과 문제 수정, IP 실물 연결 |
-| RTL08~RTL32 | 기능 RTL 초안과 Clock Smoke TB | **TB가 DUT를 인스턴스하지 않으므로 기능 검증 불가**. 전용 TB 작성 및 실행, 통합과제 Top·XDC 작성 |
+| RTL08~RTL32 | 기능 RTL 초안과 DUT 인스턴스 자체검사 TB | 기능 시뮬레이션 실행·고장 수리·통합과제 Top·XDC 작성 필요 |
+
+## 자동화된 실행
+- `bash rtl/run_rtl_tests.sh`: Icarus Verilog로 각 차시 TB를 컴파일하고 실행.
+- GitHub Actions `.github/workflows/rtl-tests.yml`: 변경 시 동일한 검사 수행.
+- 해당 자동화는 **등록된 시험 시나리오만** 검증한다. IP 미연결·전기적 안전·실물 기능은 보장하지 않는다.
+- 워크플로 실행 성공 증거는 아직 수집하지 않았다.
 
 ## 기술적 주의
 - RTL14, RTL18, RTL19, RTL26, RTL27, RTL28은 통신 PHY/프로토콜을 완성한 것이 아니라 **트랜잭션 제어기**이다.

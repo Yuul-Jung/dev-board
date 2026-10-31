@@ -1,0 +1,22 @@
+name: RTL 32 lessons simulation
+on:
+  push:
+    paths:
+      - 'rtl/**'
+      - '.github/workflows/rtl-tests.yml'
+  pull_request:
+    paths:
+      - 'rtl/**'
+      - '.github/workflows/rtl-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  icarus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Icarus Verilog
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: Compile and simulate all lesson testbenches
+        run: bash rtl/run_rtl_tests.sh
