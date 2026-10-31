@@ -14,7 +14,8 @@
 - RTL01~RTL32: DUT 기반 기본 테스트벤치 작성. 시나리오 커버리지는 과제별로 서로 다르며 추가 검증 필요.
 - 전체 시뮬레이션 자동 실행 스크립트: [run_rtl_tests.sh](run_rtl_tests.sh)
 - GitHub Actions: [rtl-tests.yml](../.github/workflows/rtl-tests.yml)
-- 현재 채팅 환경에서 컴파일·시뮬레이션 실행을 확인하지 못했으므로 **PASS로 표시하지 않는다**.
+- 2026-10-31 GitHub Actions 에서 Icarus 32/32 PASS(런 41189772658 등), RTL03 UVM PASS(런 41189772574) 확인. 단 최초 실행에서 RTL08·RTL09 가 상태 레지스터 폭 부족(2비트에 상태 4·5)으로 실패했고 3비트로 수정함. 폭 검사 `rtl/verification/lint_widths.py` 를 CI 에 추가.
+- 변형 검사(`rtl/verification/rtl/mutate.py`, 런 41190240306): 222개 변형 중 114개만 TB 가 잡음(51.4 %). PASS 는 「좁은 지향 시험 통과」이지 기능 완전성이 아니다.
 - Vivado 합성·Timing·Basys3 실물 검증: 미실시.
 
 ## 통합 전 확인

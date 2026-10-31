@@ -6,8 +6,8 @@
 
 | 검증 방법 | 구현 | 범위 | 결과 |
 |---|---|---|---|
-| RTL Directed Test | Icarus Verilog | 기존 32개 과제의 tb 자동 검색 및 각 DUT 실행 | 아직 PASS 로그 확보 전 |
-| SystemVerilog UVM | Verilator 5.052 + Accellera UVM | RTL03 UART LED Controller에 대한 UVM Test/Driver/Monitor/Scoreboard | 아직 PASS 로그 확보 전 |
+| RTL Directed Test | Icarus Verilog | 기존 32개 과제의 tb 자동 검색 및 각 DUT 실행 | 32/32 PASS (CI 런 41189772658) |
+| SystemVerilog UVM | Verilator 5.052 + Accellera UVM | RTL03 UART LED Controller에 대한 UVM Test/Driver/Monitor/Scoreboard | PASS (CI 런 41189772574) |
 | Synthesis/Timing | Vivado | 별도 하드웨어 검증 | 미실시 |
 
 자동 생성된 로그는 GitHub Actions Artifacts에서 확인한다. CI 실행 기록이 없는 경우 PASS로 표기하지 않는다.
