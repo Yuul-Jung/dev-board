@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_hc595_7seg.v](tb_hc595_7seg.v) |  |
+| [tb_hc595_7seg.v](tb_hc595_7seg.v) | 시프트 클럭 상승 때 data 를 표본(MSB 먼저), 간격은 3*DIV=6 클럭, 래치는 8번째 에지 뒤에 shift_clk=0 일 때만 |
 
 <!-- index:end -->

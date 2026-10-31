@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_max7219_tx.v](tb_max7219_tx.v) |  |
+| [tb_max7219_tx.v](tb_max7219_tx.v) | sclk 상승 때 din 표본(MSB 먼저), 간격 3*DIV=6 클럭, 전송 중(busy)에는 cs_n=0 이어야 함 |
 
 <!-- index:end -->
