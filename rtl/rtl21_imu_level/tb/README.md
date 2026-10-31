@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_imu_tilt_alert.v](tb_imu_tilt_alert.v) |  |
+| [tb_imu_tilt_alert.v](tb_imu_tilt_alert.v) | RTL21 IMU 기울기 경보: 임계 ±5000 의 양끝 경계(4999/5000/5001, -4999/-5000/-5001), 극값, valid 유지, Reset |
 
 <!-- index:end -->

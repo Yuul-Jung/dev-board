@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_dht22_limit_controller.v](tb_dht22_limit_controller.v) |  |
+| [tb_dht22_limit_controller.v](tb_dht22_limit_controller.v) | RTL12 DHT22 한계 알람: 임의 입력을 TB 모델과 비교(회귀/변형 검출용 모델이며 사양 자체의 검증은 아님). |
 
 <!-- index:end -->

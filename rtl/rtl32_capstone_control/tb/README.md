@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_capstone_controller.v](tb_capstone_controller.v) |  |
+| [tb_capstone_controller.v](tb_capstone_controller.v) | RTL32 캡스톤 제어: 거리 임계 20 cm(19/20/21), 온도 임계 480(479/480/481), 극값, valid 가 없을 때 유지, log_even |
 
 <!-- index:end -->

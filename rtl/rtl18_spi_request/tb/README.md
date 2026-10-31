@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_spi_request_controller.v](tb_spi_request_controller.v) |  |
+| [tb_spi_request_controller.v](tb_spi_request_controller.v) | RTL18 SPI 요청 컨트롤러: 임의 start/ready/done_in/Reset 을 TB 모델과 비교(회귀/변형 검출용). |
 
 <!-- index:end -->

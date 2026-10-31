@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_rs485_tx_direction.v](tb_rs485_tx_direction.v) |  |
+| [tb_rs485_tx_direction.v](tb_rs485_tx_direction.v) | RTL27 RS-485 송신 방향 제어: 임의 start/uart_ready/uart_done/Reset 을 TB 모델과 비교(회귀/변형 검출용). |
 
 <!-- index:end -->

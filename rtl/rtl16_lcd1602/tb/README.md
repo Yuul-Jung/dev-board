@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_lcd_message_tx.v](tb_lcd_message_tx.v) |  |
+| [tb_lcd_message_tx.v](tb_lcd_message_tx.v) | RTL16 LCD 메시지 전송: 임의 start/ready/Reset 을 TB 모델과 비교(회귀/변형 검출용; 사양 자체의 검증은 아님). |
 
 <!-- index:end -->

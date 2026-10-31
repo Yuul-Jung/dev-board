@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_status_registers.v](tb_status_registers.v) |  |
+| [tb_status_registers.v](tb_status_registers.v) | RTL31 레지스터 맵: 임의 쓰기(wr_addr 0..3, wr_en)·읽기 주소 0..3·status·Reset 을 TB 모델과 비교. |
 
 <!-- index:end -->

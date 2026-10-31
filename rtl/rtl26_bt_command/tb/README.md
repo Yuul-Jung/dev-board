@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_bt_command_controller.v](tb_bt_command_controller.v) |  |
+| [tb_bt_command_controller.v](tb_bt_command_controller.v) | RTL26 블루투스 명령 디코더: 임의 바이트(명령 '1','0','S','s' 와 이웃 바이트 '2','R','r','T','t',0x00,0xFF 등)와 |
 
 <!-- index:end -->

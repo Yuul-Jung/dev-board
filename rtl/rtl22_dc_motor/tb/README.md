@@ -13,6 +13,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [tb_motor_dir_controller.v](tb_motor_dir_controller.v) |  |
+| [tb_motor_dir_controller.v](tb_motor_dir_controller.v) | RTL22 DC 모터 방향 제어: 임의 enable/forward/reverse/pwm_in/Reset 을 TB 모델과 비교(회귀/변형 검출용). |
 
 <!-- index:end -->
