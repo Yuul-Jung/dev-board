@@ -21,6 +21,37 @@
 | [rtl06_timer_led/](rtl06_timer_led/README.md) | Arduino 09차시 대응: 0.5초 Tick과 LED 점멸 | RTL·Testbench 작성, 시뮬레이션 전 |
 | [rtl07_buzzer_melody/](rtl07_buzzer_melody/README.md) | Arduino 10차시 대응: 3음 멜로디와 주파수 발생기 | RTL·Testbench 작성, 시뮬레이션 전 |
 
+
+## RTL08~RTL32 추가 개발 현황
+
+| RTL | 주제 | 상태 |
+|---|---|---|
+| [RTL08](rtl08_hc595_7seg/README.md) | 74HC595 직렬 세그먼트 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL09](rtl09_max7219/README.md) | MAX7219 전송 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL10](rtl10_pir_event/README.md) | PIR 이벤트 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL11](rtl11_ultrasonic_event/README.md) | 초음파 거리 경보 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL12](rtl12_dht22_alarm/README.md) | DHT22 데이터 경보 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL13](rtl13_ds18b20_alarm/README.md) | 온도·거리 경보 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL14](rtl14_i2c_scan/README.md) | I2C 스캐너 요청 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL15](rtl15_bh1750/README.md) | BH1750 조도 경보 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL16](rtl16_lcd1602/README.md) | LCD 문자열 전송 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL17](rtl17_oled_page/README.md) | OLED 페이지 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL18](rtl18_spi_request/README.md) | SPI 트랜잭션 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL19](rtl19_sd_logger/README.md) | microSD 로깅 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL20](rtl20_rtc_timestamp/README.md) | RTC 시간 스냅샷 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL21](rtl21_imu_level/README.md) | IMU 기울기 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL22](rtl22_dc_motor/README.md) | DC 모터 제어 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL23](rtl23_servo_pulse/README.md) | 서보 목표 펄스 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL24](rtl24_stepper_phase/README.md) | 스테퍼 패턴 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL25](rtl25_distance_motor/README.md) | 거리 기반 모터 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL26](rtl26_bt_command/README.md) | Bluetooth UART | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL27](rtl27_rs485_packet/README.md) | RS485 방향 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL28](rtl28_network_sample/README.md) | 네트워크 데이터 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL29](rtl29_integration/README.md) | 센서 통합 경보 | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL30](rtl30_event_fifo/README.md) | 이벤트 FIFO | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL31](rtl31_register_map/README.md) | Register Map | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+| [RTL32](rtl32_capstone_control/README.md) | 캡스톤 Controller | 기능 RTL 초안, 테스트벤치 강화·실행 전 |
+
 ## 필수 안전 확인
 - 비동기 외부 입력은 동기화 후 사용. 동기화 플립플롭 사이의 타이밍 예외는 실제 제약에 근거할 때만 적용.
 - 외부 5V 출력은 Basys3 GPIO로 직접 연결하지 말고 레벨 시프터 또는 분압 검토.
