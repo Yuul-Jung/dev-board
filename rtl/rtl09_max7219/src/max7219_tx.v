@@ -1,5 +1,5 @@
 module max7219_tx #(parameter integer DIV=50)(input wire clk,rst,start,input wire [15:0] frame,output reg din,sclk,cs_n,busy,done);
-reg [15:0] shift;reg [4:0] n;reg [31:0] timer;reg [1:0] state;
+reg [15:0] shift;reg [4:0] n;reg [31:0] timer;reg [2:0] state;
 always @(posedge clk) begin
  if(rst)begin din<=0;sclk<=0;cs_n<=1;busy<=0;done<=0;shift<=0;n<=0;timer<=0;state<=0;end
  else begin done<=0;

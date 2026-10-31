@@ -1,5 +1,5 @@
 module hc595_7seg #(parameter integer DIV=50)(input wire clk,rst,start,input wire [7:0] segments,output reg data,shift_clk,latch_clk,busy,done);
-reg [7:0] bits; reg [3:0] n; reg [31:0] delay_count; reg [1:0] state;
+reg [7:0] bits; reg [3:0] n; reg [31:0] delay_count; reg [2:0] state;
 always @(posedge clk) begin
  if(rst) begin data<=0;shift_clk<=0;latch_clk<=0;busy<=0;done<=0;bits<=0;n<=0;delay_count<=0;state<=0;end
  else begin done<=0;

@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Icarus Verilog
         run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: Width lint (state/literal truncation)
+        run: python3 rtl/verification/lint_widths.py
       - name: Run RTL directed tests
         run: bash rtl/verification/rtl/run.sh
       - uses: actions/upload-artifact@v4
