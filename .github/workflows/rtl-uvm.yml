@@ -1,0 +1,38 @@
+name: RTL03 SystemVerilog UVM
+on:
+  push:
+    paths:
+      - 'rtl/verification/uvm/**'
+      - 'rtl/rtl03_uart_led/**'
+      - '.github/workflows/rtl-uvm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  uvm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtain standard UVM reference library
+        run: git clone --depth 1 https://github.com/accellera-official/uvm-core.git /tmp/uvm-core
+      - name: Obtain Verilator 5.052
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git autoconf make g++ perl python3 bison flex libfl-dev help2man
+          git clone --depth 1 --branch v5.052 https://github.com/verilator/verilator.git /tmp/verilator
+          cd /tmp/verilator
+          autoconf
+          ./configure
+          make -j 2
+      - name: Run UVM test and capture log
+        env:
+          UVM_HOME: /tmp/uvm-core/src
+        run: |
+          export PATH="/tmp/verilator/bin:$PATH"
+          bash rtl/verification/uvm/run.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rtl03-uvm-results
+          path: rtl/verification/uvm/results/rtl03-uvm.log
+          if-no-files-found: warn
