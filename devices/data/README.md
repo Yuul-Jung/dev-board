@@ -14,6 +14,7 @@
 | 파일 | 설명 |
 |---|---|
 | [chapter-status.csv](chapter-status.csv) |  |
+| [crosswalk.csv](crosswalk.csv) |  |
 | [devices.json](devices.json) |  |
 | [module-status.csv](module-status.csv) |  |
 | [session-map.csv](session-map.csv) |  |

@@ -13,6 +13,6 @@
 
 | 폴더 | 내용 |
 |---|---|
-| [01_led_button/](01_led_button/README.md) |  |
+| [01_led_button/](01_led_button/README.md) | 01_led_button |
 
 <!-- index:end -->

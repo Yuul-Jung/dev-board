@@ -1,6 +1,6 @@
 # Arduino 전용 학습 과정
 
-[저장소 홈](../README.md) · [32차시 테크트리](ROADMAP.md) · [기존 자료 대응표](CROSSWALK.md) · [검토 기록](REVIEW.md) · [첫 실습](examples/01_led_button/01_led_button.ino)
+[저장소 홈](../README.md) · [32차시 테크트리](ROADMAP.md) · [기존 자료 대응표](CROSSWALK.md) · [검토 기록](REVIEW.md) · [세 체계 대조](../devices/TREE-CROSSWALK.md) · [첫 실습](examples/01_led_button/01_led_button.ino)
 
 ## 목적
 Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동기 → 통합 프로젝트를 단계적으로 학습한다. Arduino 프로그래밍은 Arduino Sketch(C++ 기반)와 표준 라이브러리 중심으로 구성한다. Basys3 + MicroBlaze V의 RTL/AXI 설계 과정과는 **별개의 구현 트랙**이다.
@@ -61,7 +61,7 @@ Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동
 
 | 폴더 | 내용 |
 |---|---|
-| [examples/](examples/README.md) |  |
+| [examples/](examples/README.md) | examples |
 
 ### 파일
 

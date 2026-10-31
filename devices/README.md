@@ -26,7 +26,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 
 전체 범주 목록과 상태는 [CATEGORIES.md](CATEGORIES.md), 남은 일은 [TODO.md](TODO.md), 문서 형식은 [TEMPLATE.md](TEMPLATE.md).
 학습 순서로 보려면 아두이노 교재 목차에 맞춘 [BOOK-MAP.md](BOOK-MAP.md)(장별 대응과 빈칸).
-기술 트리 32차시 대응은 [SESSION-MAP.md](SESSION-MAP.md), GitHub 참고 자료 대장은 [REFERENCES.md](REFERENCES.md), 프로젝트 문서와의 대조·개정 검토는 [REVIEW-20261031.md](REVIEW-20261031.md).
+교재·Arduino·테크트리 세 체계의 주제별 대조는 [TREE-CROSSWALK.md](TREE-CROSSWALK.md), 기술 트리 32차시 대응은 [SESSION-MAP.md](SESSION-MAP.md), GitHub 참고 자료 대장은 [REFERENCES.md](REFERENCES.md), 프로젝트 문서와의 대조·개정 검토는 [REVIEW-20261031.md](REVIEW-20261031.md).
 모듈 전체 현황(상태 기준·인터페이스별·빈틈 순서)은 [STATUS.md](STATUS.md), 원자료는 `data/module-status.csv` · `data/chapter-status.csv`.
 
 ## 검증 자료
@@ -92,6 +92,7 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [STATUS.md](STATUS.md) | 아두이노 모듈 현황 (구조화·순서화) |
 | [TEMPLATE.md](TEMPLATE.md) | <부품명> |
 | [TODO.md](TODO.md) | 남은 일 (데이터시트·시뮬레이션 확인 전) |
+| [TREE-CROSSWALK.md](TREE-CROSSWALK.md) | 세 체계 대조: 교재 목차 ↔ Arduino 32차시 ↔ 테크트리 32차시 |
 | [VERIFICATION.md](VERIFICATION.md) | 적대적 검증 결과 |
 | [run_host_tests.sh](run_host_tests.sh) | 호스트(gcc, python3)에서 모의 레지스터로 실행되는 테스트를 모두 돌린다. Verilog 는 포함하지 않는다(시뮬레이터 필요). |
 

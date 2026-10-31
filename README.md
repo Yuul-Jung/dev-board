@@ -50,7 +50,7 @@
 | [atlas/](atlas/README.md) | atlas |
 | [catalog/](catalog/README.md) | catalog |
 | [devices/](devices/README.md) | devices — 인터페이스별 주변장치 자료 |
-| [examples/](examples/README.md) |  |
+| [examples/](examples/README.md) | examples |
 | [soc-map/](soc-map/README.md) | soc-map |
 
 ### 파일

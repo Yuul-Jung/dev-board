@@ -87,7 +87,7 @@ cd devices
 ./run_host_tests.sh                    # 기본 40개(링크·사실표 대조 포함)
 SAN=1 FUZZ=1 ./run_host_tests.sh       # ASan/UBSan + 퍼저·전수
 python3 tools/check_links.py           # 문서 링크
-python3 tools/gen_status.py > STATUS.md; python3 tools/gen_sessions.py > SESSION-MAP.md   # 현황표·차시 대응(CSV 에서 생성)
+python3 tools/gen_status.py > STATUS.md; python3 tools/gen_sessions.py > SESSION-MAP.md; python3 tools/gen_crosswalk.py > TREE-CROSSWALK.md   # 현황표·차시 대응(CSV 에서 생성)
 python3 tools/gen_index.py --check; python3 tools/gen_pages.py --check                      # 폴더 인덱스가 최신인지
 pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt (그리고 mcp2515.txt, nrf24.txt) 로 변환해 한 폴더에 두고
 python3 -I tools/crosscheck_pdf.py <폴더>              # PDF 텍스트 블록 + 사실표 블록(PDF 포함 총합은 이번에 못 돌림, 계산상 586)
