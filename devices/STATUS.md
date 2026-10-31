@@ -64,7 +64,7 @@
 | P03 | TB6612FNG | 응용 | 25 | 문서만 | `motor/tb6612fng.md` |  |  |
 | P04 | DRV8833 | 응용 |  | 없음 |  |  |  |
 | P05 | MOSFET LED·팬 PWM | 기초 | 9 | 일부 | `gpio/fan-pwm.md` |  | AXI Timer PWM 드라이버 |
-| P06 | 28BYJ-48 + ULN2003 | 응용 | 27 | 완비 | `motor/28byj-48.md` |  | 이번 세션 추가(모델 시험) |
+| P06 | 28BYJ-48 + ULN2003 | 응용 | 27 | 완비 | `motor/28byj-48.md` |  | 모델 시험 |
 
 ### 펄스·캡처 — 완비 1 · 일부 2 · 문서만 0 · 없음 1 · 제외 0
 
@@ -95,7 +95,7 @@
 | I03 | BMP280 | 응용 |  | 일부 | `i2c/bme280.md` |  | BME280 드라이버로 압력·온도 부분 사용 |
 | I04 | MPU-6050 | 응용 | 24 | 완비 | `i2c/sensors.md` |  |  |
 | I05 | DS3231 RTC | 기초 | 22 | 완비 | `i2c/clock.md` |  |  |
-| I06 | SSD1306 OLED | 응용 | 23 | 완비 | `i2c/ssd1306.md` |  | 이번 세션: 선·원·삼각형·비트맵·5x7 글꼴 |
+| I06 | SSD1306 OLED | 응용 | 23 | 완비 | `i2c/ssd1306.md` |  | 선·원·삼각형·비트맵·5x7 글꼴 |
 | I07 | LCD1602 + PCF8574 | 응용 | 15 | 완비 | `i2c/lcd1602.md` |  | 백팩 핀 배치는 관례(미확인) |
 | I08 | PCF8574 확장기 | 응용 | 19 | 완비 | `i2c/io-expander.md` |  |  |
 | I09 | PCA9685 16채널 PWM | 심화 |  | 없음 |  |  |  |
@@ -176,17 +176,17 @@
 | 14 | 내장 LED 매트릭스 | 해당 없음 |  | 우노 R4 고유 |
 | 15 | 텍스트 LCD | 완비 | `i2c/lcd1602.md` |  |
 | 16 | 센서 모음 | 일부 | `gpio/hc-sr04.md` | HC-SR04·DHT22·DS18B20 시험 완료, CdS 는 상대 밝기로 결정(lux 환산 안 함, 변형 검사 미실시), PIR 전용 드라이버 없음 |
-| 17 | 소리·RTTTL·부저 | 일부 | `gpio/rtttl.md` | 이번 세션: RTTTL, 명세 충돌 3건·부저 사양 미확인 |
+| 17 | 소리·RTTTL·부저 | 일부 | `gpio/rtttl.md` | RTTTL, 명세 충돌 3건·부저 사양 미확인 |
 | 18 | UART | 완비 | `uart/README.md` |  |
 | 19 | I2C + I2C LCD | 완비 | `i2c/README.md` |  |
 | 20 | SPI + SD 카드 | 일부 | `spi/README.md` | microSD 미확인 |
 | 21 | CAN | 완비 | `can/README.md` |  |
 | 22 | RTC | 완비 | `i2c/clock.md` |  |
-| 23 | OLED 도형·이미지 | 완비 | `i2c/ssd1306.md` | 이번 세션 추가, 책의 비트맵 형식 미확인 |
+| 23 | OLED 도형·이미지 | 완비 | `i2c/ssd1306.md` | 책의 비트맵 형식 미확인 |
 | 24 | MPU-6050 | 완비 | `i2c/sensors.md` |  |
 | 25 | DC 모터 | 일부 | `motor/l298.md` | RTL 시뮬레이션 전 |
 | 26 | 서보 | 일부 | `motor/sg90.md` | RTL 시뮬레이션 전 |
-| 27 | 스텝 모터 | 완비 | `motor/28byj-48.md` | 이번 세션 추가, IN 대응은 설계안 |
+| 27 | 스텝 모터 | 완비 | `motor/28byj-48.md` | IN 대응은 설계안 |
 | 28 | 블루투스 클래식(HC-06) | 완비 | `uart/modules.md` |  |
 | 29 | BLE(ESP32-S3) | 일부 | `uart/modules.md` | HM-10 으로 대체, ESP32-S3 미선정 |
 | 30 | 인터넷·Wi-Fi | 일부 | `ethernet/socket-apps.md` | Wi-Fi 없음, 유선 W5500 대안, HTTPS·날씨 JSON 없음 |

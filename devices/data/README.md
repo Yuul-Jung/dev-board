@@ -16,5 +16,6 @@
 | [chapter-status.csv](chapter-status.csv) |  |
 | [devices.json](devices.json) |  |
 | [module-status.csv](module-status.csv) |  |
+| [session-map.csv](session-map.csv) |  |
 
 <!-- index:end -->

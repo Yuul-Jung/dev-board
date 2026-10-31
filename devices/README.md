@@ -19,13 +19,14 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 | [`ps2/`](ps2/README.md) | PS/2 키보드·마우스 | 수신 전용 RTL, 프로토콜은 2차 자료 |
 | [`ethernet/`](ethernet/README.md) | 이더넷 3경로 비교, W5500 위 DHCP·DNS·NTP·HTTP·JSON 응용([socket-apps.md](ethernet/socket-apps.md)) | W5500, Pmod NIC100, AXI Ethernet Lite (일부 미확인) |
 | [`bluetooth/`](bluetooth/README.md) | Bluetooth | HC-05·HC-06·HM-10 은 `uart/` 에 있음 |
-| [`SELECTION.md`](SELECTION.md) | 주변장치 선정 기준(1순위 아두이노, 2순위 디질런트)과 분류별 대응 | 모터·블루투스·문자 LCD 만 조사 |
+| [`SELECTION.md`](SELECTION.md) | 주변장치 선정 기준(1순위 아두이노, 2순위 디질런트)과 분류별 대응 | 전 분류 조사(2026-10-30 완료) |
 | [`data/`](data/README.md) | 위 소자의 구조화 데이터 ([devices.json](data/devices.json)) | |
 
 **전용 RTL 방침**: 열람한 AMD IP가 없는 인터페이스는 AXI4-Lite 슬레이브 전용 RTL로 설계합니다. 현재 `1-wire/rtl/`, `gpio/rtl/`(HC-SR04 래퍼, DHT22), `motor/rtl/`(DC 모터, 서보 PWM) — 모두 시뮬레이션 전. `ps2/rtl/`(수신 전용). I2S, CAN 은 AMD IP 확인으로 대상에서 제외.
 
 전체 범주 목록과 상태는 [CATEGORIES.md](CATEGORIES.md), 남은 일은 [TODO.md](TODO.md), 문서 형식은 [TEMPLATE.md](TEMPLATE.md).
 학습 순서로 보려면 아두이노 교재 목차에 맞춘 [BOOK-MAP.md](BOOK-MAP.md)(장별 대응과 빈칸).
+기술 트리 32차시 대응은 [SESSION-MAP.md](SESSION-MAP.md), GitHub 참고 자료 대장은 [REFERENCES.md](REFERENCES.md), 프로젝트 문서와의 대조·개정 검토는 [REVIEW-20261031.md](REVIEW-20261031.md).
 모듈 전체 현황(상태 기준·인터페이스별·빈틈 순서)은 [STATUS.md](STATUS.md), 원자료는 `data/module-status.csv` · `data/chapter-status.csv`.
 
 ## 검증 자료
@@ -84,7 +85,10 @@ SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니�
 |---|---|
 | [BOOK-MAP.md](BOOK-MAP.md) | 교재 목차 대응표 (아두이노 우노 R4 교재 ↔ 이 저장소) |
 | [CATEGORIES.md](CATEGORIES.md) | 주변장치 전체 분류 (필수 항목 목록) |
+| [REFERENCES.md](REFERENCES.md) | GitHub 참고 자료 대장 |
+| [REVIEW-20261031.md](REVIEW-20261031.md) | 프로젝트 문서 ↔ 저장소 개정 검토 (2026-10-31) |
 | [SELECTION.md](SELECTION.md) | 주변장치 선정 기준과 분류별 대응 |
+| [SESSION-MAP.md](SESSION-MAP.md) | 기술 트리 32차시 ↔ 저장소 모듈 대응 |
 | [STATUS.md](STATUS.md) | 아두이노 모듈 현황 (구조화·순서화) |
 | [TEMPLATE.md](TEMPLATE.md) | <부품명> |
 | [TODO.md](TODO.md) | 남은 일 (데이터시트·시뮬레이션 확인 전) |

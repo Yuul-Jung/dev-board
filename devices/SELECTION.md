@@ -24,7 +24,7 @@
 | 조도 | CdS 분압(책 16장), BH1750 I2C 모듈 | [Pmod ALS](https://reference.digilentinc.com/pmod:pmod:als:ref_manual) (TEMT6000X01+ADC081S021, SPI, D1 요약 경유) | CdS 변환([analog-sensors.md](gpio/analog-sensors.md)), BH1750([i2c/sensors.md](i2c/sensors.md)). ALS 드라이버 없음 |
 | 모션(가속도·자이로) | MPU-6050·ADXL345 모듈(책 24장) | [Pmod ACL2](https://reference.digilentinc.com/pmod:pmod:acl2:ref_manual) (ADXL362, SPI, D1 요약 경유) / [Pmod GYRO](https://digilent.com/reference/pmod/pmod/gyro/ref_manual) (L3G4200D, SPI, D3) | MPU-6050·ADXL345([i2c/sensors.md](i2c/sensors.md)) 완비. Pmod 드라이버 없음 |
 | 서보 | SG90(책 26장) | 해당 없음(디질런트에 서보 전용 Pmod 없음) | [motor/sg90.md](motor/sg90.md), 전용 RTL. RTL 미시뮬레이션 |
-| 스테퍼 | 28BYJ-48+ULN2003(책 27장) | 해당 없음(디질런트에 스테퍼 전용 Pmod 없음) | [motor/28byj-48.md](motor/28byj-48.md), 문서만 |
+| 스테퍼 | 28BYJ-48+ULN2003(책 27장) | 해당 없음(디질런트에 스테퍼 전용 Pmod 없음) | [motor/28byj-48.md](motor/28byj-48.md), 드라이버·모델 시험 있음(완비, 실물 미확인) |
 | 시계(RTC) | DS3231·DS1307 모듈(I2C, 책 22장) | [Pmod RTCC](https://reference.digilentinc.com/pmod/pmod/rtcc/old_ref_manual) (MCP79410, I2C/SPI, D3) | DS3231([i2c/clock.md](i2c/clock.md)), DS3234([spi/clock.md](spi/clock.md)) 완비. RTCC 드라이버 없음 |
 | 저장(SD) | microSD SPI 모듈(책 20장) | [Pmod MicroSD](https://digilent.com/reference/pmod/pmodmicrosd/reference-manual) (microSD, SPI) / [Pmod SD](https://reference.digilentinc.com/pmod/pmod/sd/ref_manual) (full-size SD, SPI) | microSD 미확인([spi/comm-storage-io.md](spi/comm-storage-io.md) 언급만) |
 | 저장(직렬 플래시) | W25Q64JV SPI 플래시 모듈 | Pmod MEM (SPI 플래시, D3 — 칩·가용성 미확인) | W25Q64JV([spi/comm-storage-io.md](spi/comm-storage-io.md)) 완비 |

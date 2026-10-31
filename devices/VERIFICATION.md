@@ -49,6 +49,8 @@
 | 40 | DC 모터 드라이버(`motor/sw/dcmotor.[ch]`, L298·TB6612) 다시 읽기(2026-10-30) | **결함 4건**: ① **RTL 의 DUTY 레지스터가 16비트**인데 기본 주기가 100000 클럭이라 듀티 66 % 넘는 값이 잘렸다(100 % → 34464 = 약 34 %, 75 % → 약 9.5 %). 기존 시험은 모의 레지스터가 32비트로 저장해 통과했다 — 모의가 실제를 가린 사례 ② `period * percent` 가 32비트라 주기 4290만 클럭 넘으면(100 MHz 에서 약 2.3 Hz 이하) 넘침 ③ mode 가 0~3 밖이면 `mode << 1` 이 enable·다른 비트를 건드림 ④ 쓰기 실패를 알 방법이 없음(void) | RTL 을 DUTY 32비트로 넓힘(regs·top·engine·tb, **시뮬레이션 못 함**). 드라이버: 64비트 곱셈, mode 검증, DUTY 를 쓴 뒤 다시 읽어 다르면 CTRL=0 으로 멈추고 `MOT_ERR_DUTY` — 예전 16비트 RTL 비트스트림에서도 조용히 틀린 속도로 돌지 않음. 시험의 모의 레지스터는 리터럴 오프셋 + DUTY 폭(16/32) 선택 가능. 변형 5/50 생존, 전부 동치(`<`↔`<=` 경계, 같은 값으로 클램프, 리턴 0) |
 | 41 | SG90 서보 드라이버(`motor/sw/servo.[ch]`, 교재 26장) 신규 작성(2026-10-30) | 시험이 한 번에 통과(실패 0) — **통과를 믿을 근거가 아직 없다**: 변형 검사와 사실표 대조를 사용자 요청(「검증은 나중」)으로 하지 않았음. 미확인: SG90 방향·펄스 폭 범위(2차 자료), 레지스터 맵은 RTL 주석 기준 | 드라이버·모의 레지스터 시험·문서 추가, 상태는 「일부」로 둠. 다음 검증 때 변형 검사와 대조를 먼저 할 것 |
 | 42 | CdS 상대 밝기·슈미트 스위치(`gpio/sw/analog_sensors.[ch]`에 추가, 2026-10-30) | 사용자 결정으로 lux 환산 대신 상대 밝기(원소스, 감도는 외부 R_fixed)로 감. 시험은 한 번에 통과(실패 0) — **변형 검사 미실시라 통과를 믿을 근거가 아직 없음**(사용자 요청으로 뒤로 미룸). 미확인: R_fixed 선택 기준은 셀 자료·실측 필요 | 함수 3개 추가, 문서 갱신. 상태는 「일부」 |
+| 43 | 프로젝트 문서(기술 트리 2026-10-30)와 저장소 대조(2026-10-31) | **문서가 오래된 곳 4건**: ① `SELECTION.md` 가 28BYJ-48 을 「문서만」으로 적음(실제는 드라이버·모델 시험 있음) ② `README.md` 가 선정 기준 조사를 「모터·블루투스·문자 LCD 만」으로 적음(전 분류 완료) ③ `CATEGORIES.md` 가 「4개 분류만」으로 적음 ④ CSV 메모의 「이번 세션」은 시점이 사라지는 표현 | 문장 수정, STATUS.md 재생성. 이 4건은 자동 검사가 못 잡는 문장이라 앞으로도 상태가 바뀔 때 `grep "문서만\|드라이버 없음"` 로 SELECTION·CATEGORIES 를 같이 봐야 함 |
+| 44 | 같은 대조: 프로젝트 문서 §6 하드웨어 점검 11항목과 소자 문서 대조 | **경고 누락 3건**: ① CdS(`gpio/analog-sensors.md`)에 XADC 0~1.0 V 입력 범위 주의 없음 ② `i2c/README.md` 에 풀업이 5 V 인 모듈의 SDA/SCL 5 V 문제 없음 ③ MFRC522(`spi/comm-storage-io.md`)에 UID 단독 인증의 보안 한계 없음 | 세 곳에 추가. 출처는 프로젝트 문서(설계안·미확인)이며 UG480 원문은 열람하지 못함 |
 
 ## 2. 원문 대조 (코드의 상수·레지스터 ↔ 근거)
 `tools/crosscheck_pdf.py`: 두 가지 방식이 섞여 있습니다.
@@ -82,6 +84,8 @@ cd devices
 ./run_host_tests.sh                    # 기본 40개(링크·사실표 대조 포함)
 SAN=1 FUZZ=1 ./run_host_tests.sh       # ASan/UBSan + 퍼저·전수
 python3 tools/check_links.py           # 문서 링크
+python3 tools/gen_status.py > STATUS.md; python3 tools/gen_sessions.py > SESSION-MAP.md   # 현황표·차시 대응(CSV 에서 생성)
+python3 tools/gen_index.py --check; python3 tools/gen_pages.py --check                      # 폴더 인덱스가 최신인지
 pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg096.txt pg142.txt pg153.txt (그리고 mcp2515.txt, nrf24.txt) 로 변환해 한 폴더에 두고
 python3 -I tools/crosscheck_pdf.py <폴더>              # PDF 텍스트 블록 + 사실표 블록(PDF 포함 총합은 이번에 못 돌림, 계산상 586)
 python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(524항목, PDF 텍스트 없이 저장소의 ref/ 만으로 돎, run_host_tests.sh 에도 포함)

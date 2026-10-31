@@ -1,0 +1,33 @@
+session,track,title,module_ids,amd_ip,note
+01,A 기초 GPIO,버튼과 LED,G01 G07,,
+02,A 기초 GPIO,적외선 감지 경보,G02 G08,,
+03,A 기초 GPIO,문 열림 모니터,G04 G01 G07 G08,,리드 스위치 전용 문서 없음(G04)
+04,A 기초 GPIO,조도 센서 단순 디지털 입력,A01 G07,,비교기 DO 입력은 일반 GPIO 입력. 모듈 DO 문서 없음
+05,A 기초 GPIO,4×4 키패드,B02,,
+06,A 기초 GPIO,입력 이벤트 레지스터,G01 G02 G04 G05 G06,,
+07,B 시간·파형·ADC,PWM LED 조광,P05,AXI Timer(PG079) PWM,
+08,B 시간·파형·ADC,초음파 거리,T01,,HC-SR04 RTL 래퍼는 시뮬레이션 전
+09,B 시간·파형·ADC,서보 위치 제어,P01,AXI Timer PWM 대안,
+10,B 시간·파형·ADC,DC 모터 제어,P02 P03,,TB6612 는 L298 드라이버 공용(문서만)
+11,B 시간·파형·ADC,엔코더 회전수,T02,,"전용 RTL, 시뮬레이션 전"
+12,B 시간·파형·ADC,CdS 스마트 조명,A01 P05,XADC,XADC 는 AMD 블록. 0~1.0 V 주의
+13,B 시간·파형·ADC,2입력·2출력 환경 제어,A01 G02 G07 G08,,
+14,C UART·전용,UART 센서 명령·응답,,AXI UART Lite(PG142),자체 uart_core 대신 AMD IP 사용(사용자 결정)
+15,C UART·전용,Bluetooth Serial 제어,U01,AXI UART Lite,
+16,C UART·전용,GPS 수신,U02,AXI UART Lite,
+17,C UART·전용,DS18B20 온도 수집,W01,,1-Wire 전용 RTL 시뮬레이션 전
+18,C UART·전용,전용 타이밍 장치(DHT22 또는 HX711),C01 C02,,HX711 은 없음
+19,D I²C,I²C 마스터 회로,,AXI IIC(PG090),자체 마스터 RTL 대신 AMD IP 사용(사용자 결정)
+20,D I²C,조도 읽기,I01,AXI IIC,
+21,D I²C,RTC + OLED 표시,I05 I06,AXI IIC,
+22,D I²C,동작·자세 측정,I04,AXI IIC,
+23,D I²C,다채널 PWM 확장,I09 P01,AXI IIC,PCA9685 드라이버 없음
+24,E SPI,SPI 마스터·표시,S03,AXI Quad SPI(PG153),
+25,E SPI,태그 읽기,S01,AXI Quad SPI,RC522 드라이버 없음
+26,E SPI,외부 ADC,S05,AXI Quad SPI,
+27,E SPI,무선 패킷,S08,AXI Quad SPI,
+28,E SPI,저장·네트워크 확장,S02 S09,AXI Quad SPI,SD 는 문서만
+29,F SoC 확장,AXI GPIO·Timer 보안 입력장치,G01 G02 G04,AXI GPIO(PG144) + AXI Timer,
+30,F SoC 확장,AXI UART 센서 게이트웨이,U01 U02,AXI UART Lite,
+31,F SoC 확장,외부 통신 IP + 센서 드라이버,I02 I04 S05,AXI IIC / AXI Quad SPI,
+32,F SoC 확장,Custom AXI IP 주변장치,W01 T01 P01 P02,자체 RTL(AXI4-Lite 래퍼),RTL 4종 모두 시뮬레이션 전
