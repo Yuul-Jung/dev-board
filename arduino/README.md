@@ -1,6 +1,6 @@
 # Arduino 전용 학습 과정
 
-[저장소 홈](../README.md) · [32차시 테크트리](ROADMAP.md) · [기존 자료 대응표](CROSSWALK.md) · [첫 실습](examples/01_led_button/01_led_button.ino)
+[저장소 홈](../README.md) · [32차시 테크트리](ROADMAP.md) · [기존 자료 대응표](CROSSWALK.md) · [검토 기록](REVIEW.md) · [첫 실습](examples/01_led_button/01_led_button.ino)
 
 ## 목적
 Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동기 → 통합 프로젝트를 단계적으로 학습한다. Arduino 프로그래밍은 Arduino Sketch(C++ 기반)와 표준 라이브러리 중심으로 구성한다. Basys3 + MicroBlaze V의 RTL/AXI 설계 과정과는 **별개의 구현 트랙**이다.
@@ -51,3 +51,24 @@ Arduino UNO R4를 기준으로 GPIO → ADC/PWM → 통신 → 센서 → 구동
 5. 기존 데이터시트·드라이버 문서를 복제하지 않고 상대 링크로 연결한다.
 
 > 참고: `devices/BOOK-MAP.md`는 '상상을 스케치하는 아두이노 우노 R4' **31장 목차에 대한 SoC 대응표**이다. 이 디렉터리의 32차시는 별도로 설계한 Arduino 실습 교육과정이며 1:1 교재 복제가 아니다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [examples/](examples/README.md) |  |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [CROSSWALK.md](CROSSWALK.md) | Arduino ↔ 공통 부품 ↔ Basys3 SoC 대응 |
+| [REVIEW.md](REVIEW.md) | Arduino 트랙 검토 (2026-10-31) |
+| [ROADMAP.md](ROADMAP.md) | Arduino UNO R4 전용 32차시 테크트리 |
+
+<!-- index:end -->

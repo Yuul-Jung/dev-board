@@ -4,6 +4,7 @@
 
 프로젝트 문서(`arduino_io_module_tech_tree_20261030_github_updated.md` §4·§10)의 32차시를 이 저장소의 모듈과 연결한 표입니다. 이 파일은 `tools/gen_sessions.py` 가 `data/session-map.csv` 와 `data/module-status.csv` 에서 만듭니다.
 
+- **번호 주의**: 이 표의 32차시는 프로젝트 문서의 FPGA/SoC 트랙이며 [Arduino 32차시](../arduino/ROADMAP.md)와 번호가 다른 별개 과정입니다(예: 09차시는 여기서는 서보, Arduino 쪽은 millis 타이머).
 - **대응(차시→모듈 ID)은 제목을 보고 맞춘 설계안**입니다. 문서가 모듈 ID 로 차시를 지정한 것이 아닙니다.
 - **차시 상태**는 소속 모듈 중 가장 낮은 상태입니다(계산). 「완비」도 호스트 모의 시험까지이고, 보드·RTL 시뮬레이션은 하나도 없습니다([STATUS.md](STATUS.md) §1).
 - AMD IP 열은 해당 차시에서 자체 RTL 대신 쓰는 AMD IP입니다(사용자 결정 2026-10-31, [TODO.md](TODO.md)). 14·19 차시는 모듈이 없고 AMD IP 만 씁니다.

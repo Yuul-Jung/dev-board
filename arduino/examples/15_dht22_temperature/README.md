@@ -28,4 +28,21 @@ DHT22 온습도 측정을 Arduino UNO R4의 입출력으로 구현한다. 기본
 - UNO R4 실물 시험: 미실행
 - 실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요
 
+## 개정 메모 (2026-10-31 검토)
+- 스케치의 `delay(2000)` 은 [DHT22 문서](../../../devices/gpio/dht22.md)의 「수집 주기 2 s 초과」와 맞습니다(읽기 시간까지 더해 실제 주기는 2 s 를 넘음).
+- **미확인**: Adafruit DHT 라이브러리가 UNO R4(Renesas RA4M1)에서 정상 동작하는지는 확인하지 못했습니다. 베어 센서의 풀업 값도 데이터시트에 없습니다(위 devices 문서).
+
 **공통 모듈 자료**: [devices](../../../devices/README.md) (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [15_dht22_temperature.ino](15_dht22_temperature.ino) |  |
+
+<!-- index:end -->

@@ -3,7 +3,7 @@
 [Arduino 목차](../../README.md) · [32차시 테크트리](../../ROADMAP.md)
 
 ## 개요
-버튼과 수동 부저을 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.
+버튼과 수동 부저를 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.
 
 ## 준비 및 배선
 - 보드: Arduino UNO R4 Minima 또는 WiFi. 실제 보드에 맞게 Arduino IDE 보드와 포트를 선택한다.
@@ -28,4 +28,20 @@
 - UNO R4 실물 시험: 미실행
 - 실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요
 
+## 개정 메모 (2026-10-31 검토)
+- 32차시 표([ROADMAP](../../ROADMAP.md))는 이 차시를 「능동·수동 부저 구분 및 멜로디」로 적었으나 **현재 스케치는 440 Hz 한 음만 냅니다**(구분 설명·멜로디 없음). 부저 사양은 [devices/gpio/buzzer.md](../../../devices/gpio/buzzer.md)에 미확인으로 남아 있고, 멜로디는 [RTTTL 문서](../../../devices/gpio/rtttl.md)를 참고할 수 있습니다. 범위를 맞출지(스케치 확장 또는 ROADMAP 문구 수정)는 미결정.
+
 **공통 모듈 자료**: [devices](../../../devices/README.md) (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [10_button_buzzer.ino](10_button_buzzer.ino) |  |
+
+<!-- index:end -->

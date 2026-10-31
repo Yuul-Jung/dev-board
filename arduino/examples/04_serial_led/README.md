@@ -31,3 +31,16 @@ PC USB 케이블로 보드 연결; 내장 LED 사용
 - 실제 컴파일 성공 또는 보드 동작을 아직 주장하지 않는다.
 - 모듈의 전원 정격과 실제 배선을 확인한 후 전원을 넣는다.
 - 공통 부품 자료: [devices/](../../../devices/README.md)
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [04_serial_led.ino](04_serial_led.ino) | Serial Monitor: 115200 baud, 명령 '1' 또는 '0' |
+
+<!-- index:end -->

@@ -46,10 +46,11 @@
 
 | 폴더 | 내용 |
 |---|---|
-| [arduino/](arduino/README.md) | Arduino UNO R4 전용 학습 과정 |
+| [arduino/](arduino/README.md) | Arduino 전용 학습 과정 |
 | [atlas/](atlas/README.md) | atlas |
 | [catalog/](catalog/README.md) | catalog |
 | [devices/](devices/README.md) | devices — 인터페이스별 주변장치 자료 |
+| [examples/](examples/README.md) |  |
 | [soc-map/](soc-map/README.md) | soc-map |
 
 ### 파일

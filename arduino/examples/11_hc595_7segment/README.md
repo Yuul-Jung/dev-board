@@ -3,7 +3,7 @@
 [Arduino 목차](../../README.md) · [32차시 테크트리](../../ROADMAP.md)
 
 ## 개요
-74HC595와 7세그먼트을 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.
+74HC595와 7세그먼트를 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.
 
 ## 준비 및 배선
 - 보드: Arduino UNO R4 Minima 또는 WiFi. 실제 보드에 맞게 Arduino IDE 보드와 포트를 선택한다.
@@ -29,3 +29,16 @@
 - 실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요
 
 **공통 모듈 자료**: [devices](../../../devices/README.md) (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [11_hc595_7segment.ino](11_hc595_7segment.ino) | Q0..Q6 -> a..g, Q7 -> dp, 공통 캐소드 기준 |
+
+<!-- index:end -->
