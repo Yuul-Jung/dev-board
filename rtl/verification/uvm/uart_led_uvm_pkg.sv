@@ -153,6 +153,9 @@ package uart_led_uvm_pkg;
      led_sequence seq;
      phase.raise_objection(this);
      seq=led_sequence::type_id::create("seq");
+     // DUT 리셋이 해제될 때까지 트랜잭션 시작하지 않음.
+     wait(env.agent.scoreboard.vif.rst == 1'b0);
+     repeat(2) @(negedge env.agent.scoreboard.vif.clk);
      seq.start(env.agent.sequencer);
      repeat(5) @(negedge env.agent.scoreboard.vif.clk);
      phase.drop_objection(this);
