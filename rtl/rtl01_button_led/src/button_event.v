@@ -13,13 +13,13 @@ module button_event #(
     localparam integer TICKS = CLK_HZ / 1000 * DEBOUNCE_MS;
     localparam integer CW = (TICKS > 1) ? $clog2(TICKS) : 1;
 
-    reg sync_1, sync_2;
+    (* ASYNC_REG = "TRUE" *) reg sync_1;
+    (* ASYNC_REG = "TRUE" *) reg sync_2;
     reg stable;
     reg [CW-1:0] count;
     wire pressed = ACTIVE_LOW ? ~sync_2 : sync_2;
 
     // 첫 번째 FF는 비동기 입력을 받아들이며, 두 번째 FF는 동기화한다.
-    (* ASYNC_REG = "TRUE" *) reg unused_attribute_placeholder;
     always @(posedge clk) begin
         if (rst) begin
             sync_1 <= ACTIVE_LOW ? 1'b1 : 1'b0;
