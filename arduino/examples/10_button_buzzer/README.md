@@ -47,6 +47,6 @@
 
 | 파일 | 설명 |
 |---|---|
-| [10_button_buzzer.ino](10_button_buzzer.ino) |  |
+| [10_button_buzzer.ino](10_button_buzzer.ino) | 10차시: 수동 피에조 부저에서 버튼을 누르는 동안 3음 멜로디 반복 |
 
 <!-- index:end -->

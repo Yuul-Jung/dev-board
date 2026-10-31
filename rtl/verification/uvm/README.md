@@ -15,3 +15,19 @@
 UVM_ERROR/UVM_FATAL 발생 또는 Simulation 비정상 종료는 FAIL. 정상 종료 후 scoreboard에 명시적인 `UVM_SCOREBOARD_PASS`가 있어야 PASS.
 
 검증 자료와 실행 로그를 RTL Directed Test 결과와 혼합하지 않는다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [run.sh](run.sh) | 실패하면 로그 앞·뒤를 ::error 주석으로 남긴다(로그 파일을 내려받지 못하는 환경에서도 원인 확인). |
+| [tb_top.sv](tb_top.sv) |  |
+| [uart_led_if.sv](uart_led_if.sv) |  |
+| [uart_led_uvm_pkg.sv](uart_led_uvm_pkg.sv) |  |
+
+<!-- index:end -->

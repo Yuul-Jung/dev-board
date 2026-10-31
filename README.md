@@ -54,8 +54,8 @@
 | [catalog/](catalog/README.md) | catalog |
 | [devices/](devices/README.md) | devices — 인터페이스별 주변장치 자료 |
 | [examples/](examples/README.md) | examples |
+| [rtl/](rtl/README.md) | Verilog RTL 과 RTL 테스트벤치(시뮬레이터 없음, 미실행) |
 | [soc-map/](soc-map/README.md) | soc-map |
-| [rtl/](rtl/README.md) | Arduino 대응 순수 RTL 학습 트랙 |
 
 ### 파일
 

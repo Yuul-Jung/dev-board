@@ -12,13 +12,90 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">arduino</a> › <a href="../index.html">examples</a> › 10_button_buzzer</nav>
 <h1>10차시 — 버튼과 수동 부저</h1>
 <p class="lede">Arduino 목차 · 32차시 테크트리</p>
 <p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/arduino/examples/10_button_buzzer">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/10_button_buzzer/README.md">README</a></p>
+<p><a href="../../README.md">Arduino 목차</a> · <a href="../../ROADMAP.md">32차시 테크트리</a></p>
+<h2>개요</h2>
+<p>능동 부저와 수동 피에조 부저의 차이를 구분하고, 버튼을 누르는 동안 세 음이 반복되는 멜로디를 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.</p>
+<h2>준비 및 배선</h2>
+<ul>
+<li>보드: Arduino UNO R4 Minima 또는 WiFi. 실제 보드에 맞게 Arduino IDE 보드와 포트를 선택한다.</li>
+<li>배선: D2 버튼-GND, D9 수동 피에조 부저 신호, 부저 GND 공통</li>
+<li>주의: 수동 피에조(소전류) 부저. 능동 부저는 tone 출력 목적에 맞지 않습니다.</li>
+</ul>
+<h2>전체 코드</h2>
+<p><a href="10_button_buzzer.ino">10_button_buzzer.ino</a> — 이 폴더의 스케치 원본</p>
+<h2>실행 절차</h2>
+<ul>
+<li>Arduino IDE에서 <code>10_button_buzzer.ino</code>를 열고 보드·포트를 선택한다.</li>
+<li>필요한 라이브러리를 설치하고 스케치를 검증(컴파일)한 뒤 업로드한다.</li>
+<li>배선을 확인하고 입력을 변화시키면서 출력 반응을 관찰한다.</li>
+<li>Serial 출력이 있는 차시는 115200 baud로 시리얼 모니터를 연다.</li>
+</ul>
+<h2>예상 결과</h2>
+<p>버튼을 누르면 440Hz → 523Hz → 659Hz가 약 250ms 간격으로 반복되며, 놓으면 즉시 멈춥니다.</p>
+<h2>검증 상태</h2>
+<ul>
+<li>코드 작성: 완료</li>
+<li>Arduino IDE 컴파일: 미실행</li>
+<li>UNO R4 실물 시험: 미실행</li>
+<li>실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요</li>
+</ul>
+<h2>능동 부저와 수동 부저</h2>
+<ul>
+<li>능동 부저: 자체 발진 회로가 있으므로 전원 또는 제어 신호로 켜고 끄는 데 적합하며, 임의 음계 재생에는 적합하지 않습니다.</li>
+<li>수동 피에조 부저: 외부 주파수 신호가 필요하므로 <code>tone()</code>으로 음계를 구현합니다. 반드시 부품의 전압·전류 정격을 확인합니다.</li>
+</ul>
+<h2>개정 메모</h2>
+<ul>
+<li>(변경) 32차시 ROADMAP과 일치하도록 3음 멜로디를 추가했습니다. <code>millis()</code> 간격으로 다음 음을 선택하며 <code>delay()</code> 없이 버튼 해제를 검사합니다.</li>
+<li>(참고) 실제 음량, 주파수 정확도, UNO R4 실물 동작은 아직 검증하지 않았습니다.</li>
+</ul>
+<p><strong>공통 모듈 자료</strong>: <a href="../../../devices/README.md">devices</a> (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).</p>
+<h2>이 폴더의 목록</h2>
+<h2>전체 스케치 — 10_button_buzzer.ino</h2>
+<pre class="code"><code>// 10차시: 수동 피에조 부저에서 버튼을 누르는 동안 3음 멜로디 반복
+// 버튼 D2-GND, 수동 피에조 부저 D9-GND (구동 전류 확인)
+// 능동 부저는 자체 발진하므로 이 멜로디 실습에 사용하지 않는다.
+const byte BTN=2, BUZZER=9;
+const unsigned int notes[]={440, 523, 659}; // A4, C5, E5
+const unsigned long NOTE_MS=250;
+bool playing=false;
+byte noteIndex=0;
+unsigned long noteAt=0;
+
+void setup() {
+  pinMode(BTN, INPUT_PULLUP);
+}
+
+void loop() {
+  const unsigned long now=millis();
+  const bool pressed=(digitalRead(BTN)==LOW);
+  if (!pressed) {
+    if (playing) noTone(BUZZER);
+    playing=false;
+    noteIndex=0;
+    return;
+  }
+  if (!playing) {
+    playing=true;
+    noteAt=now;
+    noteIndex=0;
+    tone(BUZZER, notes[noteIndex]);
+  } else if (now-noteAt&gt;=NOTE_MS) {
+    noteAt=now;
+    noteIndex=(noteIndex+1)%3;
+    tone(BUZZER, notes[noteIndex]);
+  }
+}
+</code></pre>
+<p><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/10_button_buzzer/10_button_buzzer.ino">원본 소스 보기</a></p>
 <h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
-<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/10_button_buzzer/10_button_buzzer.ino">10_button_buzzer.ino</a></td><td></td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/10_button_buzzer/10_button_buzzer.ino">10_button_buzzer.ino</a></td><td>10차시: 수동 피에조 부저에서 버튼을 누르는 동안 3음 멜로디 반복</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/10_button_buzzer/README.md">README.md</a></td><td>10차시 — 버튼과 수동 부저</td></tr>
 </table></div>
 <footer>자동 생성 페이지(devices/tools/gen_pages.py). 근거 수준과 한계는 각 문서에 적혀 있습니다.</footer></main></body></html>

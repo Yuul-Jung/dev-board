@@ -59,3 +59,17 @@ vvp /tmp/rtl03_sim
 | Basys3 UART RX 실물 확인 | 미실행 |
 
 **다음 통합 단계:** 기존 `uart_core`의 `rx_out_data/rx_out_valid/rx_out_ready` 포트가 실제로 존재하는지 확인한 뒤 동일 신호에 연결하고, Basys3 UART RX 핀과 XDC를 확정한다. 인터페이스가 다르면 별도 검토 후 연결 규약을 정한다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [src/](src/README.md) | src |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+<!-- index:end -->

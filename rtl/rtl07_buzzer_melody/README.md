@@ -52,3 +52,17 @@ vvp /tmp/rtl07_sim
 | Icarus 시뮬레이션 | 미실행 |
 | Vivado Synthesis/Timing | 미실행 |
 | Basys3 보드 테스트 | 미실행 |
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [src/](src/README.md) | src |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+<!-- index:end -->

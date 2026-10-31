@@ -12,11 +12,91 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">arduino</a> › <a href="../index.html">examples</a> › 16_dual_sensor_alarm</nav>
 <h1>16차시 — DS18B20와 거리 경고</h1>
 <p class="lede">Arduino 목차 · 32차시 테크트리</p>
 <p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/arduino/examples/16_dual_sensor_alarm">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/16_dual_sensor_alarm/README.md">README</a></p>
+<p><a href="../../README.md">Arduino 목차</a> · <a href="../../ROADMAP.md">32차시 테크트리</a></p>
+<h2>개요</h2>
+<p>DS18B20와 거리 경고를 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.</p>
+<h2>준비 및 배선</h2>
+<ul>
+<li>보드: Arduino UNO R4 Minima 또는 WiFi. 실제 보드에 맞게 Arduino IDE 보드와 포트를 선택한다.</li>
+<li>배선: DS18B20 DATA→D2, 4.7kΩ 풀업→센서 정격 VCC(일반적으로 5V 구성), GND 공통. HC-SR04 TRIG→D7 ECHO→D8, VCC→5V, GND 공통. 내장 LED, D9 수동 피에조 부저.</li>
+<li>주의: OneWire 및 DallasTemperature 라이브러리 설치. 이 차시는 기능 결합용 예제이며, 변환 대기는 아래 개정 메모처럼 비차단으로 처리합니다.</li>
+</ul>
+<h2>전체 코드</h2>
+<p><a href="16_dual_sensor_alarm.ino">16_dual_sensor_alarm.ino</a> — 이 폴더의 스케치 원본</p>
+<h2>실행 절차</h2>
+<ul>
+<li>Arduino IDE에서 <code>16_dual_sensor_alarm.ino</code>를 열고 보드·포트를 선택한다.</li>
+<li>필요한 라이브러리를 설치하고 스케치를 검증(컴파일)한 뒤 업로드한다.</li>
+<li>배선을 확인하고 입력을 변화시키면서 출력 반응을 관찰한다.</li>
+<li>Serial 출력이 있는 차시는 115200 baud로 시리얼 모니터를 연다.</li>
+</ul>
+<h2>예상 결과</h2>
+<p>온도와 거리 값이 출력되고 물체가 20cm 미만이면 LED와 부저가 켜집니다. 온도 센서 오류는 별도 표기합니다.</p>
+<h2>검증 상태</h2>
+<ul>
+<li>코드 작성: 완료</li>
+<li>Arduino IDE 컴파일: 미실행</li>
+<li>UNO R4 실물 시험: 미실행</li>
+<li>실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요</li>
+</ul>
+<h2>개정 메모 (2026-10-31 검토)</h2>
+<ul>
+<li><strong>지연 문제를 고쳤습니다</strong>: 이전 스케치는 <code>requestTemperatures()</code> 가 변환을 기다려(12비트 최대 750 ms, <a href="../../../devices/1-wire/ds18b20.md">DS18B20 문서</a>) 한 바퀴가 약 1.8 s 였고, 그동안 거리 경고가 멈췄습니다. 이제 <code>setWaitForConversion(false)</code> 와 millis 로 변환을 기다리지 않고 거리는 약 0.1 s 마다 갱신합니다.</li>
+<li>2 cm 미만·400 cm 초과 값은 경고 판단에서 제외합니다(HC-SR04 규격 범위).</li>
+<li>위 주의 문구의 「블로킹 구현」은 이전 버전 설명입니다. 개정한 스케치는 <strong>스텁 헤더로 문법만 확인</strong>했고 <code>setWaitForConversion</code> 등 라이브러리 API 는 실제 라이브러리로 컴파일하지 않았습니다(미확인).</li>
+</ul>
+<p><strong>공통 모듈 자료</strong>: <a href="../../../devices/README.md">devices</a> (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).</p>
+<h2>이 폴더의 목록</h2>
+<h2>전체 스케치 — 16_dual_sensor_alarm.ino</h2>
+<pre class="code"><code>#include &lt;OneWire.h&gt;
+#include &lt;DallasTemperature.h&gt;
+const byte ONE_WIRE_PIN=2,TRIG=7,ECHO=8,BUZZER=9;
+OneWire bus(ONE_WIRE_PIN);
+DallasTemperature temp(&amp;bus);
+// 변환 대기를 loop 를 막지 않고 millis 로 처리한다(거리 경고가 온도 변환 때문에 늦어지지 않게).
+// 12비트 변환 최대 750 ms(devices/1-wire/ds18b20.md). 더 낮은 해상도에서도 이 값이면 충분하다.
+const unsigned long CONV_MS=750;
+unsigned long convStart=0, lastPrint=0;
+bool converting=false, tempValid=false;
+float c=DEVICE_DISCONNECTED_C;
+void setup() {
+  pinMode(TRIG,OUTPUT); pinMode(ECHO,INPUT);
+  pinMode(LED_BUILTIN,OUTPUT);
+  Serial.begin(115200);
+  temp.begin();
+  temp.setWaitForConversion(false);
+}
+void loop() {
+  unsigned long now=millis();
+  if (!converting) { temp.requestTemperatures(); convStart=now; converting=true; }
+  else if (now-convStart&gt;=CONV_MS) { c=temp.getTempCByIndex(0); tempValid=true; converting=false; }
+  digitalWrite(TRIG,LOW); delayMicroseconds(2);
+  digitalWrite(TRIG,HIGH); delayMicroseconds(10);
+  digitalWrite(TRIG,LOW);
+  unsigned long us=pulseIn(ECHO,HIGH,30000UL);
+  float cm=us?us*0.0343f/2.0f:-1.0f;
+  bool inRange=(cm&gt;=2.0f &amp;&amp; cm&lt;=400.0f); // 규격 범위 밖은 경고 판단에 쓰지 않는다
+  bool alarm=inRange &amp;&amp; cm&lt;20.0f;
+  digitalWrite(LED_BUILTIN,alarm?HIGH:LOW);
+  if(alarm) tone(BUZZER,800); else noTone(BUZZER);
+  if (now-lastPrint&gt;=1000) {
+    lastPrint=now;
+    if(!tempValid) Serial.print(&quot;Temp WAIT&quot;);
+    else if(c==DEVICE_DISCONNECTED_C) Serial.print(&quot;Temp ERROR&quot;);
+    else { Serial.print(&quot;Temp C: &quot;);Serial.print(c,1); }
+    Serial.print(&quot;  Distance cm: &quot;);
+    if(inRange) Serial.println(cm,1); else Serial.println(&quot;none&quot;);
+  }
+  delay(60); // HC-SR04 측정 주기 60 ms 초과 권장
+}
+</code></pre>
+<p><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/16_dual_sensor_alarm/16_dual_sensor_alarm.ino">원본 소스 보기</a></p>
 <h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/16_dual_sensor_alarm/16_dual_sensor_alarm.ino">16_dual_sensor_alarm.ino</a></td><td>변환 대기를 loop 를 막지 않고 millis 로 처리한다(거리 경고가 온도 변환 때문에 늦어지지 않게).</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/16_dual_sensor_alarm/README.md">README.md</a></td><td>16차시 — DS18B20와 거리 경고</td></tr>

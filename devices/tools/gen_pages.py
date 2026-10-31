@@ -94,7 +94,7 @@ def lesson_content(d):
             blocks.append('<h2>' + e(t[3:]) + '</h2>'); continue
         if t.startswith(('- ', '1. ', '2. ', '3. ', '4. ')):
             if not in_list: blocks.append('<ul>'); in_list = True
-            blocks.append('<li>' + inline_md(re.sub(r'^(?:- |[1-4]\\. )', '', t)) + '</li>')
+            blocks.append('<li>' + inline_md(re.sub(r'^(?:- |[1-4]\. )', '', t)) + '</li>')
             continue
         if in_list: blocks.append('</ul>'); in_list = False
         if t: blocks.append('<p>' + inline_md(t) + '</p>')
@@ -107,14 +107,14 @@ def lesson_content(d):
             blocks.append('<p><a href="' + GH + '/blob/main/' +
                           e(os.path.relpath(os.path.join(d, fn), root).replace(os.sep, '/')) +
                           '">원본 소스 보기</a></p>')
-    return '\\n'.join(blocks)
+    return '\n'.join(blocks)
 
 def inline_md(s):
     s = e(s)
-    s = re.sub(r'\\[([^\\]]+)\\]\\(([^)]+)\\)', lambda m:
+    s = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', lambda m:
                '<a href="' + e(m.group(2), quote=True) + '">' + m.group(1) + '</a>', s)
-    s = re.sub(r'`([^`]+)`', r'<code>\\1</code>', s)
-    s = re.sub(r'\\*\\*([^*]+)\\*\\*', r'<strong>\\1</strong>', s)
+    s = re.sub(r'`([^`]+)`', r'<code>\1</code>', s)
+    s = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', s)
     return s
 
 def page(d):
@@ -144,7 +144,10 @@ def page(d):
             t = title(r); t = ROLE.get(x) or t or ''
             o.append(f'<a class="card" href="{e(x)}/index.html"><b>{e(x)}/</b><span>{e(t)}</span></a>')
         o.append('</div>')
-    if rel.startswith('arduino/examples/') and len(parts) == 3:\n        o.append(lesson_content(d))\n    if rel == 'devices':\n        o.append('<h2>모듈 전체 목록</h2>' + modtable(MODS))
+    if rel.startswith('arduino/examples/') and len(parts) == 3:
+        o.append(lesson_content(d))
+    if rel == 'devices':
+        o.append('<h2>모듈 전체 목록</h2>' + modtable(MODS))
     if files:
         o.append('<h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>')
         for x in files:

@@ -11,3 +11,24 @@
 | Synthesis/Timing | Vivado | 별도 하드웨어 검증 | 미실시 |
 
 자동 생성된 로그는 GitHub Actions Artifacts에서 확인한다. CI 실행 기록이 없는 경우 PASS로 표기하지 않는다.
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [rtl/](rtl/README.md) | Verilog RTL 과 RTL 테스트벤치(시뮬레이터 없음, 미실행) |
+| [uvm/](uvm/README.md) | UVM(SystemVerilog) 독립 검증 |
+
+### 파일
+
+| 파일 | 설명 |
+|---|---|
+| [RESULTS.md](RESULTS.md) | 검증 방법별 결과 기록 |
+| [lint_widths.py](lint_widths.py) | 간이 폭 검사(시뮬레이터 없이 소스만 읽음). 사용: python3 rtl/verification/lint_widths.py [루트] |
+
+<!-- index:end -->

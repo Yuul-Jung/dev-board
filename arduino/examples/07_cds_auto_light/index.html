@@ -12,11 +12,54 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">arduino</a> › <a href="../index.html">examples</a> › 07_cds_auto_light</nav>
 <h1>07차시 — CdS 자동 조명</h1>
 <p class="lede">Arduino 전체 목차 · 32차시 테크트리</p>
 <p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/arduino/examples/07_cds_auto_light">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/07_cds_auto_light/README.md">README</a></p>
+<p><a href="../../README.md">Arduino 전체 목차</a> · <a href="../../ROADMAP.md">32차시 테크트리</a></p>
+<h2>개요</h2>
+<p>입력 신호를 읽고 출력 장치를 제어한다. 이전 차시와 비교하여 늘어난 입출력 기능을 확인한다.</p>
+<h2>준비</h2>
+<ul>
+<li>대상 보드: Arduino UNO R4 Minima 또는 WiFi. 사용 보드와 포트는 Arduino IDE에서 직접 선택한다.</li>
+<li>CdS·10kΩ 저항·LED·220Ω 저항·점퍼선</li>
+<li>부품·모듈 회로도를 확인하고 외부 전원과 GND를 연결한다. LED에는 전류 제한 저항을 넣는다.</li>
+</ul>
+<h2>배선</h2>
+<p>5V → CdS → A0 → 10kΩ → GND; D9 → 220Ω → LED 양극, LED 음극 → GND</p>
+<h2>전체 소스</h2>
+<p><a href="07_cds_auto_light.ino">07_cds_auto_light.ino</a></p>
+<p>소스 파일은 이 폴더에서 열어 그대로 업로드한다. (README와 .ino를 같은 디렉터리에 배치함)</p>
+<h2>실행 절차</h2>
+<ul>
+<li>Arduino IDE에서 보드와 USB 포트를 선택한다.</li>
+<li>스케치 파일을 열어 컴파일(검증)하고 업로드한다.</li>
+<li>입력값을 변화시키면서 출력의 변화를 관찰한다.</li>
+</ul>
+<h2>예상 결과</h2>
+<p>어두울수록 LED가 밝아진다. 센서·조명 간섭이 있으면 위치를 분리한다.</p>
+<h2>확인 및 주의</h2>
+<ul>
+<li>상태: <strong>소스 작성 / 컴파일 미검증 / 실물 미검증</strong></li>
+<li>실제 컴파일 성공 또는 보드 동작을 아직 주장하지 않는다.</li>
+<li>CdS는 조도(lux)를 직접 측정하지 않는다. 분압 저항과 주변 빛에 따라 제어 범위가 달라진다.</li>
+<li>공통 부품 자료: <a href="../../../devices/README.md">devices/</a></li>
+</ul>
+<h2>이 폴더의 목록</h2>
+<h2>전체 스케치 — 07_cds_auto_light.ino</h2>
+<pre class="code"><code>// 밝을수록 A0 증가하는 분압 배치: 출력은 어두울수록 증가
+const byte PWM_LED=9;
+void setup() { pinMode(PWM_LED,OUTPUT); analogReadResolution(10); analogWriteResolution(8); }
+void loop() {
+  int light=analogRead(A0);
+  int duty=map(constrain(light,0,1023),0,1023,255,0);
+  analogWrite(PWM_LED,duty);
+  delay(30);
+}
+</code></pre>
+<p><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/07_cds_auto_light/07_cds_auto_light.ino">원본 소스 보기</a></p>
 <h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/07_cds_auto_light/07_cds_auto_light.ino">07_cds_auto_light.ino</a></td><td>밝을수록 A0 증가하는 분압 배치: 출력은 어두울수록 증가</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/07_cds_auto_light/README.md">README.md</a></td><td>07차시 — CdS 자동 조명</td></tr>

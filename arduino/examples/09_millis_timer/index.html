@@ -12,11 +12,71 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">arduino</a> › <a href="../index.html">examples</a> › 09_millis_timer</nav>
 <h1>09차시 — millis 비차단 타이머</h1>
 <p class="lede">Arduino 목차 · 32차시 테크트리</p>
 <p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/arduino/examples/09_millis_timer">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/09_millis_timer/README.md">README</a></p>
+<p><a href="../../README.md">Arduino 목차</a> · <a href="../../ROADMAP.md">32차시 테크트리</a></p>
+<h2>개요</h2>
+<p>millis 비차단 타이머를 Arduino UNO R4의 입출력으로 구현한다. 기본 예제에서 확인한 입력·출력 개념을 이어서 사용한다.</p>
+<h2>준비 및 배선</h2>
+<ul>
+<li>보드: Arduino UNO R4 Minima 또는 WiFi. 실제 보드에 맞게 Arduino IDE 보드와 포트를 선택한다.</li>
+<li>배선: D2 버튼-GND, 내장 LED</li>
+<li>주의: GPIO 시간 제어</li>
+</ul>
+<h2>전체 코드</h2>
+<p><a href="09_millis_timer.ino">09_millis_timer.ino</a> — 이 폴더의 스케치 원본</p>
+<h2>실행 절차</h2>
+<ul>
+<li>Arduino IDE에서 <code>09_millis_timer.ino</code>를 열고 보드·포트를 선택한다.</li>
+<li>필요한 라이브러리를 설치하고 스케치를 검증(컴파일)한 뒤 업로드한다.</li>
+<li>배선을 확인하고 입력을 변화시키면서 출력 반응을 관찰한다.</li>
+<li>Serial 출력이 있는 차시는 115200 baud로 시리얼 모니터를 연다.</li>
+</ul>
+<h2>예상 결과</h2>
+<p>버튼을 누를 때마다 점멸 활성화가 전환되고 활성화 중 약 500ms마다 LED가 토글됩니다.</p>
+<h2>검증 상태</h2>
+<ul>
+<li>코드 작성: 완료</li>
+<li>Arduino IDE 컴파일: 미실행</li>
+<li>UNO R4 실물 시험: 미실행</li>
+<li>실제 모듈별 전압·핀 배치 대조: 시험 전 확인 필요</li>
+</ul>
+<p><strong>공통 모듈 자료</strong>: <a href="../../../devices/README.md">devices</a> (해당 자료의 RTL/C 코드는 Arduino 스케치가 아님).</p>
+<h2>이 폴더의 목록</h2>
+<h2>전체 스케치 — 09_millis_timer.ino</h2>
+<pre class="code"><code>const byte BTN=2;
+bool lastRead=HIGH, stable=HIGH, enabled=false, led=false;
+unsigned long edgeTime=0, tickTime=0;
+void setup() {
+  pinMode(BTN,INPUT_PULLUP);
+  pinMode(LED_BUILTIN,OUTPUT);
+}
+void loop() {
+  unsigned long now=millis();
+  bool raw=digitalRead(BTN);
+  if (raw!=lastRead) edgeTime=now;
+  if (now-edgeTime&gt;=30 &amp;&amp; raw!=stable) {
+    stable=raw;
+    if (stable==LOW) {
+      enabled=!enabled;
+      tickTime=now;
+      led=false;
+      digitalWrite(LED_BUILTIN,LOW);
+    }
+  }
+  lastRead=raw;
+  if (enabled &amp;&amp; now-tickTime&gt;=500) {
+    tickTime=now;
+    led=!led;
+    digitalWrite(LED_BUILTIN,led?HIGH:LOW);
+  }
+}
+</code></pre>
+<p><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/09_millis_timer/09_millis_timer.ino">원본 소스 보기</a></p>
 <h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/09_millis_timer/09_millis_timer.ino">09_millis_timer.ino</a></td><td></td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/arduino/examples/09_millis_timer/README.md">README.md</a></td><td>09차시 — millis 비차단 타이머</td></tr>

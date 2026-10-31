@@ -12,7 +12,8 @@ td.f{word-break:break-all}.tw{overflow-x:auto}
 .kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
 .s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
-footer{margin-top:40px;font-size:13px;color:var(--mut)}</style></head><body><main>
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
 <nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">devices</a> › <a href="../index.html">spi</a> › rtl</nav>
 <h1>ILI9341 전용 RTL (설계안, 시뮬레이션·합성 전)</h1>
 <p class="lede">AXI Quad SPI 로는 D/CX 선과 화면 채우기를 CPU 없이 처리할 수 없어서 만든 작은 전용 엔진입니다. 구조: ili9341_axil_top.v(배선만) + ili9341_axil_regs.v(AXI4-Lite) + ili9341_engine.v(SPI 모드 0, MSB 먼저).</p>

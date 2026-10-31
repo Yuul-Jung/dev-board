@@ -36,3 +36,17 @@ flowchart LR
 - Basys3 실물: 미실행
 - XDC 핀 연결: 미확정. Basys3 사용자 버튼은 눌림이 High이므로 Top에서 `ACTIVE_LOW=0`으로 설정했다. Testbench는 pull-up 방식 버튼을 모델링해 `ACTIVE_LOW=1`을 사용한다.
 - Icarus Verilog 예시: `iverilog -g2012 -s tb_button_led -o sim rtl/rtl01_button_led/src/button_event.v rtl/rtl01_button_led/src/led_toggle_controller.v rtl/rtl01_button_led/tb/tb_button_led.v && vvp sim`
+
+## 이 폴더의 목록
+
+<!-- index:begin -->
+<!-- 이 목록은 devices/tools/gen_index.py 가 만든다. 직접 고치지 말 것. -->
+
+### 하위 폴더
+
+| 폴더 | 내용 |
+|---|---|
+| [src/](src/README.md) | src |
+| [tb/](tb/README.md) | 호스트 테스트와 레지스터/장치 모델(mock) |
+
+<!-- index:end -->

@@ -1,0 +1,26 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>src · dev-board</title><style>:root{--bg:#fafaf7;--fg:#1c1c1a;--mut:#6b6b66;--line:#dcdcd4;--card:#fff;--acc:#1f5f8b;--ok:#2e7d4f;--part:#b7791f;--doc:#7a6bb0;--none:#8a8a84;--ex:#5b7f95}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#161715;--fg:#e8e8e2;--mut:#9a9a92;--line:#33342f;--card:#1e1f1c;--acc:#6db3e0;--ok:#5cbf86;--part:#e0a948;--doc:#a597d8;--none:#8f8f88;--ex:#86a9be}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:20px 16px 60px}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+nav.bc{font-size:14px;color:var(--mut);margin-bottom:12px}h1{font-size:28px;margin:4px 0 8px}h2{font-size:18px;margin:32px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.lede{color:var(--mut);margin:0 0 8px}.gh{font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:block;color:var(--fg)}.card:hover{border-color:var(--acc);text-decoration:none}
+.card b{display:block;color:var(--acc)}.card span{font-size:14px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:600}
+td.f{word-break:break-all}.tw{overflow-x:auto}
+.kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
+.s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
+<nav class="bc"><a href="../../../index.html">홈</a> › <a href="../../index.html">rtl</a> › <a href="../index.html">rtl01_button_led</a> › src</nav>
+<h1>src</h1>
+<p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/rtl/rtl01_button_led/src">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/rtl01_button_led/src/README.md">README</a></p>
+<h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/rtl01_button_led/src/README.md">README.md</a></td><td>src</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/rtl01_button_led/src/basys3_button_led_top.v">basys3_button_led_top.v</a></td><td>Shell/Wrapper: 보드 핀과 재사용 모듈 연결만 한다.</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/rtl01_button_led/src/button_event.v">button_event.v</a></td><td>버튼 입력: 2FF 동기화 → 안정시간 필터 → 1클럭 press_pulse</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/rtl01_button_led/src/led_toggle_controller.v">led_toggle_controller.v</a></td><td>버튼 이벤트마다 1비트 LED 레지스터 상태를 반전한다.</td></tr>
+</table></div>
+<footer>자동 생성 페이지(devices/tools/gen_pages.py). 근거 수준과 한계는 각 문서에 적혀 있습니다.</footer></main></body></html>

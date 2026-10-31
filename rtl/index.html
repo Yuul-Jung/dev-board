@@ -1,0 +1,63 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Basys3 순수 RTL 학습 트랙 · dev-board</title><style>:root{--bg:#fafaf7;--fg:#1c1c1a;--mut:#6b6b66;--line:#dcdcd4;--card:#fff;--acc:#1f5f8b;--ok:#2e7d4f;--part:#b7791f;--doc:#7a6bb0;--none:#8a8a84;--ex:#5b7f95}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#161715;--fg:#e8e8e2;--mut:#9a9a92;--line:#33342f;--card:#1e1f1c;--acc:#6db3e0;--ok:#5cbf86;--part:#e0a948;--doc:#a597d8;--none:#8f8f88;--ex:#86a9be}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:20px 16px 60px}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+nav.bc{font-size:14px;color:var(--mut);margin-bottom:12px}h1{font-size:28px;margin:4px 0 8px}h2{font-size:18px;margin:32px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.lede{color:var(--mut);margin:0 0 8px}.gh{font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:block;color:var(--fg)}.card:hover{border-color:var(--acc);text-decoration:none}
+.card b{display:block;color:var(--acc)}.card span{font-size:14px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:600}
+td.f{word-break:break-all}.tw{overflow-x:auto}
+.kpi{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:84px}.kpi b{font-size:22px;display:block}.kpi small{color:var(--mut)}
+.s-완비{color:var(--ok)}.s-일부{color:var(--part)}.s-문서{color:var(--doc)}.s-없음{color:var(--none)}.s-제외{color:var(--ex)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:currentColor}
+footer{margin-top:40px;font-size:13px;color:var(--mut)}
+pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}p,li{overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace}</style></head><body><main>
+<nav class="bc"><a href="../index.html">홈</a> › rtl</nav>
+<h1>Basys3 순수 RTL 학습 트랙</h1>
+<p class="lede">저장소 홈 · Arduino 대응 · RTL 학습 순서</p>
+<p class="gh"><a href="https://github.com/Yuul-Jung/dev-board/tree/main/rtl">GitHub 에서 이 폴더 보기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/README.md">README</a></p>
+<h2>하위 폴더</h2><div class="grid">
+<a class="card" href="rtl01_button_led/index.html"><b>rtl01_button_led/</b><span>RTL01 — 버튼 입력·디바운스·LED 토글</span></a>
+<a class="card" href="rtl02_rgb_buttons/index.html"><b>rtl02_rgb_buttons/</b><span>RTL02 — 버튼 2개로 RGB LED 제어</span></a>
+<a class="card" href="rtl03_uart_led/index.html"><b>rtl03_uart_led/</b><span>RTL03 — UART 바이트 명령으로 LED 제어</span></a>
+<a class="card" href="rtl04_pwm_led/index.html"><b>rtl04_pwm_led/</b><span>RTL04 — PWM Counter·Comparator·Duty Register</span></a>
+<a class="card" href="rtl05_xadc_pwm/index.html"><b>rtl05_xadc_pwm/</b><span>RTL05 — XADC 샘플 → PWM 듀티 Controller</span></a>
+<a class="card" href="rtl06_timer_led/index.html"><b>rtl06_timer_led/</b><span>RTL06 — Timer Tick 기반 LED 점멸</span></a>
+<a class="card" href="rtl07_buzzer_melody/index.html"><b>rtl07_buzzer_melody/</b><span>RTL07 — 부저 주파수 발생기 + 3음 멜로디</span></a>
+<a class="card" href="rtl08_hc595_7seg/index.html"><b>rtl08_hc595_7seg/</b><span>RTL08 — 74HC595 7세그 직렬 출력</span></a>
+<a class="card" href="rtl09_max7219/index.html"><b>rtl09_max7219/</b><span>RTL09 — MAX7219 16비트 워드 전송</span></a>
+<a class="card" href="rtl10_pir_event/index.html"><b>rtl10_pir_event/</b><span>RTL10 — PIR 입력 이벤트 검출</span></a>
+<a class="card" href="rtl11_ultrasonic_event/index.html"><b>rtl11_ultrasonic_event/</b><span>RTL11 — 초음파 거리 valid 기반 경보</span></a>
+<a class="card" href="rtl12_dht22_alarm/index.html"><b>rtl12_dht22_alarm/</b><span>RTL12 — DHT22 온습도 경고</span></a>
+<a class="card" href="rtl13_ds18b20_alarm/index.html"><b>rtl13_ds18b20_alarm/</b><span>RTL13 — 온도·거리 복합 경보</span></a>
+<a class="card" href="rtl14_i2c_scan/index.html"><b>rtl14_i2c_scan/</b><span>RTL14 — I2C 주소 탐색 요청 컨트롤러</span></a>
+<a class="card" href="rtl15_bh1750/index.html"><b>rtl15_bh1750/</b><span>RTL15 — BH1750 lux 비교 제어</span></a>
+<a class="card" href="rtl16_lcd1602/index.html"><b>rtl16_lcd1602/</b><span>RTL16 — LCD 문자 전송용 바이트 스트림</span></a>
+<a class="card" href="rtl17_oled_page/index.html"><b>rtl17_oled_page/</b><span>RTL17 — OLED 페이지 선택</span></a>
+<a class="card" href="rtl18_spi_request/index.html"><b>rtl18_spi_request/</b><span>RTL18 — SPI 트랜잭션 요청</span></a>
+<a class="card" href="rtl19_sd_logger/index.html"><b>rtl19_sd_logger/</b><span>RTL19 — microSD 샘플 기록 요청</span></a>
+<a class="card" href="rtl20_rtc_timestamp/index.html"><b>rtl20_rtc_timestamp/</b><span>RTL20 — RTC 시각 스냅샷</span></a>
+<a class="card" href="rtl21_imu_level/index.html"><b>rtl21_imu_level/</b><span>RTL21 — MPU6050 기울기 경고</span></a>
+<a class="card" href="rtl22_dc_motor/index.html"><b>rtl22_dc_motor/</b><span>RTL22 — DC 모터 방향·PWM 구동</span></a>
+<a class="card" href="rtl23_servo_pulse/index.html"><b>rtl23_servo_pulse/</b><span>RTL23 — 서보 PWM 목표각</span></a>
+<a class="card" href="rtl24_stepper_phase/index.html"><b>rtl24_stepper_phase/</b><span>RTL24 — 스테퍼 하프스텝 패턴</span></a>
+<a class="card" href="rtl25_distance_motor/index.html"><b>rtl25_distance_motor/</b><span>RTL25 — 거리 기반 모터 안전 정지</span></a>
+<a class="card" href="rtl26_bt_command/index.html"><b>rtl26_bt_command/</b><span>RTL26 — Bluetooth UART 바이트 명령</span></a>
+<a class="card" href="rtl27_rs485_packet/index.html"><b>rtl27_rs485_packet/</b><span>RTL27 — RS485 송신 방향 제어</span></a>
+<a class="card" href="rtl28_network_sample/index.html"><b>rtl28_network_sample/</b><span>RTL28 — 네트워크 샘플 큐 전단</span></a>
+<a class="card" href="rtl29_integration/index.html"><b>rtl29_integration/</b><span>RTL29 — 복합 센서 경보 상태</span></a>
+<a class="card" href="rtl30_event_fifo/index.html"><b>rtl30_event_fifo/</b><span>RTL30 — 이벤트 FIFO 버퍼</span></a>
+<a class="card" href="rtl31_register_map/index.html"><b>rtl31_register_map/</b><span>RTL31 — 간단한 Register Map</span></a>
+<a class="card" href="rtl32_capstone_control/index.html"><b>rtl32_capstone_control/</b><span>RTL32 — 캡스톤 모듈 통합 제어</span></a>
+<a class="card" href="verification/index.html"><b>verification/</b><span>RTL/UVM 독립 검증</span></a>
+</div>
+<h2>파일</h2><div class="tw"><table><tr><th>파일</th><th>설명</th></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/ADVERSARIAL_REVIEW_20261031.md">ADVERSARIAL_REVIEW_20261031.md</a></td><td>RTL 32개 과제 적대적 검증 — 2026-10-31</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/README.md">README.md</a></td><td>Basys3 순수 RTL 학습 트랙</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/ROADMAP.md">ROADMAP.md</a></td><td>Arduino 실습을 RTL로 재설계하는 32차시 대응 계획</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/VERIFICATION_STATUS.md">VERIFICATION_STATUS.md</a></td><td>RTL 32개 과제 검증 상태</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/rtl/run_rtl_tests.sh">run_rtl_tests.sh</a></td><td>Reused RTL components are external to the current lesson.</td></tr>
+</table></div>
+<footer>자동 생성 페이지(devices/tools/gen_pages.py). 근거 수준과 한계는 각 문서에 적혀 있습니다.</footer></main></body></html>
