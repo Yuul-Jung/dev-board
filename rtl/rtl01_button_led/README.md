@@ -34,5 +34,5 @@ flowchart LR
 - RTL 시뮬레이션: 미실행
 - Synthesis/Timing: 미실행
 - Basys3 실물: 미실행
-- XDC 핀 연결: 미확정. 실제 Basys3 버튼 핀의 active-high/low를 검증하고 `ACTIVE_LOW`를 수정해야 한다.
+- XDC 핀 연결: 미확정. Basys3 사용자 버튼은 눌림이 High이므로 Top에서 `ACTIVE_LOW=0`으로 설정했다. Testbench는 pull-up 방식 버튼을 모델링해 `ACTIVE_LOW=1`을 사용한다.
 - Icarus Verilog 예시: `iverilog -g2012 -s tb_button_led -o sim rtl/rtl01_button_led/src/button_event.v rtl/rtl01_button_led/src/led_toggle_controller.v rtl/rtl01_button_led/tb/tb_button_led.v && vvp sim`
