@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y iverilog
-      - name: Mutation run (참고용: 살아남은 변형은 실패가 아니라 경고)
+      - name: "Mutation run (참고용 - 살아남은 변형은 실패가 아니라 경고)"
         run: |
           python3 rtl/verification/rtl/mutate.py | tee /tmp/mut.txt
           printf '::notice title=변형 검사 요약::%s\n' "$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' /tmp/mut.txt | head -c 3000)"
