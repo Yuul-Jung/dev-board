@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'rtl/verification/rtl/mutate.py'
+      - 'rtl/verification/rtl/annot.py'
+      - 'rtl/verification/rtl/equivalent.txt'
       - 'rtl/rtl*/src/**'
       - 'rtl/rtl*/tb/**'
       - '.github/workflows/rtl-mutation.yml'
@@ -12,14 +14,26 @@ permissions:
 jobs:
   mutate:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y iverilog
-      - name: "Mutation run (참고용 - 살아남은 변형은 실패가 아니라 경고)"
+      - name: "도구 버전과 대상 커밋"
         run: |
+          echo "::notice title=환경::sha=$GITHUB_SHA run=$GITHUB_RUN_ID $(iverilog -V 2>&1 | head -1) | $(python3 --version)"
+      - name: "Mutation run (기준선 실패 시 실패, 생존 변형은 경고)"
+        run: |
+          set +e
           python3 rtl/verification/rtl/mutate.py | tee /tmp/mut.txt
-          printf '::notice title=변형 검사 요약::%s\n' "$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' /tmp/mut.txt | head -c 3000)"
+          rc=${PIPESTATUS[0]}
+          printf '::notice title=변형 검사 요약::%s\n' "$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' /tmp/mut.txt | head -c 3400)"
+          exit $rc
+      - name: "생존 변형 전체 목록 (1~10)"
+        if: always()
+        run: python3 rtl/verification/rtl/annot.py rtl/verification/rtl/results/mutation_survivors.txt 생존변형 0
+      - name: "생존 변형 전체 목록 (11~20)"
+        if: always()
+        run: python3 rtl/verification/rtl/annot.py rtl/verification/rtl/results/mutation_survivors.txt 생존변형 10
       - uses: actions/upload-artifact@v4
         if: always()
         with:

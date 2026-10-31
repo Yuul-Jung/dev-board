@@ -16,7 +16,8 @@ for tb in rtl/rtl*/tb/tb_*.v; do
   esac
   log="rtl/verification/rtl/results/${top}.log"
   out="rtl/verification/rtl/results/${top}.vvp"
-  if iverilog -g2012 -Wall -s "$top" -o "$out" "${files[@]}" "$tb" >"$log" 2>&1 && vvp "$out" >>"$log" 2>&1; then
+  # 통과 판정: 컴파일·실행 종료코드 0 이고, 로그에 줄 시작 「PASS」가 있어야 한다(조기 $finish·무출력 오탐 방지).
+  if iverilog -g2012 -Wall -s "$top" -o "$out" "${files[@]}" "$tb" >"$log" 2>&1 && vvp "$out" >>"$log" 2>&1 && grep -q '^PASS' "$log"; then
     printf '%s\tPASS\t%s\n' "$top" "$log" >> "$summary"
   else
     printf '%s\tFAIL\t%s\n' "$top" "$log" >> "$summary"

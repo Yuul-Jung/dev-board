@@ -18,7 +18,8 @@ GitHub Actions CI는 이 스크립트를 실행하며 결과를 Artifact로 보�
 
 | 파일 | 설명 |
 |---|---|
-| [mutate.py](mutate.py) | RTL 변형 검사: 각 과제의 src/*.v 를 한 곳씩 망가뜨려 보고(연산자 뒤집기, 상수 +1, 부정 제거 ...) |
+| [annot.py](annot.py) | 파일을 GitHub 주석(::notice)으로 쪼개 출력(로그·artifact 를 못 내려받는 환경용). |
+| [mutate.py](mutate.py) | RTL 변형 검사 v2 — 각 과제 src/*.v 를 한 곳씩 망가뜨려 그 과제 TB 가 잡는지 본다. |
 | [run.sh](run.sh) |  |
 
 <!-- index:end -->

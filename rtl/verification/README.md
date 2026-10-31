@@ -28,8 +28,10 @@
 
 | 파일 | 설명 |
 |---|---|
+| [CHATGPT_FEEDBACK.md](CHATGPT_FEEDBACK.md) | ChatGPT 독립 적대적 검증 피드백 — 2026-10-31 |
 | [CLAUDE_HANDOFF.md](CLAUDE_HANDOFF.md) | CLAUDE → ChatGPT 검증 인계 (CLAUDE_HANDOFF) |
 | [RESULTS.md](RESULTS.md) | 검증 방법별 결과 기록 |
+| [lint_verilator.sh](lint_verilator.sh) | Verilator 정적 검사(--lint-only -Wall) — 과제별로 src 만 검사, 경고 종류별 개수를 모은다. |
 | [lint_widths.py](lint_widths.py) | 간이 폭 검사(시뮬레이터 없이 소스만 읽음). 사용: python3 rtl/verification/lint_widths.py [루트] |
 
 <!-- index:end -->

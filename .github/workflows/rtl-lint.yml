@@ -1,0 +1,27 @@
+name: RTL Verilator lint
+on:
+  push:
+    paths:
+      - 'rtl/rtl*/src/**'
+      - 'rtl/verification/lint_verilator.sh'
+      - 'rtl/verification/rtl/annot.py'
+      - '.github/workflows/rtl-lint.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y verilator
+      - name: "버전"
+        run: echo "::notice title=환경::sha=$GITHUB_SHA run=$GITHUB_RUN_ID $(verilator --version)"
+      - name: "Lint (LATCH/MULTIDRIVEN 등은 실패)"
+        run: bash rtl/verification/lint_verilator.sh
+      - name: "Lint 결과 주석"
+        if: always()
+        run: python3 rtl/verification/rtl/annot.py rtl/verification/results_lint/lint.txt Lint 0
+      - name: "Lint 결과 주석 (이어서)"
+        if: always()
+        run: python3 rtl/verification/rtl/annot.py rtl/verification/results_lint/lint.txt Lint 10
