@@ -1,7 +1,11 @@
 `timescale 1ns/1ps
-// Placeholder smoke clock. DUT 미인스턴스이므로 기능 시험으로 간주하지 않는다.
 module tb_stepper_phase;
-reg clk=0;
+reg clk=0,rst=1,step=0,reverse=0;wire [3:0]coils;
+stepper_phase dut(.clk(clk),.rst(rst),.step(step),.reverse(reverse),.coils(coils));
+initial begin repeat(2)@(negedge clk);rst=0;if(coils!=4'b1000)$fatal(1,"reset phase");
+step=1;@(negedge clk);if(coils!=4'b1100)$fatal(1,"step1");
+reverse=1;@(negedge clk);if(coils!=4'b1000)$fatal(1,"reverse step");
+$display("PASS stepper_phase");$finish;end
 always #5 clk=~clk;
-initial begin repeat(20) @(posedge clk); $display("CLOCK SMOKE ONLY"); $finish; end
+initial begin #1000000;$fatal(1,"timeout");end
 endmodule
