@@ -14,6 +14,7 @@
 |---|---|---|
 | [ROADMAP.md](ROADMAP.md) | Arduino 32차시 ↔ RTL 구현 대응 | 설계안 |
 | [rtl01_button_led/](rtl01_button_led/README.md) | 01~02차시 대응: 동기화·디바운스·버튼 토글 | RTL 및 Testbench 작성, 실행 전 |
+| [rtl02_rgb_buttons/](rtl02_rgb_buttons/README.md) | Arduino 03차시 대응: 두 버튼과 RGB LED 조합회로 | RTL 및 Testbench 작성, 실행 전 |
 
 ## 필수 안전 확인
 - 비동기 외부 입력은 동기화 후 사용. 동기화 플립플롭 사이의 타이밍 예외는 실제 제약에 근거할 때만 적용.
