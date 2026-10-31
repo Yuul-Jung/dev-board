@@ -1,0 +1,14 @@
+# RTL11 — 초음파 거리 valid 기반 경보
+
+[RTL 목차](../README.md) · [Arduino 32차시](../../arduino/ROADMAP.md)
+
+## 회로 기능
+기존 HC-SR04 RTL이 출력하는 거리/valid를 받아 경보 판단. 트리거·Echo 엔진은 devices/gpio/rtl에서 재사용.
+
+- 소스: [ultrasonic_alarm.v](src/ultrasonic_alarm.v)
+- 테스트벤치: [tb_ultrasonic_alarm.v](tb/tb_ultrasonic_alarm.v) — 현재는 Clock Smoke Test만 작성되어 있으며 기능 검증 미완료.
+- 기존 `devices/`의 PHY/AXI 구현과 기능이 중복되지 않도록 **표시·판단·제어 RTL을 별도 구성**한다.
+- 실제 버스·보드 연결과 XDC는 미설정. Clock/Reset, 비트 폭, 전압을 검토한 뒤 검증한다.
+
+## 검증 상태
+RTL 소스 작성. 기능 Testbench 미완성, RTL Simulation/합성/Timing/보드 검증 미실행. 완료로 간주하지 않는다.
