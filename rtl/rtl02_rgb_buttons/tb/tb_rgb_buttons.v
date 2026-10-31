@@ -81,9 +81,10 @@ module tb_rgb_buttons;
     endtask
     integer k;
     initial begin
-        for (k = 0; k < 4; k = k + 1) begin
+        // 조합논리는 입력이 바뀌어야 처음 계산되므로 00 을 마지막(k=4)에 둔다
+        for (k = 1; k <= 4; k = k + 1) begin
             {ta, tb2} = k[1:0]; #1;
-            if ({tr, tg, tbl} !== ((k == 0) ? 3'b000 : (k == 2) ? 3'b100 : (k == 1) ? 3'b010 : 3'b001))
+            if ({tr, tg, tbl} !== ((k[1:0] == 2'd0) ? 3'b000 : (k[1:0] == 2'd2) ? 3'b100 : (k[1:0] == 2'd1) ? 3'b010 : 3'b001))
                 $fatal(1, "truth table ab=%b got %b", k[1:0], {tr, tg, tbl});
         end
         clocks(3);rst=0;clocks(4);check(3'b000);

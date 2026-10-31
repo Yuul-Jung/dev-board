@@ -69,6 +69,7 @@ task do_scan(input integer mode, input integer rnd, input integer spam, input in
                 end
                 start = spam ? $random(seed) : 1'b0;
             end
+            if (!done_seen && !rst_done) @(negedge clk);   // 다음 클럭으로(루프 한 바퀴 = 1클럭)
         end
         if (tcount >= 5000) $fatal(1, "scan timeout acc=%0d rep=%0d", acc, rep);
         if (rst_done) begin
