@@ -4,6 +4,26 @@
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
 
+## 2026-11-03 DS18B20 모듈 자료 갱신 → 동일 실행 AXI4-Lite 적대적 검증
+
+**① 자료 갱신:** [Analog Devices DS18B20 Rev.6 원문](https://www.analog.com/media/en/technical-documentation/data-sheets/ds18b20.pdf), [Arduino 1-Wire](https://github.com/arduino/docs-content/blob/475b308dd2c9d7e6783b3dbdc9626b848a454ecd/content/learn/05.communication/06.one-wire/one-wire.md), [Keyestudio KS0329](https://docs.keyestudio.com/projects/KS0329/en/latest/docs/KS0329.html), [KS0124](https://docs.keyestudio.com/projects/KS0124/en/latest/docs/KS0124.html), [Seeed Grove DS18B20](https://wiki.seeedstudio.com/One-Wire-Temperature-Sensor-DS18B20/), [국내 판매처](https://www.bliiot.co.kr/product/programmable-resolution-temperature-sensor-ds18b20.html)를 대조하고 `1-wire/ds18b20.md`와 [출처 대장](REFERENCES.md)에 칩/모듈·전원·핀맵·풀업·기생 전원·라이선스 한계를 반영했습니다. Arduino OneWire 기준 커밋 `800f26f3ee6eb446a72e013785cac3700e54cc13`이며, 소스 헤더에 MIT형 고지가 있으나 독립 LICENSE 파일은 확인되지 않았습니다. 원본 코드는 복제하지 않았습니다.
+
+**② 직후 적대적 검증:** `1-wire/rtl/onewire_axil_regs.v`·`onewire_axil_top.v`와 C 드라이버 `1-wire/sw/ds18b20.[ch]`를 기존 수정된 `gpio/rtl/us_axil_regs.v` 및 [Arm AXI4](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf)·[AMD PG267](https://docs.amd.com/r/en-US/pg267-axi-vip/AXI-Protocol-Checks-and-Descriptions)와 비교했습니다.
+
+| 우선순위 | 실제 발견·판정 | 처리 |
+|---|---|---|
+| **P0 예방** | DS18B20 5 V 동작 지원을 5 V DQ→Basys3 3.3 V GPIO 직접 연결 허용으로 오해 | 3.3 V 외부 VDD·3.3 V DQ 풀업 기준 및 실물 기판·저항 확인 요구. 5 V 풀업 직결 금지 |
+| **P0 예방** | TO-92 칩·Keyestudio 방수 프로브·Grove 기판·EASY plug RJ11을 동일 핀맵으로 오해 | 핀 번호/케이블 색/기판·커넥터 분리, 실물 확인 전 연결 미승인. XADC 0~1 V·I²C 풀업과 1-Wire 구별 |
+| **P0 예방** | 기생 전원 DS18B20을 약한 풀업·기존 RTL만으로 지원한다고 오해 | 강한 풀업(변환 명령 후 10 µs 이내) 미구현 명시. 외부 VDD 모드만 설계 범위 |
+| **P1 수정** | 1-Wire AXI4-Lite `AWVALID && WVALID` 동시 요구 | AW/W 독립 1단 버퍼·양 채널 수락 후 단일 커밋·BREADY 백프레셔로 수정 |
+| **P1 수정** | `s_axi_wstrb` 포트 누락·CMD/IRQ_EN 쓰기에서 WSTRB 무시 | Top→Regs WSTRB[3:0] 전달, 하위 바이트 스트로브만 부작용 허용 |
+| **P1 확인** | `CMD` 실행 중 busy, `STATUS.done`·`IRQ_EN`·`B/R` 응답 | 기존 명령/IRQ 정책 유지. 새 지향 테스트벤치 `1-wire/tb/tb_onewire_axil_regs.v`와 CI 등록 |
+| **유지** | `onewire_bit_engine.v` 슬롯 타이밍, `ds18b20.c` CRC·변환·폴링, 기존 C 호스트 시험 | 기능 소스 수정 없음. C 헤더의 원문 근거·WSTRB 설명만 정정 |
+| **P1 추가 발견(미해결)** | `gpio/rtl/dht22_axil_regs.v`·`quad_axil_regs.v`에도 AW/W 동시 요구와 WSTRB 누락이 남음 | **이번 범위 외**. 개별 테스트벤치와 프로토콜 검증 전 수정·검증 완료로 표시하지 않음 |
+| **미검증** | 실제 DS18B20 전압·3.3 V 풀업·배선, 1-Wire 아날로그 파형, AXI VIP, Vivado 합성·타이밍·실물 보드 | 실제 측정/통합 검증 전 완료 주장 금지 |
+
+**검증 범위:** GitHub 원본과 수정 소스의 포트·핸드셰이크·WSTRB·레지스터·문서 정적 대조. `tb_onewire_axil_regs.v`는 AW 선행/W 선행/동시 도착, WSTRB=0/상위 바이트, busy 중 명령 무시, done/IRQ, B/R 백프레셔·동시 읽기, 리셋을 검사하도록 작성했습니다. **CI가 실제 실행되기 전에는 시뮬레이션 통과로 표시하지 않습니다.** 호스트 C 시험과 RTL 시뮬레이션도 FPGA 합성·보드 검증과 다릅니다.
+
 ## 2026-11-03 초음파 AXI4-Lite·Modulino 자료 갱신 → 같은 실행 적대적 검증
 
 **① 자료 갱신:** Arduino [Modulino Distance 공식 하드웨어](https://docs.arduino.cc/hardware/modulino-distance)·[ABX00102 데이터시트](https://docs.arduino.cc/resources/datasheets/ABX00102-datasheet.pdf)에서 VL53L4CDV0DH/1, 3.3 V Qwiic, 센서 공급 2.6~3.5 V를 확인했습니다. [Arduino_Modulino](https://github.com/arduino-libraries/Arduino_Modulino) 소스 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`(v0.10.0, MPL-2.0)의 `ModulinoDistance`가 주소 0x29와 VL53L4CD→VL53L4ED 폴백을 구현한 사실을 확인하되, **호환 코드가 실제 실장 IC를 증명하지는 않는다**고 구분했습니다. [일반 HC-SR04 5 V](https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html), [HC-SR04-33](https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html), [Seeed Grove 1선 SIG](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/), [Adafruit ECHO 5 V](https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts) 및 기존 Keyestudio/Freenove·국내 판매처의 모델별 차이·저작권 상태를 [출처 대장](REFERENCES.md)과 [HC-SR04 문서](gpio/hc-sr04.md)에서 재확인했습니다.
