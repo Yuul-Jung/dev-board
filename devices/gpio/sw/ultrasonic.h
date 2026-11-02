@@ -4,7 +4,7 @@
  *   DIST 0x08 [9:0] cm, BCD 0x0C, IRQ_EN 0x10. 코어는 enable 이 켜져 있는 동안 60 ms 간격으로 계속 측정한다(rtl/README.md).
  *   done 은 측정이 끝나고 valid 일 때만 켜지고, 에코가 없으면 timeout 이 켜진다.
  * 설계안: 폴링 상한, 비차단 us_poll, 범위(2~400 cm) 밖 값 거부. 코어는 최대 999 cm 까지 낼 수 있어 400 초과는 반사 오류 의심.
- * 미확인: enable 을 껐다 켜면 측정이 즉시 새로 시작하는지(코어 소스를 읽지 못함). 이 드라이버는 켜 두고 done/timeout 플래그만 기다린다.
+ * RTL 소스 확인: enable=0이면 gap_us_cnt를 MEASURE_GAP_US로 초기화하고, 재활성화 후 첫 1us tick에서 새 측정을 시작하도록 설계됨(실물 타이밍 미검증).
  * 보드에서 실행해 보지 않았다. 호스트 모의 레지스터 시험만. */
 #ifndef ULTRASONIC_H
 #define ULTRASONIC_H
