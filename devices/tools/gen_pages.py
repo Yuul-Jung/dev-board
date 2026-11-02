@@ -196,4 +196,8 @@ for d, ds, _ in os.walk(root):
         if '--check' not in sys.argv: open(p, 'w', encoding='utf-8').write(new)
         changed.append(os.path.relpath(p, root))
 print(f'페이지 {len(changed)}개 갱신' + (' (--check, 미기록)' if '--check' in sys.argv else ''))
+for name in changed[:30]:
+    print('갱신 대상:', name)
+if len(changed) > 30:
+    print('그 밖의 갱신 대상:', len(changed) - 30)
 sys.exit(1 if changed and '--check' in sys.argv else 0)
