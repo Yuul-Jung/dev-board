@@ -24,7 +24,7 @@
 | **P1 추가 발견(미해결)** | `gpio/rtl/dht22_axil_regs.v`·`quad_axil_regs.v`에도 AW/W 동시 요구와 WSTRB 누락이 남음 | **이번 범위 외**. 개별 테스트벤치와 프로토콜 검증 전 수정·검증 완료로 표시하지 않음 |
 | **미검증** | 실제 DS18B20 전압·3.3 V 풀업·배선, 1-Wire 아날로그 파형, AXI VIP, Vivado 합성·타이밍·실물 보드 | 실제 측정/통합 검증 전 완료 주장 금지 |
 
-**검증 범위:** GitHub 원본과 수정 소스의 포트·핸드셰이크·WSTRB·레지스터·문서 정적 대조. `tb_onewire_axil_regs.v`는 AW 선행/W 선행/동시 도착, WSTRB=0/상위 바이트, busy 중 명령 무시, done/IRQ, B/R 백프레셔·동시 읽기, 리셋을 검사하도록 작성했습니다. **CI가 실제 실행되기 전에는 시뮬레이션 통과로 표시하지 않습니다.** 호스트 C 시험과 RTL 시뮬레이션도 FPGA 합성·보드 검증과 다릅니다.
+**검증 결과(2026-11-03):** [GitHub Actions #41499100802](https://github.com/Yuul-Jung/dev-board/actions/runs/41499100802) **success** (커밋 `22117f3856463dfef00fdf8c841999cedf95d015`). Python 구문·JSON 파싱 PASS, Markdown 상대 링크 **1,838개 오류 0**, 핵심 HTML 상대 링크 **44개 오류 0**, `gen_pages.py --check` **0개 변경**, C 호스트 모의시험 전체 PASS, 초음파 AXI RTL 회귀시험 **PASS**, 1-Wire Top Icarus Verilog 컴파일 및 **`PASS tb_onewire_axil_regs`** 확인. AW 선행/W 선행/동시 도착, WSTRB=0/상위 바이트, busy 중 명령 무시, done/IRQ, B/R 백프레셔·동시 읽기, ARVALID 없는 상태의 임의 RVALID 방지, 리셋을 검사했습니다. 이 결과는 지정된 RTL 시뮬레이션 범위에만 적용되며 **AXI VIP·Vivado 합성·Timing·실물 센서/보드 검증은 미실시**입니다. 이후 문서 커밋은 별도 CI 확인 대상입니다.
 
 ## 2026-11-03 초음파 AXI4-Lite·Modulino 자료 갱신 → 같은 실행 적대적 검증
 
