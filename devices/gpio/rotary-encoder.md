@@ -3,6 +3,19 @@
 <!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [gpio](README.md)
 근거: ALPS 엔코더 문서(D3 수준, 도면은 텍스트로 못 읽음). 구분: 확인 / 설계안 / 미확인.
 
+## 2026-11-03 실물 모듈 변형·전기 안전
+
+| 제품 | 실제 인터페이스·전원 | 핀·기판·RTL 적용 |
+|---|---|---|
+| KY-040 계열 | 일반적으로 CLK(A)·DT(B)·SW·+·GND, 접점식 A/B+버튼. 기판별 풀업 구성 차이 | CLK/DT/SW의 HIGH 전압은 내장 풀업 전원에 좌우될 수 있으므로 5 V 전원 기판을 Basys3에 직결 금지. 3.3 V 동작 가능 여부는 해당 기판 확인 필요 |
+| [Keyestudio KS0013](https://docs.keyestudio.com/projects/KS0013/en/latest/docs/KS0013.html) | 제조사 명시 **5 V**, 디지털 엔코더 | 제조사 5 V 예제를 3.3 V 직결 승인 근거로 사용하지 않음. A/B/버튼의 실측 HIGH 및 전원·풀업 회로 확인 |
+| [Seeed Grove Encoder](https://wiki.seeedstudio.com/Grove-Encoder/) | **4.5~5.5 V**, Grove 커넥터 | 기판 인터페이스·신호 전압 확인 전 3.3 V FPGA 직결 금지 |
+| [Arduino Modulino Knob](https://docs.arduino.cc/tutorials/modulino-knob/how-knob/) | **3.3 V, STM32C011F4 + I²C(Qwiic)**, 기본 7비트 주소 0x3A | STM32 MCU가 A/B/버튼을 처리하여 I²C로 전달. 별도 PA0/PA1/PA2 헤더는 있으나 3.3 V 전기 조건·연결을 검토해야 하며 KY-040용 RTL과 I²C 경로는 다름 |
+
+**P0:** 엔코더 접점 자체의 정격 5 V·10 mA는 FPGA 입력의 허용 HIGH 전압을 뜻하지 않습니다. 모듈의 + 단자와 풀업 연결을 회로도·실물로 확인하고, 3.3 V가 보장되지 않으면 레벨 변환 후 연결합니다. XADC는 아날로그 0~1 V 경로로 본 엔코더 A/B 입력과 무관합니다.
+
+**P1:** Modulino Knob의 I²C는 외부 풀업 전원·7비트 주소를 확인해야 하며, Keyestudio KS0013/일반 KY-040의 직접 GPIO 직교 입력과 호환되는 것으로 기록하지 않습니다. 방향·디텐트 수·풀업 저항·핀 배열은 판매처/PCB별 차이가 있어 실물 미확인입니다. 원본 사진·회로도·예제 코드는 복제하지 않았습니다.
+
 | 항목 | 값 | 구분 |
 |---|---|---|
 | 디텐트 / 펄스 | 30 / 15 (문서에 "per revolution" 명시 없음) | 확인(문구) |
