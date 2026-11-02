@@ -21,6 +21,7 @@
 | [model_quad.py](model_quad.py) | rtl/quad_engine.v 의 전이 표(00->10->11->01->00 = +1)와 필터를 옮긴 파이썬 모델. Verilog 검증이 아님. |
 | [tb_dht22_engine.v](tb_dht22_engine.v) | 엔진 단독 테스트. 소자 모델이 데이터시트 서술의 파형으로 응답한다. |
 | [tb_ultrasonic.v](tb_ultrasonic.v) | 코어 단독 테스트. 트리거 뒤 에코를 만들어 넣어 거리 변환과 타임아웃을 확인한다. |
+| [tb_us_axil_regs.v](tb_us_axil_regs.v) | 초음파 AXI4-Lite 레지스터 독립 채널/WSTRB/응답 백프레셔 회귀 테스트. |
 | [test_analog_sensors.c](test_analog_sensors.c) | 아날로그 센서 변환 시험: 손으로 계산한 값, 경계, 독립 계산(__int128 정수 반올림)과의 대조, 단조성·범위 불변식. 보드 측정이 아니다. |
 | [test_axi_gpio.c](test_axi_gpio.c) | 모델의 레지스터 오프셋은 헤더 매크로가 아닌 PG144 요약의 숫자를 직접 적었다(헤더가 틀려도 모델이 같이 틀리지 않도록). |
 | [test_basic_io.c](test_basic_io.c) | 기본 입출력 예제 묶음 시험: 자유 실행 시계, 비차단 타이머, 버튼 디바운스, RGB. 자작 AXI Timer 모의에 대한 시험이며 보드에서 확인한 것이 아니다 |
