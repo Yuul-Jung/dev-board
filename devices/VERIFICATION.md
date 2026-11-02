@@ -13,6 +13,7 @@
 | **P0 예방** | 일반 HC-SR04 5 V ECHO → Basys3 3.3 V GPIO | Adafruit 공식 핀 설명과 SparkFun 5 V 제품을 대조. **직결 금지**, 분압 예(10 kΩ/10 kΩ → 2.5 V)와 전원·GND·핀 확인을 [센서 문서](gpio/hc-sr04.md)에 명시. **실물 전압·VIH 여유는 미검증** |
 | **P0 예방** | XADC에 분압된 ECHO 2.5 V 연결 위험 | XADC는 일반 단극성 0~1 V(AMD UG480)이며 **디지털 ECHO는 GPIO**라고 명시. CdS·조이스틱 문서의 XADC 주의와 교차 확인 |
 | **P1 수정** | 일반 HC-SR04 vs HC-SR04-33 vs Grove SIG vs Modulino Distance 혼동 | 제조사 문서로 **전원·신호 핀·프로토콜이 서로 다름**을 표로 분리. Grove 1선 양방향 및 Modulino I²C를 기존 TRIG/ECHO RTL의 대체품으로 분류하지 않음 |
+| **P1 확인** | 국내 HC-SR04 판매처의 3.3 V 호환성 표기 충돌 | 아이씨팩토리 HC-SR04+는 3~5.5 V로 표기하나 ECHO HIGH는 미확인. EKU 상품은 제목의 3~5.5 V와 상세의 DC5V/HIGH5V가 서로 모순. **제품 제목만으로 FPGA 직결 승인 금지**, [센서 문서](gpio/hc-sr04.md)에 기록 |
 | **P1 수정** | RTL 코어 주석의 `CTRL[2]` vs 실제 `us_axil_regs.v`의 `CTRL[0]` | 실제 enable 포트·레지스터 주소 대조 후 **주석만 `CTRL[0]`으로 정정**, 기능 코드 변경 없음 |
 | **P1 수정** | `tools/gen_pages.py`가 수작업 `devices/capstone/index.html`을 자동 덮어씀 | `MANUAL_PAGES`에 등록하여 덮어쓰기 방지, 페이지 누락은 `--check`에서 검출하도록 변경 |
 | **P1 미해결** | `us_axil_top.v`에 WSTRB 포트가 없음 | [RTL README](gpio/rtl/README.md)에 **완전한 AXI4-Lite IP 검증 전**이라고 명시. 표준 채널·WSTRB·독립 AW/W 타이밍·응답·백프레셔를 시뮬레이션 후 IP화해야 함. 코드 무검증 재설계 금지 |
