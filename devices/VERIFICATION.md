@@ -4,6 +4,24 @@
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
 
+## 2026-11-02 주변모듈 갱신 직후 적대적 검증
+
+**범위:** [HC-SR04](gpio/hc-sr04.md), [구조화 데이터](data/devices.json), [출처·라이선스 대장](REFERENCES.md), `gpio/rtl/ultrasonic_distance_meter.v`, `gpio/rtl/us_axil_regs.v`, `gpio/rtl/us_axil_top.v`, `gpio/sw/ultrasonic.[ch]`, `gpio/tb/tb_ultrasonic.v`, `gpio/tb/test_ultrasonic.c`, `tools/gen_pages.py`와 기존 I²C LCD·XADC 안전 문서.
+
+| 등급 | 대조 항목 | 판정 / 조치 |
+|---|---|---|
+| **P0 예방** | 일반 HC-SR04 5 V ECHO → Basys3 3.3 V GPIO | Adafruit 공식 핀 설명과 SparkFun 5 V 제품을 대조. **직결 금지**, 분압 예(10 kΩ/10 kΩ → 2.5 V)와 전원·GND·핀 확인을 [센서 문서](gpio/hc-sr04.md)에 명시. **실물 전압·VIH 여유는 미검증** |
+| **P0 예방** | XADC에 분압된 ECHO 2.5 V 연결 위험 | XADC는 일반 단극성 0~1 V(AMD UG480)이며 **디지털 ECHO는 GPIO**라고 명시. CdS·조이스틱 문서의 XADC 주의와 교차 확인 |
+| **P1 수정** | 일반 HC-SR04 vs HC-SR04-33 vs Grove SIG vs Modulino Distance 혼동 | 제조사 문서로 **전원·신호 핀·프로토콜이 서로 다름**을 표로 분리. Grove 1선 양방향 및 Modulino I²C를 기존 TRIG/ECHO RTL의 대체품으로 분류하지 않음 |
+| **P1 수정** | RTL 코어 주석의 `CTRL[2]` vs 실제 `us_axil_regs.v`의 `CTRL[0]` | 실제 enable 포트·레지스터 주소 대조 후 **주석만 `CTRL[0]`으로 정정**, 기능 코드 변경 없음 |
+| **P1 수정** | `tools/gen_pages.py`가 수작업 `devices/capstone/index.html`을 자동 덮어씀 | `MANUAL_PAGES`에 등록하여 덮어쓰기 방지, 페이지 누락은 `--check`에서 검출하도록 변경 |
+| **P1 미해결** | `us_axil_top.v`에 WSTRB 포트가 없음 | [RTL README](gpio/rtl/README.md)에 **완전한 AXI4-Lite IP 검증 전**이라고 명시. 표준 채널·WSTRB·독립 AW/W 타이밍·응답·백프레셔를 시뮬레이션 후 IP화해야 함. 코드 무검증 재설계 금지 |
+| **P1 확인** | Keyestudio/Freenove 저작권·원본 커밋 | Keyestudio 원본 루트에 LICENSE 없음(재배포 권한 미확인), Freenove README/라이선스는 **CC BY-NC-SA 3.0**. 각 GitHub SHA·출처 링크를 [대장](REFERENCES.md)에 기록. 외부 사진·코드 복제 없음 |
+| **유지** | HC-SR04 C 드라이버·호스트 모의시험 | 기존 `us_poll`/W1C 플래그 처리·거리 범위·헤더 상수와 RTL 주소를 정적으로 대조. 이번 변경에 기능 수정 없음. **이 감사에서 재실행 전에는 기존 호스트 시험 통과 기록만 참고** |
+| **유지** | I²C PCF8574 LCD 5 V 풀업 위험 | [lcd1602.md](i2c/lcd1602.md)의 SDA/SCL 풀업 전원 미확인 경고 유지. 실제 백팩 회로가 없으므로 안전한 직결로 승격하지 않음 |
+
+**검증 수준 구분:** 위의 정적 원본·소스 대조는 보드 동작 확인이 아닙니다. RTL 32과제의 GitHub Actions 시뮬레이션 기록과 `devices/gpio/rtl`의 초음파 AXI 래퍼 시뮬레이션은 **서로 다른 검증 범위**입니다. 후자는 본 작업에서 합성·타이밍·실물 검증하지 않았습니다. 자동 검사 결과는 CI 실행 후 별도 기록해야 합니다.
+
 ## 1. 발견해서 고친 결함
 | # | 발견 방법 | 결함 | 조치 |
 |---|---|---|---|
@@ -78,7 +96,7 @@
 - BME280 온도 25.08 °C 는 BMP280 데이터시트 예제와 일치. 압력은 0.02 Pa 차이(기억에 의존한 기준값이라 ±8 LSB 허용).
 
 ## 4. 검증하지 못한 것 (믿지 마세요)
-- **모든 Verilog**: 시뮬레이터가 없어 실행·합성 안 함. PS/2·엔코더는 알고리즘 파이썬 모델만 통과(코드 자체의 검증 아님).
+- **`devices/` 전용 Verilog RTL**: 초음파·DHT22·PS/2·엔코더 등의 실제 RTL 시뮬레이션·합성·보드 시험은 이 문서의 호스트 모의시험 범위 밖입니다. 별도 `rtl/` 32과제는 GitHub Actions의 Icarus/Verilator 검증 기록(위 48~56행)이 있으므로 '모든 Verilog 미실행'으로 일반화하지 않습니다.
 - **요약 경유 근거**: W5500, MAX7219, AXI GPIO(PG144), LM35, HD44780 은 PDF 원문이 아니라 웹 가져오기 요약에서 값을 옮겼다(각 소자 문서에 표기). 표 머리글이 깨졌다고 요약이 밝힌 부분(HD44780 전압 열)은 추정이다.
 - **새 드라이버 전체가 실제 소자·보드에서 실행된 적 없음**: W5500(TCP/UDP), DNS·NTP·HTTP 응용, MAX7219, AXI GPIO·버튼·RGB·시계, HD44780(+PCF8574 백팩). 특히 HD44780 은 실제 모듈의 핀 배치·전원·대비, MAX7219 는 CLK 휴지 레벨과 자릿수 방향, AXI GPIO 는 입력 비트 쓰기 효과와 리셋 값 불일치가 미확인.
 - **모의 장치 순환 논리**: 드라이버 테스트의 모의 IP 는 내가 읽은 문서대로 내가 만든 것이라, 문서 해석이 틀리면 테스트도 같이 틀린다. 실제 보드·Vivado 시뮬레이션이 필요.
