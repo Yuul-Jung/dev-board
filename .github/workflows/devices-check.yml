@@ -30,3 +30,14 @@ jobs:
           python3 devices/tools/gen_pages.py --check
       - name: C driver host tests (mock only, not board verification)
         run: bash devices/run_host_tests.sh
+      - name: AXI4-Lite ultrasonic RTL directed simulation
+        run: |
+          sudo apt-get update && sudo apt-get install -y iverilog
+          iverilog -g2012 -Wall -s us_axil_top -o /tmp/us_axil_top \
+            devices/gpio/rtl/us_axil_top.v \
+            devices/gpio/rtl/us_axil_regs.v \
+            devices/gpio/rtl/ultrasonic_distance_meter.v
+          iverilog -g2012 -Wall -s tb_us_axil_regs -o /tmp/tb_us_axil_regs \
+            devices/gpio/rtl/us_axil_regs.v \
+            devices/gpio/tb/tb_us_axil_regs.v
+          vvp /tmp/tb_us_axil_regs
