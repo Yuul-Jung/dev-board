@@ -6,12 +6,16 @@
 
 int ads1115_write_reg(ads1115_t *a, uint8_t reg, uint16_t v)
 {
+    // (추가) 공개 레지스터 API의 NULL 장치/버스 포인터 역참조 방지
+    if (!a || !a->iic) return IIC_ERR_ARGS;
     uint8_t b[3] = { reg, (uint8_t)(v >> 8), (uint8_t)v };   /* MSB 먼저 */
     return axi_iic_write(a->iic, a->addr7, b, 3);
 }
 
 int ads1115_read_reg(ads1115_t *a, uint8_t reg, uint16_t *v)
 {
+    // (추가) NULL 출력 포인터 및 미초기화 장치 포인터 역참조 방지
+    if (!a || !a->iic || !v) return IIC_ERR_ARGS;
     uint8_t r[2];
     int rc = axi_iic_write_read(a->iic, a->addr7, &reg, 1, r, 2);
     if (rc) return rc;
