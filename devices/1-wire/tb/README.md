@@ -4,6 +4,8 @@
 
 호스트 테스트와 레지스터/장치 모델(mock)
 
+AXI 레지스터 지향 시험: `tb_onewire_axil_regs.v` (GitHub Actions에서 Icarus Verilog 실행). 통과 기록 확인 전에는 실행 성공으로 표시하지 않습니다.
+
 ## 이 폴더의 목록
 
 <!-- index:begin -->
@@ -14,6 +16,7 @@
 | 파일 | 설명 |
 |---|---|
 | [mock_ow.h](mock_ow.h) | endif |
+| [tb_onewire_axil_regs.v](tb_onewire_axil_regs.v) | 1-Wire AXI4-Lite 독립 AW/W, WSTRB, CMD 단발 펄스, IRQ, B/R 백프레셔 검증. |
 | [tb_onewire_engine.v](tb_onewire_engine.v) | 엔진 단독 테스트. 소자 모델이 리셋에 응답하고, 읽기 슬롯에서 패턴 1,0,1,1 을 돌려준다. |
 | [test_ds18b20.c](test_ds18b20.c) | DS18B20 드라이버 호스트 시험. 모의 소자는 1-Wire 마스터 IP 의 레지스터(rtl/README.md)와 DS18B20 슬레이브를 비트 단위로 흉내 낸 |
 
