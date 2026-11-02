@@ -28,7 +28,7 @@
 | [test_axi_gpio.c](test_axi_gpio.c) | 모델의 레지스터 오프셋은 헤더 매크로가 아닌 PG144 요약의 숫자를 직접 적었다(헤더가 틀려도 모델이 같이 틀리지 않도록). |
 | [test_basic_io.c](test_basic_io.c) | 기본 입출력 예제 묶음 시험: 자유 실행 시계, 비차단 타이머, 버튼 디바운스, RGB. 자작 AXI Timer 모의에 대한 시험이며 보드에서 확인한 것이 아니다 |
 | [test_dht22.c](test_dht22.c) | DHT22 드라이버 호스트 시험. 모의 소자는 dht22_axil_regs.v 의 레지스터 동작(머리말 주석)을 흉내 낸다 — 비트 타이밍(RTL 엔진)은 시험하 |
-| [test_gpio_sw.c](test_gpio_sw.c) |  |
+| [test_gpio_sw.c](test_gpio_sw.c) | (추가) 독립 모의 CTRL 레지스터로 INVERT 수정 시 IRQ_EN 보존을 검증한다. |
 | [test_rtttl.c](test_rtttl.c) | RTTTL 해석기·재생기 호스트 시험 (교재 17장). |
 | [test_tach.c](test_tach.c) |  |
 | [test_ultrasonic.c](test_ultrasonic.c) | HC-SR04 드라이버 호스트 시험. 모의 소자는 us_axil_regs.v 의 레지스터 동작(머리말 주석, 1 을 쓰면 지워지는 timeout·done)을 흉내 |
