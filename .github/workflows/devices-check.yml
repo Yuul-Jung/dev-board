@@ -41,3 +41,14 @@ jobs:
             devices/gpio/rtl/us_axil_regs.v \
             devices/gpio/tb/tb_us_axil_regs.v
           vvp /tmp/tb_us_axil_regs
+      - name: AXI4-Lite 1-Wire RTL directed simulation
+        run: |
+          iverilog -g2012 -Wall -DSIMULATION -s onewire_axil_top -o /tmp/onewire_axil_top \
+            devices/1-wire/rtl/onewire_axil_top.v \
+            devices/1-wire/rtl/onewire_axil_regs.v \
+            devices/1-wire/rtl/onewire_bit_engine.v \
+            devices/1-wire/rtl/onewire_iobuf.v
+          iverilog -g2012 -Wall -s tb_onewire_axil_regs -o /tmp/tb_onewire_axil_regs \
+            devices/1-wire/rtl/onewire_axil_regs.v \
+            devices/1-wire/tb/tb_onewire_axil_regs.v
+          vvp /tmp/tb_onewire_axil_regs
