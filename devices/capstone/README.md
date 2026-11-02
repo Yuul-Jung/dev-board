@@ -136,3 +136,43 @@ Testbench 시나리오: Reset → PIR=0 → PIR 검출 → ECHO 정상/타임아
 | HTML 게시 | [Pages 배포 작업 #41480275045](https://github.com/Yuul-Jung/dev-board/actions/runs/41480275045) **success** | 실제 외부 브라우저 HTTP 접근 여부는 별도 확인 필요 |
 
 **캡스톤 제안 회로·핀 배정 상태:** Basys3의 GPIO는 3.3 V 기준이고 일반 HC-SR04 ECHO는 5 V가 될 수 있다. 입력 보호·부저 드라이버·공통 접지·PIR 출력 HIGH 실측을 통과하지 않은 연결은 게시용 '검증 완료 회로'가 아니다. 초음파 엔진의 `distance_valid`는 유지 레벨이며, 신규 Controller는 완료 이벤트(예: 기존 AXI 레지스터의 W1C `done_flag` 또는 별도 단발 스트로브)를 **명시적으로 설계·검증**해야 한다.
+
+## 8. 2026-11-03 최신 주변모듈 적대적 검증과 캡스톤 적용 범위
+
+[최신 주변모듈 감사 커밋 `92504fa6`](https://github.com/Yuul-Jung/dev-board/commit/92504fa6d29ff381257ea0f7ad7835a1cde40d6b)과 [검증 기록](../VERIFICATION.md)을 대조했다. [GitHub Actions #41518731026](https://github.com/Yuul-Jung/dev-board/actions/runs/41518731026)은 해당 커밋의 문서·호스트·지정 RTL 검증 **success**로 기록되어 있다. 아래는 **이번 캡스톤 자체를 시험한 결과가 아니라, 기존 라이브러리에서 확인된 근거의 적용 범위**이다.
+
+| 최신 자료·검증 | 확인된 범위 | CAPSTONE-01에 반영할 판단 |
+|---|---|---|
+| DHT22 단일선 모듈 변형 | 단품/Keyestudio/Grove의 전원·DATA 풀업·핀맵과 Modulino Thermo의 I²C를 구분 | **캡스톤 부품에 포함하지 않음.** 동일한 '센서'라는 이유로 PIR·HC-SR04 핀맵에 적용 금지 |
+| KY-040/Keyestudio/Seeed 엔코더와 Modulino Knob | 직접 A/B GPIO와 STM32 경유 I²C를 구분 | **캡스톤 부품에 포함하지 않음.** 보드별 VCC/출력 HIGH 검증 원칙만 참고 |
+| DHT22·Quad AXI4-Lite 수정 | 독립 AW/W 수락, WSTRB, W1C·IRQ·B/R 응답 지정 시험 통과 | 신규 보안 레지스터 설계 시 **검증 패턴을 참고**. 기존 시험 통과를 `security_regs` 검증으로 이전하지 않음 |
+| 기존 HC-SR04 AXI4-Lite | [전용 TB](../gpio/tb/tb_us_axil_regs.v) 지정 시나리오 통과 | 거리 측정·기존 레지스터의 참고 구현. 신규 PIR 이벤트·경보 기능은 여전히 미구현 |
+
+원본 [Keyestudio Project 47](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/blob/master/docs/2.Python_Tutorial%28Windows%29/Python_Tutorial%28Windows%29.md)의 **ESP32 PIR GPIO15, LED GPIO22, 부저 GPIO4, 0.2초 ON/OFF 동작과 배선도**는 별도 원본 사실이다. 원본 저장소의 명시적 재배포 라이선스는 확인되지 않아 **원본 배선도·사진·코드는 링크로만 안내**한다. HC-SR04, 이벤트 레지스터, Basys3 RTL, MicroBlaze V AXI 연결은 자체 확장안이다.
+
+### 8.1 기존 RTL의 실제 신호 계약과 신규 Controller 인계
+
+| 기존 신호 | 소스에서 확인된 동작 | 신규 설계 시 금지할 오해 |
+|---|---|---|
+| `pir_event.rose` | 동기화된 PIR의 상승 변화 시 1클럭 펄스 | PIR 원본 ESP32 GPIO15를 Basys3 핀 번호로 사용 금지 |
+| `ultrasonic_distance_meter.enable` | 1이면 주기 측정, 0이면 측정 중단·거리/valid 초기화 | PIR 이벤트마다 측정 시작하는 `start_pulse`로 취급 금지 |
+| `distance_valid` | 정상 ECHO 종료 시 1로 설정, 이후 다음 실패·disable/reset 전까지 유지될 수 있음 | 매 측정마다 발생하는 단발 완료 펄스로 취급 금지 |
+| `busy`, `timeout_error` | busy는 측정 구간 상태, timeout_error는 타임아웃 1클럭 펄스 | timeout 직후 이전 거리값을 새 거리로 사용 금지 |
+| `us_axil_regs.done_flag` | `busy`의 하강을 검출한 시점에 `valid`가 1이면 W1C 이벤트 설정 | **기존 초음파 전용** 레지스터. PIR 이벤트 저장 기능 없음 |
+
+신규 `security_controller`는 **정상 완료/타임아웃을 중복 없이 한 번씩 수용하는 규칙**을 정해야 한다. 기존 `done_flag`를 읽고 W1C로 지우는 방식은 SoC 소프트웨어 경로의 후보이며, RTL 내부에서 단발 스트로브를 새로 만드는 방식은 **구현·시험 전의 설계안**이다. 경보 정책(PIR 단독 또는 거리 조건 병용), timeout 후 fail-safe 경보, 임계값 0·범위 밖 처리, 경보 해제·재무장 규칙은 미확정이다.
+
+### 8.2 신규 통합 테스트 승인표 (모두 미실시)
+
+| 시나리오 | 기대 검증 항목 | 현재 |
+|---|---|---|
+| Reset/disable/재시작 | LED·부저·pending·IRQ 초기 상태와 거리 valid 무효화 | 미실시 |
+| PIR 상승/유지/하강 | `rose` 1회 처리, 이벤트 중복 방지, debounce/예열 정책 | 미실시 |
+| 거리 정상 샘플 연속 2회 | **새 샘플**만 처리, 오래된 `distance_valid` 재사용 방지 | 미실시 |
+| ECHO 없음/지속 HIGH | timeout 1회 기록, 이전 거리값 무효화, 정책에 따른 경보 | 미실시 |
+| EVENT_PENDING W1C와 새 이벤트 동시 | 하위 바이트 WSTRB, Set 우선, IRQ 유지/해제 | 미실시 |
+| AXI AW 먼저/W 먼저/동시 및 B/R 대기 | 새 보안 AXI 슬레이브 독립 채널·응답 안정성 | 미실시 |
+| 5 V ECHO·PIR HIGH·부저 전류 | 실제 모듈별 3.3 V GPIO 보호·레벨 변환·외부 구동 | 미실시 |
+| Vivado 합성/Timing/보드 | 핀 XDC·전원·실측·MicroBlaze V 주소맵/C 접근 | 미실시 |
+
+**배포 게이트:** 위 미실시 항목은 실험 결과로 게시하지 않는다. 기존 32차시 Arduino·RTL 소스, `devices/` 라이브러리 및 `amd_soc`는 변경하지 않는다.

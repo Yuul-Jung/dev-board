@@ -82,5 +82,22 @@ main{max-width:900px;margin:auto;padding:22px 18px 72px}a{color:var(--link)}nav{
  <a class="card" href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/capstone/README.md"><strong>상세 Markdown</strong><p>모듈표·절차·근거·검증 한계</p></a>
 </div>
 <p class="mut">원본 예제 확인: 완료. 신규 Basys3 RTL 통합·합성·실물 보드 검증: 미실시. 원본 이미지·코드는 무단 복제하지 않고 출처 링크를 제공합니다.</p>
+<h2>8. 최신 라이브러리 검증과 캡스톤 적용 범위 (2026-11-03)</h2>
+<p><a href="https://github.com/Yuul-Jung/dev-board/commit/92504fa6d29ff381257ea0f7ad7835a1cde40d6b">주변모듈 갱신·적대적 검증 커밋 92504fa6</a>의 DHT22·엔코더 자료/AXI4-Lite 수정과 <a href="https://github.com/Yuul-Jung/dev-board/actions/runs/41518731026">검증 CI #41518731026 (success)</a>를 확인했습니다. <strong>DHT22·엔코더는 본 캡스톤의 입력 부품이 아니며, 그 테스트 통과는 PIR 보안 통합 검증을 의미하지 않습니다.</strong></p>
+<div class="grid"><table><thead><tr><th>기존 라이브러리 근거</th><th>확인된 내용</th><th>CAPSTONE-01 적용</th></tr></thead><tbody>
+<tr><td>DHT22·직교 엔코더 모듈 감사</td><td>기판별 5 V/3.3 V, GPIO/I²C, 풀업·핀맵 구분</td><td>부품 혼동 금지·전기 안전 기준 참고</td></tr>
+<tr><td>DHT22·Quad AXI4-Lite 지정 회귀시험</td><td>AW/W 독립 수락, WSTRB, 이벤트·IRQ, 응답 안정성</td><td>신규 security_regs 테스트 패턴 참고, <strong>보안 AXI 미구현</strong></td></tr>
+<tr><td>기존 초음파 AXI 지정 회귀시험</td><td>us_axil_regs의 초음파 전용 STATUS·DIST·IRQ</td><td>PIR/경보 이벤트 레지스터와 구별</td></tr>
+</tbody></table></div>
+<h2>9. 실제 RTL 신호 의미와 신규 통합 승인 항목</h2>
+<div class="grid"><table><thead><tr><th>신호/기능</th><th>코드에서 확인한 사실</th><th>신규 보안 설계 검증</th></tr></thead><tbody>
+<tr><td>pir_event.rose</td><td>동기화된 PIR 상승 시 1클럭 펄스</td><td>PIR 1회 이벤트/유지·하강·재검출: 미실시</td></tr>
+<tr><td>ultrasonic_distance_meter.enable</td><td>주기 측정 활성화, PIR 직후 시작 입력이 아님</td><td>측정 시점과 PIR 경보 정책: 미확정</td></tr>
+<tr><td>distance_valid</td><td>정상 ECHO 이후 유지될 수 있는 레벨</td><td>연속 2회 측정에서 새 샘플만 처리: 미실시</td></tr>
+<tr><td>timeout_error</td><td>타임아웃 1클럭 펄스, valid 무효화</td><td>이전 거리값 폐기·타임아웃 경보: 미실시</td></tr>
+<tr><td>EVENT_PENDING / IRQ</td><td>현재 보안용 레지스터 없음, W1C·Set 우선은 제안</td><td>동시 이벤트·WSTRB·AW/W·백프레셔: 미실시</td></tr>
+<tr><td>보드 연결</td><td>일반 HC-SR04 ECHO는 5 V 가능</td><td>실제 PIR 출력·ECHO 레벨 변환·부저 구동·XDC·합성·Timing·실물 시험: 미실시</td></tr>
+</tbody></table></div>
+<p class="mut">세부 시나리오와 검증 게이트는 <a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/capstone/README.md">캡스톤 Markdown §8</a>을 참고합니다. Keyestudio 원본 배선도·코드·이미지는 재배포 라이선스가 확인되지 않아 링크만 제공하며, 신규 HC-SR04/이벤트 레지스터/Basys3 RTL/MicroBlaze V AXI는 자체 확장안입니다.</p>
 <footer><a href="../../index.html">메인으로 돌아가기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/HARNESS.md">운영 하네스</a></footer>
 </main></body></html>
