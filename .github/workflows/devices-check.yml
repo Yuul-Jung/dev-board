@@ -52,3 +52,24 @@ jobs:
             devices/1-wire/rtl/onewire_axil_regs.v \
             devices/1-wire/tb/tb_onewire_axil_regs.v
           vvp /tmp/tb_onewire_axil_regs
+      - name: AXI4-Lite DHT22 RTL directed simulation
+        run: |
+          iverilog -g2012 -Wall -DSIMULATION -s dht22_axil_top -o /tmp/dht22_axil_top \
+            devices/gpio/rtl/dht22_axil_top.v \
+            devices/gpio/rtl/dht22_axil_regs.v \
+            devices/gpio/rtl/dht22_engine.v \
+            devices/gpio/rtl/dht22_iobuf.v
+          iverilog -g2012 -Wall -s tb_dht22_axil_regs -o /tmp/tb_dht22_axil_regs \
+            devices/gpio/rtl/dht22_axil_regs.v \
+            devices/gpio/tb/tb_dht22_axil_regs.v
+          vvp /tmp/tb_dht22_axil_regs
+      - name: AXI4-Lite rotary encoder RTL directed simulation
+        run: |
+          iverilog -g2012 -Wall -s quad_axil_top -o /tmp/quad_axil_top \
+            devices/gpio/rtl/quad_axil_top.v \
+            devices/gpio/rtl/quad_axil_regs.v \
+            devices/gpio/rtl/quad_engine.v
+          iverilog -g2012 -Wall -s tb_quad_axil_regs -o /tmp/tb_quad_axil_regs \
+            devices/gpio/rtl/quad_axil_regs.v \
+            devices/gpio/tb/tb_quad_axil_regs.v
+          vvp /tmp/tb_quad_axil_regs
