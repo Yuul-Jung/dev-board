@@ -97,6 +97,7 @@ AMD IP로는 맞는 것이 없어 직접 설계했습니다. 구조는 1-Wire RT
 - **회귀시험 추가:** `../tb/tb_quad_axil_regs.v`에서 독립 AW/W, 32비트 부호 카운트 읽기, clear 1회, WSTRB 무부작용, W1C 이벤트 우선순위, IRQ, 동시 쓰기, B/R 백프레셔를 검사합니다.
 - **하드웨어 경고:** KS0013과 Seeed Grove Encoder는 공식 문서에서 5 V 계열이며, 3.3 V Basys3 GPIO 직결을 승인하지 않습니다. Arduino Modulino Knob는 STM32를 경유한 I²C 장치로 별도 제어 경로입니다.
 - `quad_engine.v`는 변경하지 않았습니다. CI에서 AXI 레지스터 RTL 시뮬레이션을 수행하더라도 엔진·합성·타이밍·실물 보드 검증과 혼동하지 않습니다.
+- **P1 C 드라이버 수정:** `../sw/quad.h`의 `quad_set_invert()`가 `CTRL[1]` IRQ_EN까지 지우던 문제를 읽기-수정-쓰기로 정정하고 `../tb/test_gpio_sw.c` 호스트 회귀시험 2건을 추가했습니다.
 
 ## 로터리 엔코더 (quad_*.v)
 | 파일 | 역할 |
