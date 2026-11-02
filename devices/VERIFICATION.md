@@ -1,5 +1,26 @@
 # 적대적 검증 결과
 
+## 2026-11-03 DC 모터 자료 갱신 → AXI4-Lite 적대적 검증
+
+**1단계 자료 갱신:** ST [L298 공식](https://www.st.com/en/motor-drivers/l298.html), [Keyestudio KS0063](https://docs.keyestudio.com/projects/KS0063/en/latest/docs/KS0063.html), [Seeed Grove I2C Motor Driver v1.2](https://wiki.seeedstudio.com/Grove-I2C_Motor_Driver_V1.2/), Arduino [Motor Shield Rev3](https://docs.arduino.cc/hardware/motor-shield-rev3)·[Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors), [Freenove 키트](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5), 국내 [디바이스마트](https://www.devicemart.co.kr/goods/view?no=1278835)를 교차 확인했습니다. 칩/직접 GPIO·PWM 기판/ATmega8L 경유 I²C/Arduino Shield/MAX22211 Qwiic I²C를 구분하고, 모터·로직·I²C 전원과 점퍼·풀업·핀맵을 분리했습니다. `motor/l298.md`, `REFERENCES.md` 갱신. Arduino_Modulino 기준 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`(MPL-2.0 확인), Freenove 기준 커밋 `5315f61497eea49553aa1b70721751fb16a497e5`(라이선스 NOASSERTION, 재배포 미승인). 제조사 웹 문서의 SHA는 미확인으로 기록하고 원본 그림·코드는 복제하지 않았습니다.
+
+**2단계 직후 적대적 검증:** `motor/rtl/dcmotor_axil_regs.v`·`dcmotor_axil_top.v`와 `motor/sw/dcmotor.[ch]`를 검토하고, 이전 검증된 AXI AW/W·WSTRB 구조와 비교했습니다.
+
+| 등급 | 발견 사항 | 조치 |
+|---|---|---|
+| **P0 예방** | L298N ENA 점퍼가 5 V 레일에 묶인 상태에서 FPGA PWM 구동 위험 | 구매한 기판의 점퍼 제거·5 V 결선 확인 전 연결 금지 명시 |
+| **P0 예방** | Grove I²C Motor Driver v1.2는 L298N이지만 I²C 버스 5 V | 3.3 V Basys3 SDA/SCL 직결 금지, 양방향 레벨 변환·풀업 전원 확인 |
+| **P1 근거 충돌** | Seeed v1.2 문서의 2 A 설명과 0.5 A/채널 사양표 상충 | 2 A 연속 구동으로 확정하지 않고 미확인 처리 |
+| **P1 수정** | `awvalid && wvalid` 같은 클록 동시 도착만 쓰기 수락 | AW/W 각각 1단 버퍼, 양쪽 수락 후 1회 커밋 |
+| **P1 수정** | `WSTRB` 포트 부재로 바이트 부분 쓰기 무시 | Top WSTRB 연결, CTRL은 하위 바이트, DUTY/PERIOD는 4바이트 선택 쓰기 |
+| **P1 검증** | B/R 응답 백프레셔 및 STATUS 읽기 전용 유지 | `tb_dcmotor_axil_regs.v`에서 순서별 AW/W·WSTRB·동시 수락·리셋·B/R 유지 검증 |
+| **정상 유지** | `dcmotor_engine.v`, `dcmotor.c`의 PWM·모드·듀티 기능 | 기능 코드는 수정하지 않고 C 헤더의 AXI 설명만 갱신 |
+| **미해결** | `servo_axil_regs.v`, PS/2·ILI9341 등 다른 AXI 래퍼 | 이번 회차 범위 밖. 다음 회차에서 별도 재현 후 처리 |
+| **기존 기준 유지** | XADC 0~1 V, HC-SR04 5 V ECHO, I²C 풀업 전원 | 이번 모터 전용 회로와 혼동하지 않고 기존 P0 게이트 유지 |
+
+**검증:** GitHub Actions [devices-check 실행 41536284637](https://github.com/Yuul-Jung/dev-board/actions/runs/41536284637)의 `Python syntax and structured-data parse`, `Markdown links and HTML regeneration consistency`, `C driver host tests`, 기존 초음파·1-Wire·DHT22·엔코더 RTL 시험, 신규 `AXI4-Lite DC motor RTL directed simulation` 단계가 **모두 성공**했습니다. 신규 RTL은 `iverilog -g2012 -Wall`로 Top 컴파일·레지스터 지정 시나리오를 수행했습니다. 실제 AXI VIP 전수 검증, Vivado 합성/타이밍, 보드·모터 실측은 수행하지 않았습니다. 테스트 통과가 실제 모터 구동 승인을 뜻하지 않습니다.
+
+
 ## 2026-11-03 DHT22·로터리 엔코더 자료 갱신 → AXI4-Lite 적대적 검증
 
 **1단계 자료 갱신:** [Arduino Modulino Thermo](https://docs.arduino.cc/hardware/modulino-thermo), [Modulino Knob](https://docs.arduino.cc/tutorials/modulino-knob/how-knob/), [Keyestudio KS0430](https://docs.keyestudio.com/projects/KS0430/en/latest/docs/KS0430.html)·[KS0431](https://docs.keyestudio.com/projects/KS0431/en/latest/docs/KS0431.html)·[KS0013](https://docs.keyestudio.com/projects/KS0013/en/latest/docs/KS0013.html), [Seeed Grove DHT22](https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/)·[Grove Encoder](https://wiki.seeedstudio.com/Grove-Encoder/), [국내 DHT22 3핀 판매처](https://eduiot.kr/product/디지털-온습도센서-dht22-고정밀-pcb-모듈-am2302-3pin/), [KY-040 국내 판매처](https://www.11st.co.kr/products/2227891483)를 대조하여 `gpio/dht22.md`, `gpio/rotary-encoder.md`, `REFERENCES.md`를 보완했습니다. 공식 Arduino_Modulino 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`/MPL-2.0, Seeed Grove DHT 라이브러리 `826ce8f2593f810a6063cb1cbc788fc6519dc25e`/MIT는 LICENSE 파일로 확인했습니다. 원본 이미지·예제코드는 복제하지 않았습니다.
