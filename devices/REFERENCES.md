@@ -110,6 +110,22 @@ Keyestudio 기준 조회 커밋: [`4adb6ce17ee454d10230b03030d5818e27cc0278`](ht
 
 **설계·검증 구분:** 위 공식 자료는 규격 근거이며, `devices/gpio/rtl/us_axil_*.v`의 구현 정확성을 자동으로 보증하지 않는다. 검증은 독립 AW/W 도착, WSTRB=0/상위 바이트, B/R 백프레셔, IRQ/W1C, 리셋과 실물 전기 연결을 분리한다. FPGA 일반 GPIO 3.3 V와 XADC 0~1 V는 별도 핀·입력 범위다. **웹/PDF 원본은 링크만 제공하고 재배포하지 않는다.**
 
+## 2026-11-03 DS18B20 1-Wire 모듈·Arduino·RTL 참고 원문
+
+| 공식 원본 | 확인한 사실 / 칩·기판 차이 | 고정 버전·라이선스·검증 한계 |
+|---|---|---|
+| [Analog Devices DS18B20 Rev.6 PDF](https://www.analog.com/media/en/technical-documentation/data-sheets/ds18b20.pdf) | 2019-07 Rev.6, 외부 전원 3.0~5.5 V, TO-92 핀 1 GND/2 DQ/3 VDD, DQ 오픈드레인, 4.7 kΩ 풀업 예시, 기생 전원 강한 풀업은 Convert T 이후 10 µs 이내 | 제조사 D1, PDF 문서 버전 기준(저장소 Git SHA 없음). 원문 PDF 재배포하지 않음 |
+| [Arduino 공식 1-Wire 설명](https://github.com/arduino/docs-content/blob/475b308dd2c9d7e6783b3dbdc9626b848a454ecd/content/learn/05.communication/06.one-wire/one-wire.md) | 1-Wire 데이터선·기생 전원·OneWire 라이브러리 설명. Arduino 공식 [Hardware Docs](https://docs.arduino.cc/hardware/)는 보드 사양 참조용 | Git SHA `475b308dd2c9d7e6783b3dbdc9626b848a454ecd`; docs 저장소 전체 라이선스 재배포 조건은 별도 확인 필요 |
+| [PaulStoffregen/OneWire](https://github.com/PaulStoffregen/OneWire/tree/800f26f3ee6eb446a72e013785cac3700e54cc13) | Arduino 소프트웨어 1-Wire 구현 참고. `OneWire.cpp` 소스 헤더에 저작권·MIT 형식 허가 고지 있음. 일부 CRC 출처가 별도로 표시됨 | Git SHA `800f26f3ee6eb446a72e013785cac3700e54cc13`, 독립 LICENSE 파일 없음. **소스 헤더의 MIT형 고지 확인**, 재사용·재배포 시 개별 출처 조건 추가 확인. 원본 코드 미복제 |
+| [Keyestudio KS0329](https://docs.keyestudio.com/projects/KS0329/en/latest/docs/KS0329.html) | DS18B20 방수 프로브 + 별도 4.7 kΩ 저항 동봉, 3.3~5 V, 신호선 노랑 | 제조사 제품 설명 D1, Git SHA/원본 자료 재배포 라이선스 미확인 |
+| [Keyestudio KS0124](https://docs.keyestudio.com/projects/KS0124/en/latest/docs/KS0124.html) | DS18B20 EASY plug RJ11 6P6C, 3.3~5 V, 타사 RJ11 내부 핀 순서 비호환 경고 | 제조사 제품 설명 D1, Git SHA/재배포 라이선스 미확인 |
+| [Seeed Grove One Wire Temperature Sensor](https://wiki.seeedstudio.com/One-Wire-Temperature-Sensor-DS18B20/) | DS18B20 방수 프로브, Grove 기판에 풀업 저항 실장, 전원 3.0~5.5 V | 공식 Wiki D1, 원본 이미지·문서 재배포 라이선스 미확인 |
+| [Freenove Ultimate Starter Kit — thermistor 예제](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/5315f61497eea49553aa1b70721751fb16a497e5/Sketches/Sketch_12.1.1_Detect_the_temperature/Sketch_12.1.1_Detect_the_temperature.ino) · [DHT11 예제](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/5315f61497eea49553aa1b70721751fb16a497e5/Sketches/Sketch_22.1.1_Temperature_and_Humidity_Sensor/Sketch_22.1.1_Temperature_and_Humidity_Sensor.ino) | 12장은 **A0 아날로그 서미스터**, 22장은 **DHT11**. DS18B20의 1-Wire 핀맵·타이밍을 입증하는 사례가 아니므로 혼용 금지 | Git SHA `5315f61497eea49553aa1b70721751fb16a497e5`; [LICENSE.txt](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/5315f61497eea49553aa1b70721751fb16a497e5/LICENSE.txt) **CC BY-NC-SA 3.0** 직접 확인. 코드/그림 미복제 |
+| [국내 DS18B20 공급 사례](https://www.bliiot.co.kr/product/programmable-resolution-temperature-sensor-ds18b20.html) | DS18B20 온도센서 소개, 패러사이트/일반 전원 모드. 범용 모듈의 실제 풀업 레일·기판 핀맵 증명 자료는 아님 | 국내 판매처 D3, 실물 기판·정격·호환성 별도 확인 |
+| [Arm AMBA AXI4 소개](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf) · [AMD PG267](https://docs.amd.com/r/en-US/pg267-axi-vip/AXI-Protocol-Checks-and-Descriptions) | AW/W 채널 독립 수락·WSTRB·응답 안정성은 DS18B20 데이터시트가 아닌 AXI 규격에서 검증 | 공식 기술문서 D1. 실제 RTL 검증은 별도 테스트·합성·실물 시험 필요 |
+
+**Freenove·Keyestudio 다른 키트의 1-Wire 실습은 제품·회로별 근거가 확인될 때만 DS18B20 자료에 병합**합니다. 기존 [Freenove 자료 대장](REFERENCES.md)의 커밋·라이선스는 유지하고, 이 회차에서 확인하지 않은 특정 핀 번호나 실습 번호를 추정하지 않습니다. Arduino 호환 모듈·국내/해외 판매처의 동일 제품명은 실제 IC/PCB/풀업 레일 일치의 근거가 아닙니다.
+
 ## 사용 주의 (프로젝트 문서 §12 기재)
 
 - `suoglu/HC-SR04`: README 에 measure 신호를 계속 High 로 두면 문제가 있다고 명시. 이 저장소 `gpio/rtl/` 의 HC-SR04 래퍼와 비교할 때 1클럭 시작 펄스로 검증.
