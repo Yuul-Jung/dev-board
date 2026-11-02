@@ -1,5 +1,21 @@
 # GitHub 참고 자료 대장
 
+## 2026-11-03 모터 드라이버·전기 인터페이스 교차 확인
+
+| 원본 URL | 원본 종류·재현 기준 | 검증/라이선스/한계 |
+|---|---|---|
+| [ST L298](https://www.st.com/en/motor-drivers/l298.html) | 제조사 칩 제품 페이지·데이터시트 (D1) | EN/IN TTL 로직과 VS/VSS 구분. 기판 회로가 아님. 원문·이미지 미복제 |
+| [Keyestudio KS0063](https://docs.keyestudio.com/projects/KS0063/en/latest/docs/KS0063.html) | L298N+78M05 기판 공식 제품 문서 (D1) | GPIO/PWM 직접 제어, 5 V 로직. 기판 변형·점퍼는 실물 확인. 원본 라이선스 미확인, 복제 없음 |
+| [Seeed Grove I2C Motor Driver v1.2](https://wiki.seeedstudio.com/Grove-I2C_Motor_Driver_V1.2/) | L298N+ATmega8L I²C 모듈 (D1) | I²C 5 V, 2 A 서술 vs 0.5 A 표의 모순 확인. 원본 라이선스 미확인, 복제 없음 |
+| [Arduino Motor Shield Rev3](https://docs.arduino.cc/hardware/motor-shield-rev3) | Arduino 공식 L298 Shield (D1) | 일반 빨간 L298N 보드와 다른 회로·핀맵. 공식 문서 원본 미복제 |
+| [Arduino Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors) | MAX22211 기반 3.3 V I²C/Qwiic 모듈 (D1) | L298 PWM 직접 제어와 다른 프로토콜. 개별 보드 회로도·라이브러리 호환 미검증 |
+| [Arduino_Modulino](https://github.com/arduino-libraries/Arduino_Modulino/tree/24d08a94ac4e8f83aed211df0fa6f38e9994b164) | 라이브러리 기준 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164` | [LICENSE](https://github.com/arduino-libraries/Arduino_Modulino/blob/24d08a94ac4e8f83aed211df0fa6f38e9994b164/LICENSE) MPL-2.0 확인. Modulino Motors 지원 여부는 별도 확인 필요 |
+| [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5) | 보조 키트 튜토리얼, 고정 커밋 `5315f61497eea49553aa1b70721751fb16a497e5` | GitHub 라이선스 메타데이터 NOASSERTION. 원본 자료·그림·코드 재배포 허가 미확인, 복제 없음 |
+| [디바이스마트 SZH-EK001](https://www.devicemart.co.kr/goods/view?no=1278835) | 국내 범용 L298N 판매처 (D3) | 판매처 정보는 기판 전기 회로도 근거가 아님. 제품 실물 버전 미확인 |
+
+열람일 2026-11-03. 출처의 개별 커밋을 특정할 수 없는 제조사 웹문서는 **URL + 열람일**로 추적하며 확인하지 않은 SHA를 만들지 않습니다.
+
+
 ## 2026-11-03 DHT22·직교 엔코더 모듈 교차 확인
 
 | 원본 출처 | 확인 사항 | 재현 기준 / 저작권 / 한계 |
