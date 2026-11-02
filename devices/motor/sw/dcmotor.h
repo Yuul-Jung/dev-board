@@ -4,6 +4,8 @@
  *   0x04 DUTY   [31:0] 켜짐 클럭 수 (예전 RTL 은 [15:0] — 기본 주기 100000 에서 66 % 넘는 듀티가 잘렸다. 이 드라이버는 쓴 값을 다시 읽어 확인한다)
  *   0x08 PERIOD [31:0] PWM 주기 클럭 수
  *   0x0C STATUS [1:0]=적용된 mode [2]=방향 전환 대기
+ *   AXI AW/W 채널은 독립 수락. CTRL은 WSTRB[0]만, DUTY/PERIOD는 바이트별 WSTRB 적용.
+ *   이 C 드라이버는 정렬된 32비트 MMIO 읽기/쓰기를 사용하며 별도 바이트 쓰기는 수행하지 않는다.
  *
  * 한계 — Pmod HB5 (DIR/EN 2핀, 브레이크 없음):
  *   motor_set(MOT_BRAKE, ...) 를 보내면 RTL 은 IN1=IN2=1 을 출력하지만
