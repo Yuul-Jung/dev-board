@@ -35,6 +35,17 @@ GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙
 | 9.3 | [arduino-libraries/Ethernet](https://github.com/arduino-libraries/Ethernet) | W5x00 소켓 API | 28 | 미기록 | 미기록 |
 | 5 | adafruit/RTClib, DHT-sensor-library, Adafruit_NeoPixel, Adafruit_BME280_Library, Adafruit_MPU6050, Adafruit_SSD1306, Adafruit-PWM-Servo-Driver-Library, Adafruit_ADS1X15, Adafruit_MCP3008 | §5 의 장치별 참고 라이브러리 | 21–23, 26 등 | 미기록 | 미기록 |
 
+## Arduino 공식 자료·캡스톤 출처 (2026-11-02 추가)
+
+| 출처 | 원본 자료와 활용 | 근거 수준·한계 |
+|---|---|---|
+| [Arduino Hardware Documentation](https://docs.arduino.cc/hardware/) | 보드/Modulino 사양·회로도·핀맵·튜토리얼의 **공식 출발점** | 개별 모델 자료와 범용 호환 모듈은 구별해야 함 |
+| [Keyestudio KS5003/KS5004 ESP32 42-in-1](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit) | ESP32 센서 키트의 Python 및 Arduino C 튜토리얼·media 자료 | 저장소 확인; 재배포 라이선스 미확인 |
+| [Project 47: Intrusion Detection](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/blob/master/docs/2.Python_Tutorial%28Windows%29/Python_Tutorial%28Windows%29.md) | **PIR → LED·능동 부저** 배선도·코드·결과 | 코드/구성 직접 확인; 자체 RTL 변환·실물 검증은 미실시 |
+| [캡스톤 01](capstone/README.md) | 위 공개 사례를 기준으로 HC-SR04와 상태 Register를 추가하는 독립 설계안 | 확장안, 보드 검증 전 |
+
+Keyestudio 기준 조회 커밋: [`4adb6ce17ee454d10230b03030d5818e27cc0278`](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/tree/4adb6ce17ee454d10230b03030d5818e27cc0278). 원본 소스·이미지를 복제하여 게시하기 전 라이선스 확인이 필요하다.
+
 ## 사용 주의 (프로젝트 문서 §12 기재)
 
 - `suoglu/HC-SR04`: README 에 measure 신호를 계속 High 로 두면 문제가 있다고 명시. 이 저장소 `gpio/rtl/` 의 HC-SR04 래퍼와 비교할 때 1클럭 시작 펄스로 검증.
