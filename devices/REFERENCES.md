@@ -1,5 +1,24 @@
 # GitHub 참고 자료 대장
 
+## 2026-11-03 DHT22·직교 엔코더 모듈 교차 확인
+
+| 원본 출처 | 확인 사항 | 재현 기준 / 저작권 / 한계 |
+|---|---|---|
+| [Arduino Modulino Thermo](https://docs.arduino.cc/hardware/modulino-thermo) | HS3003 온습도 센서, Qwiic I²C. DHT22 GPIO 프로토콜과 다름 | 공식 Hardware Docs, 열람 2026-11-03. 그림·코드 미복제 |
+| [Arduino Modulino Knob 튜토리얼](https://docs.arduino.cc/tutorials/modulino-knob/how-knob/) | STM32C011F4가 A/B/버튼을 처리, 3.3 V I²C, 7비트 0x3A, PA0/PA1/PA2 직접 연결 핀 별도 | 공식 문서, 열람 2026-11-03. 그림·코드 미복제 |
+| [Arduino_Modulino 라이브러리](https://github.com/arduino-libraries/Arduino_Modulino/tree/24d08a94ac4e8f83aed211df0fa6f38e9994b164) | Arduino Modulino의 I²C 인터페이스와 라이브러리 | 고정 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`, LICENSE 파일 MPL-2.0 직접 확인 |
+| [Keyestudio KS0430 DHT22](https://docs.keyestudio.com/projects/KS0430/en/latest/docs/KS0430.html) | 3핀 PCB, 3.3~5 V 단일선 | 공식 제품 문서 열람 2026-11-03, 원본 저작권/재배포 허가 미확인 |
+| [Keyestudio KS0431 EASY plug DHT22](https://docs.keyestudio.com/projects/KS0431/en/latest/docs/KS0431.html) | RJ11 6P6C, 타사 RJ11 내부 선 순서 다름 | 공식 제품 문서 열람 2026-11-03, 핀별 선색은 실물 확인 필요 |
+| [Seeed Grove DHT22](https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/) | 3.3~6 V, I/O 레벨 VCC 기준, Grove 신호 1개 | 공식 Wiki 열람 2026-11-03, 보드별 풀업/핀 확인 필요 |
+| [Seeed Grove DHT 라이브러리](https://github.com/Seeed-Studio/Grove_Temperature_And_Humidity_Sensor/tree/826ce8f2593f810a6063cb1cbc788fc6519dc25e) | DHT22 Arduino 소프트웨어 참고 | 고정 커밋 `826ce8f2593f810a6063cb1cbc788fc6519dc25e`, LICENSE 파일 MIT 직접 확인 |
+| [Keyestudio KS0013 Rotary Encoder](https://docs.keyestudio.com/projects/KS0013/en/latest/docs/KS0013.html) | 5 V 디지털 엔코더, A/B/버튼 | 공식 제품 문서 열람 2026-11-03, 3.3 V 호환성 미확인 |
+| [Seeed Grove Encoder](https://wiki.seeedstudio.com/Grove-Encoder/) | 동작 4.5~5.5 V, Grove 커넥터 | 공식 Wiki 열람 2026-11-03, Basys3 3.3 V 직접 연결 미승인 |
+| [국내 DHT22 3핀 PCB 판매처](https://eduiot.kr/product/디지털-온습도센서-dht22-고정밀-pcb-모듈-am2302-3pin/) | 3.3~5 V 표기, 저항 내장 기판으로 설명 | 판매처 설명(D3), 내장 저항이 DATA 풀업인지·핀 순서·실물 PCB 미확인 |
+| [국내 KY-040 판매처](https://www.11st.co.kr/products/2227891483) | KY-040 저가 판매 예시 | 판매처 설명(D3), 전원·출력 HIGH·풀업 회로 미확인. 가격·재고는 변동 |
+
+**교차 검증 판정:** 동일 센서 기능을 가진 DHT22 단품·Keyestudio·Grove와 Arduino Modulino Thermo는 물리 인터페이스가 같지 않습니다. 마찬가지로 KY-040/KS0013 직접 GPIO와 Modulino Knob I²C는 다른 제어 경로입니다. Freenove 기존 참고 자료는 이들 특정 기판의 데이터시트·핀맵을 대체할 근거로 사용하지 않았습니다. 사진·회로도·라이브러리 원문을 복제하지 않고 출처만 연결했습니다.
+
+
 <!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
 
 프로젝트 문서(`arduino_io_module_tech_tree_20261030_github_updated.md`) §5·§9 의 GitHub 참고 자료를 **차시와 연결한 대장**입니다.
