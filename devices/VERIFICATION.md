@@ -4,6 +4,24 @@
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
 
+## 2026-11-02 PIR 모듈 갱신 → 같은 실행 적대적 검증 (후속 회차)
+
+**자료 갱신 대상:** [HC-SR501](gpio/hc-sr501.md), [devices.json](data/devices.json), [출처 대장](REFERENCES.md), [RTL10 문서](../rtl/rtl10_pir_event/README.md). 기존 HC-SR04 문서·코드와 AXI 드라이버는 변경하지 않음.
+
+| 등급 | 적대적 대조 | 판정 / 처리 |
+|---|---|---|
+| **P0 예방** | 'HC-SR501 OUT HIGH 3.3 V → FPGA 직결 가능'이라는 **제품 변형을 무시한 단정** | Joy-IT 제품은 3 V, Espruino 일반형은 3.3 V이나 일부 오픈드레인 또는 VCC 레벨 출력 변형이 있다고 명시. **실제 OUT 전압·풀업·기판 확인 전 직결 승인 금지**로 수정 |
+| **P1 확인** | 동작전류 **65 mA**와 **<50 µA** 자료 충돌 | HSHL 65 mA(동작)/<50 µA(대기), Espruino <50 µA(동작)로 상충. 원인 미확인, 오타로 단정하지 않고 전원 예산 미승인 |
+| **P1 수정** | 국내 에듀이노 HC-SR501 상품 설명의 '적외선 송신·반사량 측정' | PIR은 **수동 적외선 감지** 방식이므로 해당 판매처의 능동 IR 설명은 기술 근거에서 제외. 가치창조기술의 65 mA 수치도 독립 측정 자료가 없어 상충 상태 유지 |
+| **P1 수정** | HC-SR501 3핀과 Seeed Grove PIR 4핀, Arduino Modulino Movement I²C/6축을 혼동할 위험 | 실제 VCC·OUT/SIG·핀 수·전원·프로토콜·소비전류를 제품별 분리. Keyestudio Project 47 DIY PIR도 동일 PCB로 단정하지 않음 |
+| **P1 수정** | 구조화 JSON의 `out_high_v: 3.3`만으로 보드 연결을 승인할 위험 | 기존 숫자형 필드는 호환성을 위해 보존하되 **공칭/미검증 표시**와 `fpga_direct_connect_approved: false`를 추가 |
+| **P1 수정** | RTL10 README의 'Clock Smoke Test만 작성/기능 TB 미완성'과 실제 `tb_pir_event.v`의 기대값 비교 코드가 불일치 | 테스트벤치가 2-FF 지연·상승/하강·리셋·임의 입력을 검사하도록 **작성된 사실**로 문서 수정. 이번 실행에서 시뮬레이션 통과를 주장하지 않음 |
+| **유지** | RTL `pir_event.v`의 비동기 입력 2-FF·펄스·FSM/타이밍, HC-SR04 5 V ECHO, XADC 0~1 V, I²C 5 V 풀업 | RTL10 소스/테스트벤치, HC-SR04, I²C 드라이버 및 C 코드는 변경하지 않음. 기존 P0/P1 안전 경고 유지 |
+
+**정적 검사:** `devices.json` JSON 파싱 성공(49개 항목), 수정 Markdown 3개에서 상대 링크 19건의 경로를 추출해 기존 저장소 파일과 대조(새 링크 대상 존재 확인). `rtl/rtl10_pir_event/src/pir_event.v`와 `tb/tb_pir_event.v`의 포트·기대값을 눈으로 대조. **Icarus Verilog 시뮬레이션·C 드라이버 호스트 시험·합성·실물 전압 측정은 이 회차에서 직접 수행하지 않았음**. GitHub Actions 결과는 별도 확인한다.
+
+**출처/저작권:** Joy-IT·Seeed·Arduino 공식 웹 자료는 URL·제품명을 기록(웹 페이지는 커밋 SHA 해당 없음), Espruino/HSHL은 2차 자료로 구분. Keyestudio/Freenove의 고정 커밋·라이선스 정보는 기존 대장 유지. 원본 사진·PDF·소스의 복제는 없음.
+
 ## 2026-11-02 주변모듈 갱신 직후 적대적 검증
 
 **범위:** [HC-SR04](gpio/hc-sr04.md), [구조화 데이터](data/devices.json), [출처·라이선스 대장](REFERENCES.md), `gpio/rtl/ultrasonic_distance_meter.v`, `gpio/rtl/us_axil_regs.v`, `gpio/rtl/us_axil_top.v`, `gpio/sw/ultrasonic.[ch]`, `gpio/tb/tb_ultrasonic.v`, `gpio/tb/test_ultrasonic.c`, `tools/gen_pages.py`와 기존 I²C LCD·XADC 안전 문서.

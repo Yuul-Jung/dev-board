@@ -52,6 +52,22 @@ GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙
 
 위 확인은 **2026-11-02 기준** 문서/저장소의 직접 열람 결과입니다. Freenove의 CC BY-NC-SA 3.0은 모든 사용을 허락하는 무조건적 퍼블릭 도메인이 아니며, Keyestudio의 LICENSE 부재도 재배포 허용을 뜻하지 않습니다. 회로/배선 그림과 데이터시트의 **링크 제공**과 **원문 파일의 재배포**를 구분합니다.
 
+## 2026-11-02 PIR 보드 변형 대조 — HC-SR501/Seeed/Modulino
+
+| 출처 URL | 모델·회로·핀·전원 대조 | 원본 버전 / 라이선스·재배포 |
+|---|---|---|
+| [Joy-IT SEN-HC-SR501 공식 제품](https://joy-it.net/en/products/SEN-HC-SR501) | 제품명 `SEN-HC-SR501`, **VCC 5 V**, 논리 출력 **3 V**, 데이터시트·설명서 다운로드 링크 존재 | 일반 웹 제품 페이지(커밋 SHA 해당 없음), 2026-11-02 열람. 저작권 © Joy-IT, 재배포 허가 **미확인** |
+| [Espruino HC-SR501 기술 안내](https://www.espruino.com/Pyroelectric) | 일반형 VCC **4.5~20 V**, OUT **3.3 V**(공칭). **오픈드레인/전원레벨 출력 변형** 경고, 소비전류 **<50 µA** 주장 | 웹 안내(고정 SHA 미기록), 2026-11-02 열람. 원문 재배포 권한 **미확인** |
+| [HSHL 대학 HC-SR501 사양표](https://wiki.hshl.de/wiki/index.php/Bewegungsmelder%2C_PIR-Sensor_-_HC-SR501) | VCC **4.5~20 V**, OUT 3.3 V, **65 mA 동작/<50 µA 대기**(Espruino와 상충), VCC/OUT/GND 핀 이름 | 교육용 2차 자료(D3), 웹 페이지(고정 SHA 없음), 라이선스 미확인 |
+| [Seeed Grove PIR Motion Sensor 공식 Wiki](https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/) | **Grove 4선(SIG/NC/VCC/GND)**, **3~5 V**, **100 µA@3 V / 150 µA@5 V**. 회로도/Eagle 다운로드 제공. **HC-SR501과 다른 기판** | 공식 웹 기술문서(D1, 제품 특정), 2026-11-02 열람. 회로도/원문 재배포 라이선스 미확인, 웹 문서 SHA 해당 없음 |
+| [Arduino Modulino Movement 공식 Hardware Docs](https://docs.arduino.cc/hardware/modulino-movement/) | **LSM6DSOXTR 가속도/자이로 6축 + Qwiic/I²C**, PIR GPIO OUT 제품이 아님 | 공식 웹 기술문서(D1), 2026-11-02 열람. 재배포 라이선스 미확인, SHA 해당 없음 |
+| [Keyestudio Project 47](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit) | ESP32 키트의 **DIY PIR 모듈**; 실제 HC-SR501과 동일 PCB/전기 사양이라고 확인되지 않음 | 기준 SHA `4adb6ce17ee454d10230b03030d5818e27cc0278`(기존 대장), 라이선스 미확인 |
+| [가치창조기술 HC-SR501 국내 판매](https://vctec.co.kr/product/적외선-pir-모션-센서-hc-sr501-infrared-pir-motion-sensor-hc-sr501/10402) | 판매 페이지: VCC 5~20 V, OUT 3.3/0 V, 65 mA 동작. HSHL과 동일 수치이나 측정 조건 미제시 | 국내 판매처(D3), 2026-11-02 열람. 웹 페이지 SHA 없음·재배포 권한 미확인 |
+| [에듀이노 HC-SR501 국내 판매](https://m.eduino.kr/product/아두이노-적외선-pir-센서-인체감지-모션센서-hc-sr501-hcsr501/104/) | OEM 모듈 판매. 설명의 '적외선을 내보내고 반사량을 측정'은 **PIR 수동 감지 원리와 불일치** → 사양 근거로 채택하지 않음 | 국내 판매처(D3), 2026-11-02 열람. 웹 페이지 SHA 없음·재배포 권한 미확인 |
+| [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit) | 범용 키트 튜토리얼 참고. **PIR의 전기 사양은 제품별 검증 없이 전용 보드에 적용하지 않음** | 기준 SHA `5315f61497eea49553aa1b70721751fb16a497e5`(기존 대장), **CC BY-NC-SA 3.0** |
+
+**전원/레벨 검증 게이트:** HC-SR501의 `out_high_v=3.3`은 자료에 나온 **공칭값**이며 실제 저가 호환 보드의 FPGA 직결 승인을 뜻하지 않는다. OUT가 VCC 레벨인 변형은 5 V가 될 수 있다. [모듈 문서](gpio/hc-sr501.md)의 전압 측정·출력 구조 확인 후 연결한다. XADC 0~1 V 아날로그 입력과 PIR 디지털 GPIO를 혼동하지 않는다.
+
 ## Arduino 공식 자료·캡스톤 출처 (2026-11-02 추가)
 
 | 출처 | 원본 자료와 활용 | 근거 수준·한계 |
