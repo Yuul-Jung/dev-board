@@ -10,6 +10,7 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 | `dcmotor_axil_regs.v` | AXI4-Lite 레지스터 |
 | `dcmotor_engine.v` | PWM, 방향, 방향 전환 보호 |
 | `../tb/tb_dcmotor_engine.v` | 엔진 테스트벤치(정회전, 듀티, 방향 전환 코스트, 브레이크, 비활성) |
+| `../tb/tb_dcmotor_axil_regs.v` | AXI AW/W 독립 수락, WSTRB, B/R 응답 검증 |
 | `../sw/dcmotor.c` | MicroBlaze V 드라이버 예시 |
 
 ## 레지스터
@@ -20,6 +21,13 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 | 0x08 | PERIOD (RW) | PWM 주기 클럭 수 (기본 100,000 = 100 MHz에서 1 kHz) |
 | 0x0C | STATUS (R) | [1:0] 적용된 mode, [2] 방향 전환 대기 |
 
+## AXI4-Lite 인터페이스 (2026-11-03 개정)
+- `dcmotor_axil_top`은 연결 전용이며 `s_axi_wstrb[3:0]`를 `dcmotor_axil_regs`의 `wstrb`에 전달합니다.
+- AW 주소와 W 데이터는 서로 다른 클록에 수락할 수 있으며, 양쪽이 수락된 뒤 단 한 번 레지스터를 변경합니다.
+- CTRL은 `WSTRB[0]`이 1일 때만 변경합니다. DUTY와 PERIOD는 바이트별 부분 쓰기를 지원합니다. `WSTRB=0`은 레지스터를 변경하지 않지만 쓰기 응답은 발생합니다.
+- B/R 응답은 READY가 올 때까지 유지하며, STATUS는 읽기 전용입니다.
+- 검증 범위: `tb_dcmotor_axil_regs.v` 지정 시나리오 및 C 호스트 모의시험. AXI VIP 전체 검증·Vivado 합성·실물 구동은 별개입니다.
+
 ## 드라이버별 동작
 - **L298**: ENA ← `motor_pwm`, IN1/IN2 ← `motor_in1/in2`. 정회전은 C=H, D=L, 역회전은 C=L, D=H, 브레이크는 ENA High에서 C=D(진리표 확인). 코스트는 PWM 0으로 Ven Low.
 - **TB6612FNG**: PWM ← `motor_pwm`, IN1/IN2 동일. 브레이크는 IN1=IN2=High. STBY는 별도 GPIO로 High 유지.
@@ -27,7 +35,7 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 - 리셋 후 enable = 0이라 코스트 상태로 시작합니다.
 
 ## 확인 필요
-- **시뮬레이션과 합성은 하지 않았습니다.**
+- **새 AXI 레지스터 테스트벤치는 CI 검증 대상으로 추가했습니다.** 전체 AXI VIP 검증, Vivado 합성·타이밍 및 실물 모터 시험은 수행하지 않았습니다. 서보 AXI 래퍼는 아직 이번 수정 대상이 아닙니다.
 - 사용자 노션의 `l298_distance_motor_controller`(CdS + 초음파 + 거리 비례 속도)는 응용 계층입니다. 이 레지스터 맵 위에서 소프트웨어로 만들 수도 있고, 노션 RTL을 그대로 쓸 수도 있습니다.
 - 전원·GND 분리(포토커플러), 모터 전원 용량은 하드웨어 설계 몫입니다. 일반 L298N 모듈은 환류 다이오드 8개가 이미 있고, **ENA 점퍼를 꽂은 채 FPGA 가 ENA 를 구동하면 5 V 레일과 맞붙으므로 점퍼를 빼야 합니다**([l298.md](../l298.md)). SENSE 핀은 모듈에서 GND 에 직결이라 전류 감지는 못 씁니다.
 
