@@ -95,11 +95,13 @@ module onewire_axil_regs (
     end
 
     assign arready = rstn && !rvalid;
+    // (수정) ARREADY는 수락 가능 상태, 실제 읽기는 ARVALID와의 핸드셰이크에서만 수행.
+    wire take_ar = arvalid && arready;
 
     always @(posedge clk) begin
         if (!rstn) begin
             rvalid <= 1'b0; rdata <= 32'd0;
-        end else if (arready) begin
+        end else if (take_ar) begin
             rvalid <= 1'b1;
             case (araddr[3:2])
                 2'd1:    rdata <= {28'd0, rbit, presence, done_flag, busy};
