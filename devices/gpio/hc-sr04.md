@@ -28,6 +28,8 @@
 | [Seeed Grove Ultrasonic Ranger V2](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/) | **3.2~5.2 V**, V2는 3.3 V 시스템 호환으로 명시 | **SIG 1선이 TRIG/ECHO를 시간 분할 공유**, Grove 4핀 커넥터 | **그대로 연결 불가**. 양방향 SIG 제어·방향 전환 로직 별도 필요 |
 | [Arduino Modulino Distance](https://docs.arduino.cc/hardware/modulino-distance) ([ABX00102 공식 데이터시트](https://docs.arduino.cc/resources/datasheets/ABX00102-datasheet.pdf)) | **VL53L4CDV0DH/1 ToF IC**, Qwiic **3.3 V 전원**. 센서 권장 공급 전압은 **2.6~3.5 V**(제품 데이터시트) | **I²C SDA/SCL**, Qwiic 4핀. HC-SR04의 TRIG/ECHO 펄스 방식 아님 | **재사용 불가**. 3.3 V I²C 풀업/실제 기판·커넥터 핀 확인 후 별도 컨트롤러·드라이버 필요 |
 
+**Modulino 라이브러리 버전 주의(2026-11-03):** [Arduino_Modulino v0.10.0 소스](https://github.com/arduino-libraries/Arduino_Modulino/blob/24d08a94ac4e8f83aed211df0fa6f38e9994b164/src/Modulino.h)는 거리 센서의 I²C 주소 `0x29`를 확인하고 `VL53L4CD` 초기화 실패 시 `VL53L4ED`를 시도합니다. 이는 **라이브러리 호환 코드**이며, ABX00102 실제 PCB에 두 칩이 모두 실장된다는 뜻이 아닙니다. 실제 하드웨어 식별은 위 Arduino 공식 데이터시트를 기준으로 합니다. 라이브러리의 `MPL-2.0` 라이선스는 원본 [LICENSE](https://github.com/arduino-libraries/Arduino_Modulino/blob/24d08a94ac4e8f83aed211df0fa6f38e9994b164/LICENSE)에서 확인했으며, 코드를 복제하지 않았습니다.
+
 **UNO R4 ↔ Basys3 차이:** [Arduino UNO R4 Minima 공식 문서](https://docs.arduino.cc/hardware/uno-r4-minima)는 보드 I/O 동작 전압이 **5 V**라고 명시합니다. UNO R4에서 직접 연결되던 일반 HC-SR04 ECHO를 Basys3의 3.3 V GPIO에 같은 방식으로 직결하면 안 됩니다.
 
 ### 국내 판매처 교차검증 — 제목만으로 3.3 V 호환 판단 금지
