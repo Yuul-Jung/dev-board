@@ -93,6 +93,22 @@ GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙
 
 Keyestudio 기준 조회 커밋: [`4adb6ce17ee454d10230b03030d5818e27cc0278`](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/tree/4adb6ce17ee454d10230b03030d5818e27cc0278). 원본 소스·이미지를 복제하여 게시하기 전 라이선스 확인이 필요하다.
 
+## 2026-11-03 초음파 AXI4-Lite 통합·모듈 전기 사양 재검증
+
+| 자료·원본 URL | 직접 확인한 사실 | 근거·라이선스·변형 구분 |
+|---|---|---|
+| [Arm Introduction to AMBA AXI4](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf) | 독립 VALID/READY 채널, 바이트별 WSTRB 정의 | Arm 공식 학습 PDF(D1); © Arm, **원문 재배포하지 않음**. 문서 URL 기준, Git SHA 없음 |
+| [AMD PG138 AXI4-Lite Interface](https://docs.amd.com/r/en-US/pg138-axi-ethernet/AXI4-Lite-Interface) | 32비트 데이터의 WSTRB[3:0]과 AW/W/B/AR/R 포트·의미 | AMD 공식 IP 문서(D1); 문서 URL 기준, Git SHA 없음, 재배포 허가 미확인 |
+| [AMD PG267 AXI VIP Protocol Checks](https://docs.amd.com/r/en-US/pg267-axi-vip/AXI-Protocol-Checks-and-Descriptions) | WSTRB 유효 바이트, WVALID/WDATA/WSTRB 안정성, BVALID은 주소·데이터 수락 후 발생 | AMD 공식 검증 규칙(D1); 본 저장소 RTL은 AXI VIP로 검증한 것이 아님 |
+| [Arduino Modulino Distance](https://docs.arduino.cc/hardware/modulino-distance) · [ABX00102 데이터시트](https://docs.arduino.cc/resources/datasheets/ABX00102-datasheet.pdf) | **VL53L4CDV0DH/1** ToF IC, Qwiic 3.3 V, 센서 공급 권장 2.6~3.5 V | Arduino 공식 하드웨어(D1), 웹/PDF URL 기준, Git SHA 없음. 일반 HC-SR04 TRIG/ECHO와 **IC·핀·프로토콜이 다름**. 회로도 재배포 허가 미확인 |
+| [SparkFun HC-SR04 SEN-15569](https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html) · [HC-SR04-33 SEN-24049](https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html) | 5 V 전용 일반형과 3.3~5 V 지원 변형의 제품 식별 분리 | 공식 판매·제품 사양(D1), 기판별 ECHO HIGH 실측 전 Basys3 연결 승인 금지 |
+| [Adafruit HC-SR04 핀 설명](https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts) | 일반형 VCC 5 V / ECHO 5 V / TRIG 3 V 또는 5 V, 분압 예시 | 공식 제품 안내(D1), 설계·실측 검증은 별개 |
+| [Seeed Grove Ultrasonic Ranger](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/) | SIG 한 선을 송수신에 사용. 일반형 2선 RTL과 다름 | 공식 제품 Wiki(D1); 보드별 전압·핀맵 재확인, 재배포 허가 미확인 |
+| [Keyestudio KS5003/KS5004 Project 47](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit) · [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit) | 주변장치 실습 사례 대조용. AXI4-Lite 슬레이브 프로토콜의 근거로 사용하지 않음 | Keyestudio 기준 SHA `4adb6ce17ee454d10230b03030d5818e27cc0278`·라이선스 미확인; Freenove 기준 SHA `5315f61497eea49553aa1b70721751fb16a497e5`·CC BY-NC-SA 3.0 |
+| [아이씨팩토리 HC-SR04+](https://icfactory.cafe24.com/product/hc-sr04%ED%94%8C%EB%9F%AC%EC%8A%A4-33v5v-%EC%B4%88%EC%9D%8C%ED%8C%8C-%EA%B1%B0%EB%A6%AC-%EC%B8%A1%EC%A0%95-%EA%B0%90%EC%A7%80-%EC%84%BC%EC%84%9C-%EB%AA%A8%EB%93%88-icf1588/827/category/73/display/1/) · [EKU HC-SR04](https://eku.co.kr/product/hc-sr04-%EC%B4%88%EC%9D%8C%ED%8C%8C-%EA%B1%B0%EB%A6%AC-%EC%84%BC%EC%84%9C-%EB%AA%A8%EB%93%88-3v-55v-%ED%98%B8%ED%99%98/149/) | 국내 저가 호환품의 전원/출력 설명이 모델별로 상이하거나 상충 | 판매처 2차 자료(D3), 회로·실측 미확인. 데이터시트 대신 사용 금지 |
+
+**설계·검증 구분:** 위 공식 자료는 규격 근거이며, `devices/gpio/rtl/us_axil_*.v`의 구현 정확성을 자동으로 보증하지 않는다. 검증은 독립 AW/W 도착, WSTRB=0/상위 바이트, B/R 백프레셔, IRQ/W1C, 리셋과 실물 전기 연결을 분리한다. FPGA 일반 GPIO 3.3 V와 XADC 0~1 V는 별도 핀·입력 범위다. **웹/PDF 원본은 링크만 제공하고 재배포하지 않는다.**
+
 ## 사용 주의 (프로젝트 문서 §12 기재)
 
 - `suoglu/HC-SR04`: README 에 measure 신호를 계속 High 로 두면 문제가 있다고 명시. 이 저장소 `gpio/rtl/` 의 HC-SR04 래퍼와 비교할 때 1클럭 시작 펄스로 검증.
