@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 GH = 'https://github.com/Yuul-Jung/dev-board'
 SKIP = {'.git', '__pycache__', 'node_modules'}
+# 수작업으로 검토·배포하는 HTML: 자동 생성 시 덮어쓰지 않는다.
+MANUAL_PAGES = {'devices/capstone/index.html'}
 ROLE = {'ref': '근거 자료와 사실표(교차 검증 대상)', 'rtl': 'Verilog RTL 과 테스트벤치 (시뮬레이터 없음, 미실행)',
         'sw': '드라이버 C 소스', 'tb': '호스트 테스트와 레지스터/장치 모델(mock)', 'data': '구조화 데이터(CSV·JSON)', 'tools': '검사·생성 스크립트'}
 e = html.escape
@@ -183,9 +185,19 @@ if not os.path.exists(nj):
     changed.append('.nojekyll')
 for d, ds, _ in os.walk(root):
     ds[:] = sorted(x for x in ds if x not in SKIP and not x.startswith('.'))
-    p = os.path.join(d, 'index.html'); new = page(d)
+    p = os.path.join(d, 'index.html')
+    rel_page = os.path.relpath(p, root).replace(os.sep, '/')
+    if rel_page in MANUAL_PAGES:
+        # 수작업 페이지의 누락은 --check에서 검출하지만 생성기가 덮어쓰지 않는다.
+        if not os.path.isfile(p): changed.append(rel_page)
+        continue
+    new = page(d)
     if read(p) != new:
         if '--check' not in sys.argv: open(p, 'w', encoding='utf-8').write(new)
         changed.append(os.path.relpath(p, root))
 print(f'페이지 {len(changed)}개 갱신' + (' (--check, 미기록)' if '--check' in sys.argv else ''))
+for name in changed[:30]:
+    print('갱신 대상:', name)
+if len(changed) > 30:
+    print('그 밖의 갱신 대상:', len(changed) - 30)
 sys.exit(1 if changed and '--check' in sys.argv else 0)

@@ -1,0 +1,32 @@
+name: Devices docs, sources and host verification
+
+on:
+  push:
+    paths:
+      - 'devices/**'
+      - '.github/workflows/devices-check.yml'
+  pull_request:
+    paths:
+      - 'devices/**'
+      - '.github/workflows/devices-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  devices-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax and structured-data parse
+        run: |
+          python3 -m py_compile devices/tools/gen_pages.py devices/tools/check_links.py
+          python3 -m json.tool devices/data/devices.json > /dev/null
+      - name: Markdown links and HTML regeneration consistency
+        run: |
+          python3 devices/tools/check_links.py
+          python3 devices/tools/gen_pages.py --check
+      - name: C driver host tests (mock only, not board verification)
+        run: bash devices/run_host_tests.sh

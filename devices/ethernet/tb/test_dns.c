@@ -273,7 +273,27 @@ static void thook(int sock, int proto, const uint8_t ip[4], uint16_t port, const
         if (memcmp(ip, answer_ip, 4) == 0) { static const char resp[] = "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nhello"; inject_rx(sock, (const uint8_t *)resp, sizeof resp - 1); }
     }
 }
-static int sink(void *c, const uint8_t *d, unsigned n) { char *p = c; memcpy(p + strlen(p), d, n); p[strlen(p) + n] = 0; return 0; }
+// (변경) memcpy 후 strlen()은 새 데이터가 NUL 종료되지 않아 버퍼 밖을 읽을 수 있다.
+// 복사 전 길이를 저장하고, 복사한 끝 위치에 종료 문자를 넣는다.
+static int sink(void *c, const uint8_t *d, unsigned n)
+{
+    char *p = c;
+    size_t used = strlen(p);
+    memcpy(p + used, d, n);
+    p[used + n] = 0;
+    return 0;
+}
+// (추가) 조각별 HTTP 본문 누적과 종료 NUL 위치를 검증한다.
+static void t_sink_chunks(void)
+{
+    char buf[16];
+    memset(buf, 'Z', sizeof buf);
+    buf[0] = 0;
+    CHECK(sink(buf, (const uint8_t *)"he", 2) == 0, "sink 첫 조각");
+    CHECK(sink(buf, (const uint8_t *)"llo", 3) == 0, "sink 두 번째 조각");
+    CHECK(strcmp(buf, "hello") == 0 && buf[6] == 'Z',
+          "sink 종료 NUL은 정확히 누적 5바이트 뒤에만 기록");
+}
 static void setup(int mode) { nwire = 0; dmode = mode; dsends = 0; wire_hits_http = 0; peer_hook = thook; memcpy(answer_ip, R1, 4); }
 
 static void t_resolve(void)
@@ -363,7 +383,7 @@ static void t_names(void)
 
 int main(void)
 {
-    t_build(); t_ipv4(); t_parse(); t_resolve(); t_names();
+    t_build(); t_ipv4(); t_parse(); t_resolve(); t_sink_chunks(); t_names();
     if (fails) { printf("FAIL: %d\n", fails); return 1; }
     printf("ALL PASS (dns)\n");
     return 0;

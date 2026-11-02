@@ -18,7 +18,7 @@ module ultrasonic_distance_meter #(
     input  wire        clk,
     input  wire        reset,
 
-    // CTRL[2]와 연결한다.
+    // (변경) us_axil_regs CTRL[0] enable과 연결한다. 기존 CTRL[2] 주석은 레지스터 맵과 불일치했다.
     // 1이면 초음파 거리계가 동작한다.
     // 0이면 측정을 멈추고 출력값을 초기화한다.
     input  wire        enable,
