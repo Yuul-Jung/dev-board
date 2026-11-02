@@ -31,6 +31,11 @@
 | [Arduino Modulino Movement](https://docs.arduino.cc/hardware/modulino-movement/) | **LSM6DSOXTR 6축 가속도·자이로**, Qwiic/I²C | 이름의 Movement는 PIR가 아님. 단순 OUT GPIO로 읽을 수 없음 |
 | [Keyestudio Project 47](../capstone/README.md) DIY PIR | ESP32용 PIR + LED/부저 튜토리얼 | 원본에 사용된 **DIY PIR 보드**를 HC-SR501과 동일 기판으로 간주 금지 |
 
+## 국내 범용 모듈 판매처 대조 (2026-11-02)
+
+- [가치창조기술 HC-SR501](https://vctec.co.kr/product/적외선-pir-모션-센서-hc-sr501-infrared-pir-motion-sensor-hc-sr501/10402): **VCC 5~20 V, OUT 3.3/0 V, 동작전류 65 mA**라고 기재(D3). HSHL과 숫자는 일치하지만 제조사 측정 근거가 없으므로 전류 충돌이 해소된 것은 아니다.
+- [에듀이노 HC-SR501](https://m.eduino.kr/product/아두이노-적외선-pir-센서-인체감지-모션센서-hc-sr501-hcsr501/104/): 저가 OEM 판매 후보(D3). 상세 설명 중 '적외선을 **내보내고 반사량을 측정**'한다는 문장은 **PIR 수동 감지 원리와 맞지 않는 일반 IR 센서 설명**이므로 기술 근거로 사용하지 않는다. 판매처에 모델명이 같아도 기판·OUT 레벨을 확인해야 한다.
+
 ## Basys3 + MicroBlaze V 연결 (실물 연결 전 점검)
 
 1. **전원과 신호를 분리**: VCC는 구매한 HC-SR501의 전원 정격에 맞는 외부 전원(일반형은 5 V)에서 공급하고, Basys3와 GND를 공통으로 한다. VCC 5 V가 OUT 5 V라는 뜻도, OUT 3.3 V라는 보장도 아니다.
