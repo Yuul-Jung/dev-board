@@ -4,7 +4,7 @@
 
 프로젝트 문서(`arduino_io_module_tech_tree_20261030_github_updated.md`) §5·§9 의 GitHub 참고 자료를 **차시와 연결한 대장**입니다.
 
-**근거 수준(중요)**: 이 표의 저장소 이름·역할·라이선스는 모두 프로젝트 문서에서 옮긴 것입니다(D3, 문서 경유). **이 저장소 작업에서 각 GitHub 원문을 직접 열어 확인하지 않았습니다 → 미확인.** 문서가 라이선스를 적은 3곳만 적었고 나머지는 「미기록」입니다. `commit`(재현 기준 커밋) 열이 아직 없는 것은 원문을 열지 않아 고정할 수 없기 때문입니다. 사용 전에 각 저장소의 해당 버전 라이선스와 커밋을 확인해 이 표에 적어야 합니다.
+**근거 수준(중요)**: **아래 기존 A/B/9.3 목록**의 저장소 이름·역할·라이선스는 프로젝트 문서에서 옮긴 것입니다(D3, 문서 경유). 그 목록은 각 GitHub 원문을 전수 확인한 결과가 아니므로 **미확인**입니다. 별도 날짜가 있는 아래 공식 자료·라이선스 확인 표는 예외입니다. 문서가 라이선스를 적은 3곳만 적었고 나머지는 「미기록」입니다. `commit`(재현 기준 커밋) 열이 아직 없는 것은 원문을 열지 않아 고정할 수 없기 때문입니다. 사용 전에 각 저장소의 해당 버전 라이선스와 커밋을 확인해 이 표에 적어야 합니다.
 
 GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙니다. 통신 순서와 레지스터 동작을 참고하는 자료이며, 목록에 있다는 것이 Basys3·Vivado 2024.2 에서 동작한다는 뜻은 아닙니다. 등급 A/B 는 열람 우선순위일 뿐 검증 완료가 아닙니다.
 
@@ -34,6 +34,21 @@ GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙
 | 9.3 | [nRF24/RF24](https://github.com/nRF24/RF24) | nRF24L01 라이브러리 | 27 | 미기록 | 미기록 |
 | 9.3 | [arduino-libraries/Ethernet](https://github.com/arduino-libraries/Ethernet) | W5x00 소켓 API | 28 | 미기록 | 미기록 |
 | 5 | adafruit/RTClib, DHT-sensor-library, Adafruit_NeoPixel, Adafruit_BME280_Library, Adafruit_MPU6050, Adafruit_SSD1306, Adafruit-PWM-Servo-Driver-Library, Adafruit_ADS1X15, Adafruit_MCP3008 | §5 의 장치별 참고 라이브러리 | 21–23, 26 등 | 미기록 | 미기록 |
+
+## 2026-11-02 추가 원문 대조 — 초음파 모듈·교재 라이선스
+
+| 문서·저장소 | 원본 링크 | 확인한 범위 | 재사용/검증 상태 |
+|---|---|---|---|
+| Arduino UNO R4 Minima 공식 Hardware Docs | [보드 사양·핀맵·회로도](https://docs.arduino.cc/hardware/uno-r4-minima) | 보드 5 V I/O, Renesas RA4M1, 다운로드 자료 제공 | 공개 사실 인용(D1); Basys3 핀과 혼용 금지 |
+| Arduino Modulino Distance 공식 Hardware Docs | [ToF 거리 모듈](https://docs.arduino.cc/hardware/modulino-distance) | ToF + I²C/Qwiic 방식. HC-SR04 TRIG/ECHO와 다른 인터페이스 | 공개 사실 인용(D1); 기존 초음파 RTL 재사용 불가 |
+| SparkFun 일반 HC-SR04 | [SEN-15569](https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html) | 제품 동작 전원 5 V, 4핀 | D1, 제품 특정 |
+| SparkFun HC-SR04-33 | [SEN-24049](https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html) | 제품 동작 전원 3.3~5 V, 4핀 | D1, 별도 기판/변형; ECHO HIGH는 실물 확인 |
+| Adafruit HC-SR04 | [핀 설명](https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts) | 일반 HC-SR04 ECHO 5 V, 10 kΩ+10 kΩ 분압 예 | D1, 연결 계산은 설계안 |
+| Seeed Grove Ultrasonic Ranger | [제조사 Wiki](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/) | V2의 3.3 V 시스템 호환, 3.2~5.2 V, **SIG 1선 양방향** | D1, HC-SR04 RTL 직접 대체 불가 |
+| Freenove Ultimate Starter Kit | [원본 저장소](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit) · [LICENSE.txt](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/master/LICENSE.txt) | README와 LICENSE를 직접 열람. **CC BY-NC-SA 3.0** (저작자표시·비영리·동일조건변경허락) | 기준 `5315f61497eea49553aa1b70721751fb16a497e5`; 교육용 참조 링크, 원문 재배포/상업 이용은 조건 확인 |
+| Keyestudio KS5003/KS5004 | [원본 저장소](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit) | Project 47 튜토리얼 열람. 저장소 루트에 LICENSE 파일 없음, API license 필드 미기재 | 기준 `4adb6ce17ee454d10230b03030d5818e27cc0278`; **재배포 권한 미확인**. 사진·코드 복제 금지 |
+
+위 확인은 **2026-11-02 기준** 문서/저장소의 직접 열람 결과입니다. Freenove의 CC BY-NC-SA 3.0은 모든 사용을 허락하는 무조건적 퍼블릭 도메인이 아니며, Keyestudio의 LICENSE 부재도 재배포 허용을 뜻하지 않습니다. 회로/배선 그림과 데이터시트의 **링크 제공**과 **원문 파일의 재배포**를 구분합니다.
 
 ## Arduino 공식 자료·캡스톤 출처 (2026-11-02 추가)
 
