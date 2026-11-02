@@ -8,6 +8,8 @@ module onewire_axil_top #(
     input  wire        s_axi_awvalid,
     output wire        s_axi_awready,
     input  wire [31:0] s_axi_wdata,
+    // (추가) 표준 AXI4-Lite 바이트 스트로브 연결.
+    input  wire [3:0]  s_axi_wstrb,
     input  wire        s_axi_wvalid,
     output wire        s_axi_wready,
     output wire [1:0]  s_axi_bresp,
@@ -29,7 +31,7 @@ module onewire_axil_top #(
     onewire_axil_regs u_regs (
         .clk(clk), .rstn(rstn),
         .awaddr(s_axi_awaddr), .awvalid(s_axi_awvalid), .awready(s_axi_awready),
-        .wdata(s_axi_wdata), .wvalid(s_axi_wvalid), .wready(s_axi_wready),
+        .wdata(s_axi_wdata), .wstrb(s_axi_wstrb), .wvalid(s_axi_wvalid), .wready(s_axi_wready),
         .bresp(s_axi_bresp), .bvalid(s_axi_bvalid), .bready(s_axi_bready),
         .araddr(s_axi_araddr), .arvalid(s_axi_arvalid), .arready(s_axi_arready),
         .rdata(s_axi_rdata), .rresp(s_axi_rresp), .rvalid(s_axi_rvalid), .rready(s_axi_rready),
