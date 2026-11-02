@@ -17,6 +17,7 @@
 | **P0 예방** | 기생 전원 DS18B20을 약한 풀업·기존 RTL만으로 지원한다고 오해 | 강한 풀업(변환 명령 후 10 µs 이내) 미구현 명시. 외부 VDD 모드만 설계 범위 |
 | **P1 수정** | 1-Wire AXI4-Lite `AWVALID && WVALID` 동시 요구 | AW/W 독립 1단 버퍼·양 채널 수락 후 단일 커밋·BREADY 백프레셔로 수정 |
 | **P1 수정** | `s_axi_wstrb` 포트 누락·CMD/IRQ_EN 쓰기에서 WSTRB 무시 | Top→Regs WSTRB[3:0] 전달, 하위 바이트 스트로브만 부작용 허용 |
+| **P1 수정(회귀시험 발견)** | ARREADY를 `rstn && !rvalid`로 바꾼 뒤, 읽기 데이터 래치가 ARVALID 없이 ARREADY만 검사하여 임의 읽기 응답을 발생시킴 | 새 테스트벤치가 ARREADY/read value 실패 12건 재현. `take_ar = arvalid && arready`로 읽기 래치 조건 수정. CI 재검증 필요 |
 | **P1 확인** | `CMD` 실행 중 busy, `STATUS.done`·`IRQ_EN`·`B/R` 응답 | 기존 명령/IRQ 정책 유지. 새 지향 테스트벤치 `1-wire/tb/tb_onewire_axil_regs.v`와 CI 등록 |
 | **유지** | `onewire_bit_engine.v` 슬롯 타이밍, `ds18b20.c` CRC·변환·폴링, 기존 C 호스트 시험 | 기능 소스 수정 없음. C 헤더의 원문 근거·WSTRB 설명만 정정 |
 | **P1 추가 발견(미해결)** | `gpio/rtl/dht22_axil_regs.v`·`quad_axil_regs.v`에도 AW/W 동시 요구와 WSTRB 누락이 남음 | **이번 범위 외**. 개별 테스트벤치와 프로토콜 검증 전 수정·검증 완료로 표시하지 않음 |
