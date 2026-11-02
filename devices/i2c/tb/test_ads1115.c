@@ -52,7 +52,15 @@ int main(void)
     CHECK(ads1115_init(&a, &iic, 0x4B) == IIC_OK); expect_addr = 0x48; ads1115_init(&a, &iic, 0x48);
 
     /* 레지스터 왕복과 바이트 순서 */
-    uint16_t v; CHECK(ads1115_read_reg(&a, ADS_REG_CONFIG, &v) == IIC_OK && v == 0x8583);
+    // (추가) 공개 레지스터 API의 NULL 포인터 입력이 충돌 대신 인자 오류를 반환하는지 검사
+    uint16_t v;
+    ads1115_t invalid_dev = {0};
+    CHECK(ads1115_read_reg(NULL, ADS_REG_CONFIG, &v) == IIC_ERR_ARGS);
+    CHECK(ads1115_read_reg(&a, ADS_REG_CONFIG, NULL) == IIC_ERR_ARGS);
+    CHECK(ads1115_read_reg(&invalid_dev, ADS_REG_CONFIG, &v) == IIC_ERR_ARGS);
+    CHECK(ads1115_write_reg(NULL, ADS_REG_CONFIG, 0x8583) == IIC_ERR_ARGS);
+    CHECK(ads1115_write_reg(&invalid_dev, ADS_REG_CONFIG, 0x8583) == IIC_ERR_ARGS);
+    CHECK(ads1115_read_reg(&a, ADS_REG_CONFIG, &v) == IIC_OK && v == 0x8583);
     /* Config 비트 배치: 0xC283 = OS|AIN0/GND|±4.096|연속|128SPS|비교기 끔 (openkits 예시와 동일 값) */
     busy_polls = 0; ain[4] = 1234;
     CHECK(ads1115_start_continuous(&a, ADS_MUX_0_G, ADS_PGA_4096, ADS_DR_128) == IIC_OK);
