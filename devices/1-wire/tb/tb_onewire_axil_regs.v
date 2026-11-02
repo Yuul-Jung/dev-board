@@ -153,6 +153,9 @@ module tb_onewire_axil_regs;
         repeat (3) @(negedge clk);
         check(!bvalid && !rvalid && !cmd_start, "reset state");
         rstn = 1;
+        // ARVALID 없이 ARREADY만 1인 상태에서는 읽기 응답이 생기면 안 된다.
+        repeat (3) @(negedge clk);
+        check(!rvalid && arready, "no spontaneous R without ARVALID");
 
         // AW 먼저: CMD 0x05 → 쓰기(1), 데이터 비트 1.
         axi_write(4'h0, 32'h00000005, 4'b0001, 0);
