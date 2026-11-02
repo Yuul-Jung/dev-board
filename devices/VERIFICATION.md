@@ -4,6 +4,27 @@
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
 
+## 2026-11-03 초음파 AXI4-Lite·Modulino 자료 갱신 → 같은 실행 적대적 검증
+
+**① 자료 갱신:** Arduino [Modulino Distance 공식 하드웨어](https://docs.arduino.cc/hardware/modulino-distance)·[ABX00102 데이터시트](https://docs.arduino.cc/resources/datasheets/ABX00102-datasheet.pdf)에서 VL53L4CDV0DH/1, 3.3 V Qwiic, 센서 공급 2.6~3.5 V를 확인했습니다. [Arduino_Modulino](https://github.com/arduino-libraries/Arduino_Modulino) 소스 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`(v0.10.0, MPL-2.0)의 `ModulinoDistance`가 주소 0x29와 VL53L4CD→VL53L4ED 폴백을 구현한 사실을 확인하되, **호환 코드가 실제 실장 IC를 증명하지는 않는다**고 구분했습니다. [일반 HC-SR04 5 V](https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html), [HC-SR04-33](https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html), [Seeed Grove 1선 SIG](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/), [Adafruit ECHO 5 V](https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts) 및 기존 Keyestudio/Freenove·국내 판매처의 모델별 차이·저작권 상태를 [출처 대장](REFERENCES.md)과 [HC-SR04 문서](gpio/hc-sr04.md)에서 재확인했습니다.
+
+**② 즉시 적대적 검증:** [Arm AXI4](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf), [AMD PG138](https://docs.amd.com/r/en-US/pg138-axi-ethernet/AXI4-Lite-Interface), [PG267](https://docs.amd.com/r/en-US/pg267-axi-vip/AXI-Protocol-Checks-and-Descriptions)와 실제 `gpio/rtl/us_axil_regs.v`·`us_axil_top.v`·`gpio/sw/ultrasonic.[ch]`·`gpio/tb/test_ultrasonic.c`를 대조했습니다.
+
+| 등급 | 발견·검증 항목 | 실제 조치·상태 |
+|---|---|---|
+| **P0 예방** | 일반 HC-SR04 ECHO 5 V → Basys3 3.3 V GPIO 직접 연결 | 기존 레벨 변환·공통 GND·실물 전압 확인 기준 유지. XADC 0~1 V와 GPIO 3.3 V 혼동 금지. **실물 연결 승인하지 않음** |
+| **P0 예방** | Arduino Modulino Distance Qwiic 3.3 V와 일반 HC-SR04 5 V 혼동 | 실제 IC·3.3 V 전원·I²C SDA/SCL·0x29를 명시. 5 V I²C 풀업은 FPGA에 직결 금지, 실제 기판 풀업·핀 배열 미확인 |
+| **P1 수정** | `us_axil_top.v`에 WSTRB 누락 | `s_axi_wstrb[3:0]` 포트와 레지스터 연결 추가 |
+| **P1 수정** | `us_axil_regs.v`에서 AWVALID와 WVALID의 동시 유효 요구 | AW/W 독립 1단 수락 버퍼, 양쪽 수락 후 한 번만 쓰기/응답, BREADY 백프레셔 처리 |
+| **P1 수정** | 부분 바이트 쓰기 및 STATUS W1C가 WSTRB를 무시 | `WSTRB[0]`이 선택된 경우에만 하위 바이트 갱신, WSTRB=0/상위 바이트만 선택 시 레지스터 부작용 없음 |
+| **P1 수정** | C 헤더·센서 문서에 'enable 재활성화 동작은 코어를 읽지 못해 미확인' | 실제 `ultrasonic_distance_meter.v` 소스와 대조해 enable=0 상태 초기화·재활성화 후 첫 1 µs tick 동작으로 정정. **보드 동작은 여전히 미검증** |
+| **유지** | 초음파 거리 코어, C 드라이버 함수·오프셋, 기존 호스트 시험 | 정상 기능은 그대로 유지. `ultrasonic_distance_meter.v`, `ultrasonic.c`, `test_ultrasonic.c` 변경 없음 |
+| **미해결** | Vivado IP Integrator/AXI VIP, 합성·Timing, 실물 전압/핀·온도·반사 성능 | 미검증. AXI 프로토콜의 전수 형식 검증을 주장하지 않음. 다른 AXI 래퍼에도 유사 패턴이 있는지는 별도 감사 필요 |
+
+**추가 테스트:** `gpio/tb/tb_us_axil_regs.v`는 AW 먼저/W 먼저/동시 도착, WSTRB 0·상위 바이트, W1C·IRQ, B/R 백프레셔, B 응답 대기 중 독립 읽기를 검사합니다. `.github/workflows/devices-check.yml`에서 Icarus Verilog로 `us_axil_top` 컴파일과 레지스터 시뮬레이션을 실행합니다.
+
+**자동시험 확인(2026-11-03, UTC 2026-11-02):** [GitHub Actions #41479846093](https://github.com/Yuul-Jung/dev-board/actions/runs/41479846093) **success** (헤드 SHA `600a816c7877bb7b769e36bfe2f4b34d8f723066`): Python 구문·JSON 검사 PASS, Markdown 링크 **1,828개 오류 0**, 핵심 HTML 상대 링크 **43개 오류 0**, HTML 생성 `--check` **0개 변경**, C 드라이버 호스트 모의시험 **45/45 PASS**, `us_axil_top` 컴파일 PASS, **`PASS tb_us_axil_regs`**. 새 문서만 추가한 후속 커밋은 최종 CI를 별도로 확인합니다. 호스트 시험/RTL 시뮬레이션을 FPGA 합성·실물 보드 검증으로 표기하지 않습니다.
+
 ## 2026-11-02 ADS1115 외부 ADC 자료 갱신 → 즉시 적대적 검증 (3차)
 
 **자료 갱신 후 검증 순서:** TI SBAS444E §5.1/§5.3/§7.3.3·Arduino UNO R4·Seeed Grove ADS1115·DFRobot DFR0553·국내 판매 자료 조사 → [ADS1115 기술자료](i2c/ads1115.md) 및 [JSON](data/devices.json)·[출처 대장](REFERENCES.md) 갱신 → 관련 C 드라이버·호스트 모델·I²C 전원·GPIO/XADC 안전 문서 정적 대조 → 실제 결함만 수정. 2026-11-02 원본 웹 문서 확인, 외부 사진/코드 복제 없음.
