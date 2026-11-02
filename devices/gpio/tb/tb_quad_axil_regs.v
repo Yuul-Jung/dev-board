@@ -160,7 +160,8 @@ module tb_quad_axil_regs;
         // 같은 클록 W1C와 새 이벤트가 겹치면 새 이벤트를 우선한다.
         send_aw(4'h4);
         send_w(32'h2, 4'b0001);
-        @(negedge clk); btn_press_pulse = 1;
+        // W가 수락된 직후, 커밋 클록에 맞춰 이벤트 펄스를 겹친다.
+        btn_press_pulse = 1;
         @(negedge clk); btn_press_pulse = 0;
         complete_b();
         axi_read(4'h4, 32'h13);
