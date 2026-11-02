@@ -498,8 +498,12 @@
    20
   ],
   "out_high_v": 3.3,
+  "out_high_v_status": "nominal_D3_not_verified_for_purchased_board",
+  "output_variants": "some boards open-drain or VCC-level; inspect before FPGA connection",
+  "fpga_direct_connect_approved": false,
+  "pin_names": ["VCC", "OUT", "GND"],
   "warmup_s": 60,
-  "evidence": "D3"
+  "evidence": "D3; Joy-IT product-specific 3V logic; Espruino variant warning"
  },
  {
   "id": "srd-05vdc-sl-c",
