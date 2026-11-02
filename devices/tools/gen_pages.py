@@ -136,6 +136,24 @@ def page(d):
     L = lede(rd)
     if L: o.append(f'<p class="lede">{e(L)}</p>')
     o.append(f'<p class="gh"><a href="{GH}/tree/main/{rel}">GitHub 에서 이 폴더 보기</a> · <a href="{GH}/blob/main/{rel + "/" if rel else ""}README.md">README</a></p>')
+    # 공개 홈·하위 페이지 탐색은 여기에서 생성하여 수작업 HTML 덮어쓰기를 방지한다.
+    if not rel:
+        nav = [
+            ('arduino/index.html', 'Arduino 32차시', 'UNO R4 실습·배선·코드'),
+            ('devices/index.html', '주변모듈 I/O', '사양·핀맵·드라이버'),
+            ('rtl/index.html', 'Basys3 RTL 32과제', 'Verilog·테스트벤치'),
+            ('soc-map/index.html', 'MicroBlaze V SoC', 'AXI·주변장치 대응'),
+            ('atlas/index.html', '회로 연결 아틀라스', 'Basys3 전기 연결'),
+            ('catalog/index.html', '개발보드 카탈로그', '보드·모듈 비교'),
+            ('devices/capstone/index.html', '캡스톤 사례', 'PIR 침입 감지·거리 연동 확장'),
+        ]
+        o.append('<h2>학습 분야 바로가기</h2><div class="grid">')
+        for url, label, summary in nav:
+            o.append(f'<a class="card" href="{e(url)}"><b>{e(label)}</b><span>{e(summary)}</span></a>')
+        o.append('</div>')
+        o.append(f'<p class="lede">자료화·적대적 검증 2시간 주기 / 프로젝트 문서화 5시간 주기 · <a href="{GH}/blob/main/HARNESS.md">운영 하네스 문서</a></p>')
+    if rel == 'devices':
+        o.append('<p><a href="capstone/index.html">캡스톤 01 — PIR 침입 감지와 거리 연동 보안 제어</a> (원본 공개 튜토리얼과 별도 확장 설계안 구분)</p>')
     if rel in ('', 'devices'): o.append('<h2>모듈 현황</h2>' + kpi(MODS) + ('<p class="lede">상태 기준은 <a href="%s/blob/main/devices/STATUS.md">STATUS.md</a>. 코드는 호스트 모의 테스트까지만, Verilog 는 시뮬레이션 전입니다.</p>' % GH))
     if sub:
         o.append('<h2>하위 폴더</h2><div class="grid">')

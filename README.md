@@ -2,6 +2,8 @@
 
 개발 보드 조사, Arduino UNO R4 전용 실습, Basys3 + MicroBlaze V SoC 학습 자료.
 
+**공개 HTML 목차:** [GitHub Pages 홈](https://yuul-jung.github.io/dev-board/) (게시 상태 확인 필요) · **운영 하네스:** [HARNESS.md](HARNESS.md) · **캡스톤 사례:** [PIR 침입 감지·거리 연동](devices/capstone/README.md)
+
 ## 폴더
 | 폴더 | 내용 |
 |---|---|

@@ -1,0 +1,97 @@
+# 주변모듈 자료화 · 검증 · 프로젝트 문서화 하네스
+
+기준일: 2026-11-02 · 대상: `Yuul-Jung/dev-board`
+
+## 1. 목적과 적용 범위
+
+Arduino 공식 [Hardware Docs](https://docs.arduino.cc/hardware/), 제조사 데이터시트·회로도, Keyestudio/Freenove/Seeed 튜토리얼, 국내외 범용 모듈 판매 정보를 교차 확인하고, **부품별 기술자료 → Arduino 실습 → Basys3 RTL → MicroBlaze V SoC**로 연결한다.
+
+- 저장소 기존 `devices/`, `arduino/`, `rtl/`, `soc-map/`, `atlas/` 체계와 32차시 번호를 **보존**한다.
+- `amd_soc`는 별개 교재 저장소로 유지한다. 이 저장소에서 이를 임의로 수정하거나 41장 본문을 중복 생성하지 않는다.
+- 공식 Modulino와 저렴한 Arduino 호환 모듈은 기능이 같더라도 신호 인터페이스가 다를 수 있다. **기능·실제 IC·전원·IO 전압·연결 핀·통신 프로토콜**을 분리해 기록한다.
+- 새 모듈 구매의 기본 후보는 국내·AliExpress의 저렴하고 쉽게 구할 수 있는 **Arduino 호환 범용 모듈**이다. Digilent Pmod는 유익한 참고 회로 자료이지만 기본 구매 우선순위가 아니다.
+
+## 2. 운영 주기 (2026-11-02 개정)
+
+| 실행 간격 | 하나의 실행에서 할 일 | 산출물 |
+|---|---|---|
+| **매 2시간** | **① 자료 갱신 → ② 즉시 적대적 검증** (반드시 순서대로) | 변경된 부품정보·문서·출처, P0/P1 검사, 수정 기록과 SHA |
+| **매 5시간** | 최근 2시간 주기의 검증 결과를 확인한 뒤 프로젝트·캡스톤 문서화 | Markdown, HTML 하위 페이지, 목차·링크 점검, 변경 SHA |
+
+**중복 작업 금지:** 자료 갱신과 검증은 같은 예약 실행에서 순차 수행한다. 검증 단독 예약은 비활성화한다. 주기는 종료 보장을 의미하지 않으며, 실행 지연·권한 제한·도구 실패 시 미완료라고 정확히 기록한다.
+
+### 2시간 작업
+
+1. 공식 Arduino Hardware Docs·제조사 회로도/데이터시트·키트 튜토리얼·국내외 판매처 및 GitHub 참고 자료의 변경 사항 조사
+2. 동일 IC와 서로 다른 Breakout 기판 구분, 실제 핀·VCC·I/O 전압·통신 방식·원본 출처/커밋·라이선스 기록. 확인된 정보만 `devices/` 및 관련 대응표 갱신
+3. **방금 갱신한 변경 내용에 대해 적대적 검증**: P0(전압/구동 안전), P1(데이터시트·칩·핀맵·타이밍·드라이버·RTL·코드 명칭), 상대 링크, 근거 수준 및 검증 상태 확인
+4. P0/P1 실제 문제를 수정하고, 정상 코드는 보존하며 선택적 개선은 분리. 변경 파일·테스트 결과·커밋 SHA 보고
+
+### 5시간 작업
+
+1. 직전 자료·적대적 검증 기록을 읽고 미해결 P0/P1, 출처·라이선스 미확인 내용은 검증 완료로 사용하지 않음
+2. 기존 32차시 및 `devices/`·`arduino/`·`rtl/`·`soc-map/`을 재사용하고, 한 개 캡스톤 사례 및 프로젝트 문서를 구체화
+3. `devices/tools/gen_pages.py`로 메인과 하위 HTML을 생성하고 `devices/tools/check_links.py`로 링크 확인. 이미 있는 페이지·마스터 데이터와 중복 생성하지 않음
+4. 공개 `index.html`에서 **Arduino / 주변모듈 / RTL / SoC / 회로 아틀라스 / 캡스톤** 하위 페이지가 탐색되는지 점검
+5. 게시 결과(성공·실패), 수정된 프로젝트 문서와 커밋 SHA 보고
+
+### 공개 GitHub Pages 원칙
+
+- 메인: `index.html` → 하위 정적 `index.html`과 `devices/capstone/index.html` 링크
+- 소스 문서: Markdown과 전체 코드 원본을 GitHub 링크로 노출, 저작권이 허락된 이미지·회로도만 직접 게시
+- GitHub 저장소 공개(Public)와 **GitHub Pages 게시 성공은 별도로 확인**한다. 원본 레포지토리가 공개되어도 Pages 주소의 HTTP 접근 검사가 없으면 게시 확인으로 표시하지 않는다.
+- HTML 생성기는 기존 `devices/tools/gen_pages.py`를 단일 경로로 사용한다. 수작업으로 메인 페이지만 바꾸고 자동생성으로 덮어쓰는 일을 방지한다.
+
+## 3. 근거와 단일 데이터 원칙
+
+| 자료 | 기준 위치 | 역할 |
+|---|---|---|
+| 모듈별 상세 기술정보 | `devices/{interface}/*.md` | 사람이 검증한 설명, 근거, 한계 |
+| 수치형 요약 | `devices/data/devices.json` | 기계가 읽는 요약. 상세 문서와 충돌하면 검토 대상 |
+| 모듈 현황 | `devices/data/module-status.csv` | 문서·드라이버·호스트 시험 범위의 기존 상태 |
+| 교육 대응표 | `devices/data/crosswalk.csv`, `session-map.csv` | 기존 31장/32차시/RTL 번호 연결 |
+| 외부 자료 대장 | `devices/REFERENCES.md` | GitHub·공식 사양·라이선스·커밋 |
+| 캡스톤 사례 | `devices/capstone/README.md` | 공개 근거 + 독립적으로 제안한 RTL 확장 |
+
+`module-status.csv`의 **완비**는 기존 정의인 호스트 모의시험 수준일 수 있다. 별도로 `문서만 / 코드 작성 / 컴파일 / 호스트 시험 / RTL Simulation / Synthesis / Timing / Board Test`를 기술하고, 단계를 혼용하지 않는다.
+
+각 모듈에는 `기능 종류`와 `실제 인터페이스`를 별도 기재하고, 제조사/판매처에 따른 브레이크아웃 변형(VCC 정격·레귤레이터·레벨 변환·풀업·핀 순서)을 반드시 검토한다.
+
+## 4. 게이트
+
+- **G0 후보**: IC/모듈 모델과 판매처를 식별하고 출처 URL을 기록한다.
+- **G1 문서**: 제조사 데이터시트/회로도/튜토리얼 중 확인된 종류를 명시한다. 단순 배선도를 회로도로 부르지 않는다.
+- **G2 전기**: 전원 VCC와 신호 I/O 전압은 각각 확인한다. Basys3 Pmod 3.3V, XADC 일반 단극성 0~1V 범위를 확인한다. 미확인 시 보드 연결 승인 금지.
+- **G3 구현**: Arduino 스케치, Verilog RTL, AXI IP, C 드라이버를 분리한다. Top은 핀·연결 위주, 기능은 Controller/IP로 둔다.
+- **G4 검증**: 시험환경·명령·예상 결과·실제 결과를 기록한다. 모의시험을 보드 동작으로 표현하지 않는다.
+- **G5 출판**: Markdown·그림·코드·출처 링크 검사 후 HTML 생성·게시. 오류/미확인 내용을 배포 자료에서 검증 완료로 표현하지 않는다.
+
+### 적대적 검증 P0/P1
+
+P0: 5V 신호의 Basys3 직접 입력, XADC 과전압, 전원 단락·모터 드라이버 충돌, 잘못된 안전 주장.
+
+P1: 실제 칩/브레이크아웃 혼동, I²C 주소·풀업·SPI 모드 오류, 잘못된 비트 폭·타이밍·FSM·핸드셰이크, 출처·라이선스·커밋 미기록, 검증 상태 오표기.
+
+## 5. 캡스톤 1호
+
+[침입 감지·거리 연동 보안 제어](devices/capstone/README.md): Keyestudio KS5003/KS5004 **Project 47**은 PIR→LED·능동 부저의 **공개 원본 사례**, HC-SR04·이벤트 레지스터·MicroBlaze V 연결은 **우리의 별도 확장 설계안**이다.
+
+## 6. 기존 도구 사용
+
+```bash
+# 상대 링크 검사: 누락 파일과 잘못된 상대경로 확인
+python3 devices/tools/check_links.py
+
+# 상태·교재 대응·목차 점검(생성물 갱신 전 diff 확인)
+python3 devices/tools/gen_status.py > /tmp/dev_board_status_check.md
+python3 devices/tools/gen_crosswalk.py > /tmp/dev_board_crosswalk_check.md
+
+# HTML 생성 예비 검사: 실제 지원 옵션은 파일 헤더 참고
+python3 devices/tools/gen_pages.py --check
+```
+
+`run_host_tests.sh`와 `rtl/run_rtl_tests.sh`의 실제 통과 결과 없이 실행 성공으로 표시하지 않는다. `docs/`나 신규 RTL IP를 불필요하게 복제하지 않는다.
+
+## 7. 보고 형식
+
+매 실행 기록에는 `시각 / 대상 / 원본 URL·SHA / 변경 파일 / 변경 전후 / 검증 도구·결과 / 미확인 / 다음 차례`를 포함한다. 배포용 본문에는 쓸데없는 검증 메타 설명을 반복하지 않고, 검증 보고서와 구분한다.

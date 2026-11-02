@@ -5,6 +5,8 @@
 Basys3 + MicroBlaze V SoC에 붙일 외부 소자(센서·모듈)를 통신 인터페이스별로 정리합니다.
 SoC 쪽 구현 경로(AXI IP, 핀 예산)는 `../soc-map/` 과 짝을 이룹니다.
 
+**운영 기준:** [자료 갱신→적대적 검증(2시간) / 프로젝트 문서화(5시간)](../HARNESS.md) · **캡스톤 사례:** [Keyestudio PIR 보안 사례와 Basys3 확장 설계](capstone/README.md). 저렴한 Arduino 호환 모듈을 실제 실습 후보로 우선 검토하며 Digilent Pmod는 참고자료로 사용합니다.
+
 ## 폴더
 | 폴더 | 인터페이스 | 소자 문서 |
 |---|---|---|
