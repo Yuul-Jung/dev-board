@@ -4,7 +4,7 @@
 
 **분류:** GPIO 입력 + 초음파 펄스 입력 → LED/부저 경보 + 상태 레지스터 (확장안)
 
-**검증 상태 (2026-11-02):** 공개 튜토리얼의 프로젝트·부품·연결도·예제코드 존재 확인. **우리의 통합 RTL/C/실물 보드 구현 및 검증은 아직 실시하지 않음.**
+**검증 상태 (2026-11-03):** 원본 튜토리얼의 프로젝트·부품·배선도·예제코드 존재 확인. 기존 HC-SR04용 AXI4-Lite 레지스터는 **WSTRB·AW/W 분리 처리 수정 및 지정된 RTL 회귀 시뮬레이션 통과**(아래 실행 근거). **PIR·HC-SR04 통합 보안 RTL, 신규 이벤트 레지스터, MicroBlaze V 통합 및 실물 보드 시험은 미실시.**
 
 ## 1. 출처가 확인된 원본 사례
 
@@ -49,6 +49,7 @@ flowchart LR
 | [`pir_event.v`](../../rtl/rtl10_pir_event/src/pir_event.v) | `pir_in` 동기화 → `motion`, `rose`, `fall` | PIR 실제 출력 전압·예열 확인, Controller 연결 |
 | [`ultrasonic_distance_meter.v`](../gpio/rtl/ultrasonic_distance_meter.v) | `echo` → `trig`, `distance_cm[9:0]`, `distance_valid`, `busy`, `timeout_error` | ECHO 레벨 변환, 신규 샘플 스트로브 정의·검증 |
 | [`ultrasonic_alarm.v`](../../rtl/rtl11_ultrasonic_event/src/ultrasonic_alarm.v) | 16비트 `distance_cm`·`distance_valid` 기반 거리 임계 경보 | 10→16비트 영확장, `distance_valid` 레벨/펄스 의미 대조 |
+| [`us_axil_top.v`](../gpio/rtl/us_axil_top.v) · [`us_axil_regs.v`](../gpio/rtl/us_axil_regs.v) | **기존 HC-SR04 전용** AXI4-Lite 레지스터(CTRL/STATUS/DIST/BCD/IRQ_EN) | WSTRB·AW/W 분리 수정, 지정된 TB 통과. **PIR/보안 이벤트 맵과는 별개** |
 | [`status_registers.v`](../../rtl/rtl31_register_map/src/status_registers.v) | 간단한 2주소 레지스터 실습 | **AXI4-Lite 슬레이브가 아님**, 아래 제안 맵과 동일하지 않음 |
 | [`capstone_controller.v`](../../rtl/rtl32_capstone_control/src/capstone_controller.v) | **온도·거리 입력으로 모터/LED 제어** | PIR·HC-SR04 보안 Controller가 아니며 **그대로 결합 불가** |
 | `security_controller`, `security_regs` | **제안 명칭, 파일 없음** | 이벤트 래치·경보정책·레지스터 구현·독립 테스트벤치 필요 |
@@ -71,14 +72,14 @@ flowchart LR
 - 이벤트는 **Set 우선**: 하드웨어 이벤트 발생과 W1C 쓰기가 같은 클럭에 겹치면 새 이벤트를 보존한다. Reset은 이벤트/IRQ/경보를 초기화한다.
 - 정상 샘플에만 DISTANCE_CM을 갱신하고, 타임아웃에는 `last_distance_valid`를 내린다. **오래된 거리값을 현재 측정으로 취급하지 않는다.**
 - `THRESHOLD_CM`의 범위·0값 처리, PIR 경보 단독/거리 결합 조건, 이벤트 발생시각·IRQ 연결은 구현 전에 정책을 확정한다.
-- `us_axil_top.v`·`us_axil_regs.v`에는 **WSTRB 누락 및 AW/W 동시 수락 문제(P1)**가 기록되어 있다. [기존 RTL 감사](../gpio/rtl/README.md)의 미해결 항목을 통과하기 전 완전한 AXI4-Lite IP로 간주하지 않는다.
+- **2026-11-03 정정:** 기존 초음파용 `us_axil_top.v`·`us_axil_regs.v`의 **WSTRB 누락·AW/W 동시 수락 문제는 수정**되었고, AW 먼저/W 먼저/동시 수락, 부분 바이트, W1C, IRQ, B/R 백프레셔를 검사하는 [전용 테스트벤치](../gpio/tb/tb_us_axil_regs.v)가 [GitHub Actions #41480276825](https://github.com/Yuul-Jung/dev-board/actions/runs/41480276825)에서 통과했다. `us_axil_top`은 Icarus Verilog **컴파일**까지 확인했다. **AXI VIP, Vivado IP Integrator, 합성·Timing·보드 실측 및 보안용 신규 레지스터 맵 검증은 미실시**다. [최신 검증 기록](../VERIFICATION.md), [초음파 RTL 설명](../gpio/rtl/README.md) 참조.
 
 ### 2.3 SoC 연결은 두 경로로 분리
 
 - **A안(기초)**: MicroBlaze V → 기존 AMD AXI GPIO → PIR 입력·LED 출력. 소프트웨어에서 이벤트를 관리하며 초음파 타이밍 엔진과 하드웨어 이벤트 레지스터가 **완성됐다는 뜻이 아니다**.
 - **B안(확장)**: `pir_event` + `ultrasonic_distance_meter` + 신규 `security_controller` + 신규 `security_regs` → 검증된 AXI4-Lite 래퍼 → MicroBlaze V의 메모리 매핑 접근. `status_registers.v`만으로 B안의 버스 연결을 대체할 수 없다.
 
-**구현 게이트:** P0 전압·부저 구동 확인 → 독립 RTL 기능 TB → 통합 기능 TB → AXI AW/W 분리·WSTRB·BREADY/AR/RREADY·Reset 검증 → Vivado 합성/Timing → 보드 실측. 미통과 단계는 공개 문서에서 완료로 표시하지 않는다.
+**구현 게이트:** P0 전압·부저 구동 확인 → PIR/거리 독립 RTL 기능 TB → **신규 보안 Controller 통합 TB** → **신규 보안 AXI 슬레이브** AW/W 분리·WSTRB·BREADY/AR/RREADY·Reset 검증 → Vivado 합성/Timing → 보드 실측. 기존 **초음파 전용** AXI 래퍼의 일부 지향성 시험 통과를 신규 보안 AXI 슬레이브의 검증으로 대체하지 않는다.
 
 ## 3. 자료 연결(기존 코드 보존)
 
@@ -123,3 +124,15 @@ Testbench 시나리오: Reset → PIR=0 → PIR 검출 → ECHO 정상/타임아
 5. 회로 오류 점검, 테스트 결과, 미확인 내용, 출처/라이선스.
 
 > **현재는 출처 조사 + 설계안 문서화 단계입니다.** 실제 구현과 실습 결과는 미확인입니다.
+
+## 7. 2026-11-03 갱신 근거 및 배포 게이트
+
+| 검사 항목 | 실제 확인 결과 | 한계 |
+|---|---|---|
+| Keyestudio 원본 | [Project 47 원문](https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/blob/master/docs/2.Python_Tutorial%28Windows%29/Python_Tutorial%28Windows%29.md)의 PIR GPIO15, LED GPIO22, 능동 부저 GPIO4 및 0.2초 ON/OFF 분기 확인 | **ESP32 원본 배선도**이며 Basys3 배선도 아님. 저장소 LICENSE 파일·GitHub 라이선스 메타데이터 미확인 → 원본 사진/코드 복제 금지 |
+| HC-SR04 변형 | [일반형 5 V](../gpio/hc-sr04.md)와 3.3 V 호환형·Grove 단선형·Arduino Modulino Distance(I²C ToF)를 구별 | 제품별 ECHO HIGH·풀업·핀 배열 실측 전 Basys3 연결 금지 |
+| 기존 초음파 AXI4-Lite | [커밋 c56c4158](https://github.com/Yuul-Jung/dev-board/commit/c56c4158f299def310553c58ed45c767054996b4)에서 WSTRB·AW/W 분리 수정, [CI #41480276825](https://github.com/Yuul-Jung/dev-board/actions/runs/41480276825) **success** | **지정된 레지스터 TB와 Top 컴파일** 통과. AXI VIP/합성/실물·보안 통합은 미검증 |
+| 문서·링크·호스트 시험 | 같은 CI의 Python/JSON·상대 링크·HTML 재생성 점검 및 C 호스트 모의시험 성공 | C 호스트 시험은 FPGA 실행 검증이 아님 |
+| HTML 게시 | [Pages 배포 작업 #41480275045](https://github.com/Yuul-Jung/dev-board/actions/runs/41480275045) **success** | 실제 외부 브라우저 HTTP 접근 여부는 별도 확인 필요 |
+
+**캡스톤 제안 회로·핀 배정 상태:** Basys3의 GPIO는 3.3 V 기준이고 일반 HC-SR04 ECHO는 5 V가 될 수 있다. 입력 보호·부저 드라이버·공통 접지·PIR 출력 HIGH 실측을 통과하지 않은 연결은 게시용 '검증 완료 회로'가 아니다. 초음파 엔진의 `distance_valid`는 유지 레벨이며, 신규 Controller는 완료 이벤트(예: 기존 AXI 레지스터의 W1C `done_flag` 또는 별도 단발 스트로브)를 **명시적으로 설계·검증**해야 한다.
