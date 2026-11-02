@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include "../sw/axi_timer_pwm.h"
+// (추가) 독립 모의 CTRL 레지스터로 INVERT 수정 시 IRQ_EN 보존을 검증한다.
+static uint32_t quad_regs[3];
+#define QD_RD(base, off)    ((void)(base), quad_regs[(off) / 4])
+#define QD_WR(base, off, v) ((void)(base), quad_regs[(off) / 4] = (v))
 #include "../sw/quad.h"
 
 static uint32_t tlr0, tlr1, tcsr0, tcsr1; static int nw;
@@ -25,6 +29,12 @@ int main(void)
     CHK(buzzer_tone(0, 100000000, 0) == TPWM_OK && (tcsr1 & TCSR_ENT));
     CHK(buzzer_tone(0, 100, 50) == TPWM_ERR_ARGS);
     CHK(tpwm_set_cycles(0, 10, 1) == TPWM_ERR_ARGS);
+    // (추가) 기존 IRQ_EN 비트를 유지한 채 invert만 변경.
+    quad_regs[2] = 2u;
+    quad_set_invert(0, 1);
+    CHK(quad_regs[2] == 3u);
+    quad_set_invert(0, 0);
+    CHK(quad_regs[2] == 2u);
     printf(fails ? "FAILED %d\n" : "ALL PASS\n", fails);
     return fails != 0;
 }
