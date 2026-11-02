@@ -18,7 +18,7 @@ main{max-width:900px;margin:auto;padding:22px 18px 72px}a{color:var(--link)}nav{
 <h2>1. 공개 원본 사례</h2>
 <p><strong>Keyestudio KS5003/KS5004 ESP32 42-in-1 센서 키트 · Project 47: Intrusion Detection</strong></p>
 <p><a href="https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/blob/master/docs/2.Python_Tutorial%28Windows%29/Python_Tutorial%28Windows%29.md">제조사 튜토리얼 — 배선도·예제코드·실행 결과</a></p>
-<p>원본에서는 PIR 감지에 따라 LED와 능동 부저를 켜거나 0.2초 간격으로 점멸합니다. 사용 부품은 ESP32, 확장 보드, PIR, LED, 능동 부저 등입니다.</p>
+<p>원본에서는 PIR 감지 시 LED와 능동 부저를 0.2초 켬 / 0.2초 끔으로 반복하고, 미감지 시 끕니다. 사용 부품은 ESP32, 확장 보드, DIY PIR, LED 모듈, 능동 부저 등입니다. 원본 MicroPython 핀은 PIR GPIO15, LED GPIO22, 부저 GPIO4이며 <strong>Basys3 핀 번호가 아닙니다.</strong></p><p class="mut">원본 커밋: <a href="https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/tree/4adb6ce17ee454d10230b03030d5818e27cc0278">4adb6ce</a> · 원본 저장소의 라이선스 메타데이터는 미지정, 루트 LICENSE 파일 확인되지 않음. 원본 이미지·코드 재배포 없이 링크만 제공합니다.</p>
 <div class="cards">
  <div class="card"><strong>입력</strong><p>PIR 움직임 센서</p></div>
  <div class="card"><strong>제어</strong><p>ESP32 MicroPython 조건 판단</p></div>
@@ -30,20 +30,41 @@ main{max-width:900px;margin:auto;padding:22px 18px 72px}a{color:var(--link)}nav{
  <div class="card"><strong>HC-SR04 측정</strong><p>TRIG / ECHO 시간 계측</p></div>
 </div>
 <div class="arrow">↓</div>
-<div class="card" style="text-align:center"><strong>security_controller (제안 명칭)</strong><p>입력 상태 판정 → 알람·이벤트 레지스터</p></div>
+<div class="card" style="text-align:center"><strong>pir_event + ultrasonic_distance_meter (기존 코드)</strong><p>motion/rose/fall · distance_cm[9:0]/distance_valid/busy/timeout_error</p><strong>↓ security_controller + security_regs (신규 설계안, 미구현)</strong><p>입력 상태 판정 → 경보 정책 → 이벤트 레지스터</p></div>
 <div class="arrow">↓</div>
 <div class="cards">
  <div class="card"><strong>LED / 부저</strong><p>경보 출력</p></div>
- <div class="card"><strong>MicroBlaze V 확장</strong><p>AXI GPIO·Timer·UART·C 드라이버</p></div>
+ <div class="card"><strong>MicroBlaze V 확장</strong><p>A안: AXI GPIO 기초 실습<br>B안: 검증된 사용자 AXI4-Lite IP (미구현)</p></div>
 </div>
-<h2>3. 전기적 안전 및 검증</h2>
+<h2>3. 실제 구현과 제안 설계 구분</h2>
+<div class="grid"><table><thead><tr><th>기존 소스</th><th>현재 기능</th><th>캡스톤 적용 상태</th></tr></thead><tbody>
+<tr><td><a href="../../rtl/rtl10_pir_event/index.html">pir_event.v</a></td><td>PIR 동기화·rose/fall 이벤트</td><td>연결·실물 미검증</td></tr>
+<tr><td><a href="../gpio/rtl/index.html">ultrasonic_distance_meter.v</a></td><td>HC-SR04 주기 측정, 거리·valid·timeout</td><td>레벨 변환·샘플 갱신 펄스 검증 필요</td></tr>
+<tr><td><a href="../../rtl/rtl11_ultrasonic_event/index.html">ultrasonic_alarm.v</a></td><td>거리 임계 경보, 16비트 거리 입력</td><td>거리 10→16비트 확장·valid 의미 확인</td></tr>
+<tr><td><a href="../../rtl/rtl31_register_map/index.html">status_registers.v</a></td><td>2주소 일반 레지스터 예제</td><td><strong>AXI4-Lite 슬레이브 아님</strong></td></tr>
+<tr><td><a href="../../rtl/rtl32_capstone_control/index.html">capstone_controller.v</a></td><td>온도·거리 기반 모터/LED</td><td><strong>PIR 보안 Controller 아님</strong></td></tr>
+<tr><td>security_controller / security_regs</td><td>보안 통합·이벤트 래치</td><td><strong>제안만 있음, 소스 없음</strong></td></tr>
+</tbody></table></div>
+<p><strong>동작 순서(제안):</strong> PIR 상승 이벤트 → 초음파 엔진의 <em>새 측정 결과</em> 확인 → 정상 거리/타임아웃 분기 → 이벤트 저장 → LED·부저 경보. 기존 엔진은 주기 측정 방식으로 PIR 입력 시 즉시 TRIG를 발생시키지 않습니다. <code>distance_valid</code> 레벨을 1회 측정 완료 펄스로 해석하면 안 됩니다.</p>
+<h2>4. 제안 레지스터 맵 — 아직 구현되지 않음</h2>
+<div class="grid"><table><thead><tr><th>Offset</th><th>레지스터</th><th>접근</th><th>제안 의미</th></tr></thead><tbody>
+<tr><td>0x00</td><td>CTRL</td><td>RW</td><td>[0] enable [1] arm [2] alarm_latch_enable</td></tr>
+<tr><td>0x04</td><td>STATUS</td><td>RO</td><td>[0] pir_motion [1] alarm [2] last_distance_valid [3] last_timeout [4] busy [5] armed</td></tr>
+<tr><td>0x08</td><td>DISTANCE_CM</td><td>RO</td><td>[9:0] 마지막 정상 거리, valid=0이면 사용 금지</td></tr>
+<tr><td>0x0C</td><td>EVENT_PENDING</td><td>RW1C</td><td>[0] pir_rise [1] near_distance [2] echo_timeout</td></tr>
+<tr><td>0x10</td><td>THRESHOLD_CM</td><td>RW</td><td>[9:0] 경보 거리, 초기 제안 20 cm</td></tr>
+<tr><td>0x14</td><td>IRQ_ENABLE</td><td>RW</td><td>[2:0] 이벤트별 인터럽트 허용</td></tr>
+</tbody></table></div>
+<p class="mut">주소는 기존 IP의 실제 레지스터 주소가 아니라 32비트·4바이트 정렬 <strong>교육용 설계안</strong>입니다. EVENT_PENDING은 W1C(1을 쓰면 지움), 같은 클럭의 새 이벤트가 지움보다 우선합니다. AXI4-Lite 연결·주소 배정·C 드라이버는 아직 구현되지 않았습니다.</p>
+<p><strong>SoC 경로:</strong> A안은 기존 AMD AXI GPIO로 PIR/LED를 다루는 기초 실습, B안은 새 Controller·Register Bank를 표준 AXI4-Lite 슬레이브에 연결하는 확장 실습입니다. 기존 초음파 AXI 래퍼에는 <strong>WSTRB 누락·AW/W 동시 수락(P1 미해결)</strong> 문제가 있어 완전한 AXI IP로 승인하지 않았습니다.</p>
+<h2>5. 전기적 안전 및 검증</h2>
 <div class="grid"><table><thead><tr><th>점검 항목</th><th>연결 기준</th></tr></thead><tbody>
 <tr><td>PIR</td><td>실제 기판의 전원·출력 HIGH 전압·예열시간 확인</td></tr>
 <tr><td>HC-SR04 ECHO</td><td>일반 5V ECHO를 Basys3 3.3V GPIO에 직접 연결 금지. 적합한 레벨 변환 확인</td></tr>
 <tr><td>부저</td><td>능동/수동 구분, 부하 전류와 외부 구동회로 검증</td></tr>
 <tr><td>타이밍</td><td>Reset, PIR 변화, ECHO 정상/타임아웃, 경보 해제 시나리오를 Clock 기준으로 검증</td></tr>
 </tbody></table></div>
-<h2>4. 하위 기술자료</h2>
+<h2>6. 하위 기술자료</h2>
 <div class="cards">
  <a class="card" href="../gpio/index.html"><strong>GPIO·센서 정보</strong><p>PIR, HC-SR04, 전압·타이밍</p></a>
  <a class="card" href="../../rtl/rtl10_pir_event/index.html"><strong>RTL10 — PIR</strong><p>입력 이벤트</p></a>
