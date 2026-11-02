@@ -26,7 +26,7 @@
 | [SparkFun SEN-15569](https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html), 일반 HC-SR04 | **5 V 동작**. [Adafruit 핀 설명](https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts)에서는 일반형 **ECHO 5 V 로직**, TRIG는 3 V 또는 5 V 입력 가능 | VCC / TRIG / ECHO / GND, 펄스 폭 | **전압 변환 뒤** 재사용 가능(설계안) |
 | [SparkFun SEN-24049](https://www.sparkfun.com/ultrasonic-distance-sensor-3-3v-hc-sr04.html), **HC-SR04-33** | 제품 페이지의 동작 전원 **3.3~5 V**. ECHO HIGH 실제 전압은 **사용 전원·해당 기판 회로로 별도 확인** | VCC / TRIG / ECHO / GND | 신호 전압 확인 후 논리 재사용 후보(실물 미검증) |
 | [Seeed Grove Ultrasonic Ranger V2](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/) | **3.2~5.2 V**, V2는 3.3 V 시스템 호환으로 명시 | **SIG 1선이 TRIG/ECHO를 시간 분할 공유**, Grove 4핀 커넥터 | **그대로 연결 불가**. 양방향 SIG 제어·방향 전환 로직 별도 필요 |
-| [Arduino Modulino Distance](https://docs.arduino.cc/hardware/modulino-distance) | 공식 제품은 ToF 거리 센서이며 **I²C/Qwiic** 연결 | I²C 데이터/클럭. HC-SR04의 펄스 방식 아님 | **재사용 불가**. I²C 컨트롤러·드라이버 과제에 해당 |
+| [Arduino Modulino Distance](https://docs.arduino.cc/hardware/modulino-distance) ([ABX00102 공식 데이터시트](https://docs.arduino.cc/resources/datasheets/ABX00102-datasheet.pdf)) | **VL53L4CDV0DH/1 ToF IC**, Qwiic **3.3 V 전원**. 센서 권장 공급 전압은 **2.6~3.5 V**(제품 데이터시트) | **I²C SDA/SCL**, Qwiic 4핀. HC-SR04의 TRIG/ECHO 펄스 방식 아님 | **재사용 불가**. 3.3 V I²C 풀업/실제 기판·커넥터 핀 확인 후 별도 컨트롤러·드라이버 필요 |
 
 **UNO R4 ↔ Basys3 차이:** [Arduino UNO R4 Minima 공식 문서](https://docs.arduino.cc/hardware/uno-r4-minima)는 보드 I/O 동작 전압이 **5 V**라고 명시합니다. UNO R4에서 직접 연결되던 일반 HC-SR04 ECHO를 Basys3의 3.3 V GPIO에 같은 방식으로 직결하면 안 됩니다.
 
