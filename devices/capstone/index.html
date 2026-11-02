@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPSTONE-01 · PIR 침입 감지와 거리 연동 보안 제어</title>
+<style>
+:root{color-scheme:light dark;--bg:#fafaf7;--fg:#222;--mut:#626760;--line:#dadfd9;--card:#fff;--link:#24668a}
+@media(prefers-color-scheme:dark){:root{--bg:#161917;--fg:#eef0ed;--mut:#afb6af;--line:#454b45;--card:#222622;--link:#87c4ec}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,"Noto Sans KR",sans-serif}
+main{max-width:900px;margin:auto;padding:22px 18px 72px}a{color:var(--link)}nav{font-size:14px;color:var(--mut)}h1{font-size:26px;line-height:1.3;margin:22px 0 8px}h2{font-size:19px;border-bottom:1px solid var(--line);padding-bottom:7px;margin-top:30px}.mut{color:var(--mut)}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.card{padding:15px;border:1px solid var(--line);border-radius:10px;background:var(--card)}.arrow{text-align:center;margin:8px 0;font-size:20px;color:var(--mut)}.grid{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{background:var(--card)}footer{border-top:1px solid var(--line);margin-top:35px;padding-top:10px;color:var(--mut);font-size:13px}
+</style>
+</head>
+<body><main>
+<nav><a href="../../index.html">홈</a> / <a href="../index.html">주변모듈</a> / CAPSTONE-01</nav>
+<h1>CAPSTONE-01 · PIR 침입 감지와 거리 연동 보안 제어</h1>
+<p class="mut">GitHub 원본 실습 사례와 Basys3·MicroBlaze V 확장 설계안을 명확히 구분합니다.</p>
+<h2>1. 공개 원본 사례</h2>
+<p><strong>Keyestudio KS5003/KS5004 ESP32 42-in-1 센서 키트 · Project 47: Intrusion Detection</strong></p>
+<p><a href="https://github.com/keyestudio/KS5003-KS5004-Keyestudio-ESP32-42-in-1-Sensor-Kit/blob/master/docs/2.Python_Tutorial%28Windows%29/Python_Tutorial%28Windows%29.md">제조사 튜토리얼 — 배선도·예제코드·실행 결과</a></p>
+<p>원본에서는 PIR 감지에 따라 LED와 능동 부저를 켜거나 0.2초 간격으로 점멸합니다. 사용 부품은 ESP32, 확장 보드, PIR, LED, 능동 부저 등입니다.</p>
+<div class="cards">
+ <div class="card"><strong>입력</strong><p>PIR 움직임 센서</p></div>
+ <div class="card"><strong>제어</strong><p>ESP32 MicroPython 조건 판단</p></div>
+ <div class="card"><strong>출력</strong><p>LED + 능동 부저</p></div>
+</div>
+<h2>2. Basys3 확장 과제 (설계안)</h2>
+<div class="cards">
+ <div class="card"><strong>PIR 감지</strong><p>동기화·이벤트 감지</p></div>
+ <div class="card"><strong>HC-SR04 측정</strong><p>TRIG / ECHO 시간 계측</p></div>
+</div>
+<div class="arrow">↓</div>
+<div class="card" style="text-align:center"><strong>security_controller (제안 명칭)</strong><p>입력 상태 판정 → 알람·이벤트 레지스터</p></div>
+<div class="arrow">↓</div>
+<div class="cards">
+ <div class="card"><strong>LED / 부저</strong><p>경보 출력</p></div>
+ <div class="card"><strong>MicroBlaze V 확장</strong><p>AXI GPIO·Timer·UART·C 드라이버</p></div>
+</div>
+<h2>3. 전기적 안전 및 검증</h2>
+<div class="grid"><table><thead><tr><th>점검 항목</th><th>연결 기준</th></tr></thead><tbody>
+<tr><td>PIR</td><td>실제 기판의 전원·출력 HIGH 전압·예열시간 확인</td></tr>
+<tr><td>HC-SR04 ECHO</td><td>일반 5V ECHO를 Basys3 3.3V GPIO에 직접 연결 금지. 적합한 레벨 변환 확인</td></tr>
+<tr><td>부저</td><td>능동/수동 구분, 부하 전류와 외부 구동회로 검증</td></tr>
+<tr><td>타이밍</td><td>Reset, PIR 변화, ECHO 정상/타임아웃, 경보 해제 시나리오를 Clock 기준으로 검증</td></tr>
+</tbody></table></div>
+<h2>4. 하위 기술자료</h2>
+<div class="cards">
+ <a class="card" href="../gpio/index.html"><strong>GPIO·센서 정보</strong><p>PIR, HC-SR04, 전압·타이밍</p></a>
+ <a class="card" href="../../rtl/rtl10_pir_event/index.html"><strong>RTL10 — PIR</strong><p>입력 이벤트</p></a>
+ <a class="card" href="../../rtl/rtl11_ultrasonic_event/index.html"><strong>RTL11 — 초음파</strong><p>거리 측정</p></a>
+ <a class="card" href="../../rtl/rtl32_capstone_control/index.html"><strong>RTL32 — 캡스톤</strong><p>통합 Controller 구조</p></a>
+ <a class="card" href="../../soc-map/index.html"><strong>SoC 대응</strong><p>AXI 주변장치 확장</p></a>
+ <a class="card" href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/capstone/README.md"><strong>상세 Markdown</strong><p>모듈표·절차·근거·검증 한계</p></a>
+</div>
+<p class="mut">원본 예제 확인: 완료. 신규 Basys3 RTL 통합·합성·실물 보드 검증: 미실시. 원본 이미지·코드는 무단 복제하지 않고 출처 링크를 제공합니다.</p>
+<footer><a href="../../index.html">메인으로 돌아가기</a> · <a href="https://github.com/Yuul-Jung/dev-board/blob/main/HARNESS.md">운영 하네스</a></footer>
+</main></body></html>
