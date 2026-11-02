@@ -162,6 +162,9 @@ def page(d):
         for x in sub:
             r = os.path.join(d, x, 'README.md')
             t = title(r); t = ROLE.get(x) or t or ''
+            # 루트 RTL 트랙은 CI에서 32개 과제 시험 이력이 있어 '미실행'으로 표시하지 않는다.
+            if not rel and x == 'rtl':
+                t = 'Basys3 RTL 32과제 · Icarus/Verilator 검증 이력은 rtl/ 문서 참조'
             o.append(f'<a class="card" href="{e(x)}/index.html"><b>{e(x)}/</b><span>{e(t)}</span></a>')
         o.append('</div>')
     if rel.startswith('arduino/examples/') and len(parts) == 3:
