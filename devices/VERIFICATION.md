@@ -19,7 +19,7 @@
 
 **검증 명령(자동 CI 설정):** `python3 devices/tools/check_links.py`, `python3 devices/tools/gen_pages.py --check`, `bash devices/run_host_tests.sh`, `iverilog -g2012 -Wall -s tb_dht22_axil_regs ...` 및 `tb_quad_axil_regs` 지정 시나리오, Top 컴파일. `tb_dht22_axil_regs.v`·`tb_quad_axil_regs.v`를 추가하고 `.github/workflows/devices-check.yml`에 등록했습니다.
 
-**검증 상태:** 이 문서 작성 시점의 신규 RTL 회귀시험 결과는 **CI 실행 결과 확인 전**입니다. 지정 시나리오 시험이 통과해도 AXI VIP 전수 검증·Vivado 합성/타이밍·실물 Basys3 연결은 미실시입니다. DHT22/Quad 엔진 기능 코드는 변경하지 않았으며, 엔진의 단독 동작·실물 센서 응답은 별도로 검증해야 합니다.
+**검증 상태:** [GitHub Actions 실행 41518512735](https://github.com/Yuul-Jung/dev-board/actions/runs/41518512735)에서 Python/JSON, Markdown 상대 링크·HTML 재생성 일치, C 드라이버 호스트 시험, 초음파·1-Wire 기존 RTL, **신규 DHT22·Quad AXI4-Lite Top 컴파일 및 지정 시나리오 시뮬레이션이 모두 SUCCESS**로 기록되었습니다(검증한 커밋 `edd90f39225cacc165ec1aa6559ec8ff1e0b9171`). 이후 문서 목록 변경은 기능 코드에 영향을 주지 않지만 최종 커밋 CI도 별도 확인합니다. AXI VIP 전수 검증·Vivado 합성/타이밍·실물 Basys3 연결은 미실시입니다. DHT22/Quad 엔진 기능 코드는 변경하지 않았으며, 엔진의 단독 동작·실물 센서 응답은 별도로 검증해야 합니다.
 
 
 <!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
