@@ -4,7 +4,7 @@
 
 호스트 테스트와 레지스터/장치 모델(mock)
 
-AXI 레지스터 지향 시험: `tb_onewire_axil_regs.v` (GitHub Actions에서 Icarus Verilog 실행). 통과 기록 확인 전에는 실행 성공으로 표시하지 않습니다.
+AXI 레지스터 지향 시험: `tb_onewire_axil_regs.v` (GitHub Actions에서 Icarus Verilog 실행). [CI #41499100802](https://github.com/Yuul-Jung/dev-board/actions/runs/41499100802)에서 `PASS tb_onewire_axil_regs` 확인. 실물 보드 검증과는 구분합니다.
 
 ## 이 폴더의 목록
 
