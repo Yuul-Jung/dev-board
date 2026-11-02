@@ -30,6 +30,12 @@
 
 **UNO R4 ↔ Basys3 차이:** [Arduino UNO R4 Minima 공식 문서](https://docs.arduino.cc/hardware/uno-r4-minima)는 보드 I/O 동작 전압이 **5 V**라고 명시합니다. UNO R4에서 직접 연결되던 일반 HC-SR04 ECHO를 Basys3의 3.3 V GPIO에 같은 방식으로 직결하면 안 됩니다.
 
+### 국내 판매처 교차검증 — 제목만으로 3.3 V 호환 판단 금지
+
+- [아이씨팩토리 HC-SR04플러스 ICF1588](https://icfactory.cafe24.com/product/hc-sr04%ED%94%8C%EB%9F%AC%EC%8A%A4-33v5v-%EC%B4%88%EC%9D%8C%ED%8C%8C-%EA%B1%B0%EB%A6%AC-%EC%B8%A1%EC%A0%95-%EA%B0%90%EC%A7%80-%EC%84%BC%EC%84%9C-%EB%AA%A8%EB%93%88-icf1588/827/category/73/display/1/): 상품 페이지에 **HC-SR04+ / SGM324 / 3~5.5 V**라고 기재. **판매처 설명(D3)**이며 실제 ECHO HIGH 전압과 PCB 회로는 미확인.
+- [EKU 'HC-SR04 3V~5.5V' 상품](https://eku.co.kr/product/hc-sr04-%EC%B4%88%EC%9D%8C%ED%8C%8C-%EA%B1%B0%EB%A6%AC-%EC%84%BC%EC%84%9C-%EB%AA%A8%EB%93%88-3v-55v-%ED%98%B8%ED%99%98/149/): 제목은 **3~5.5 V 호환**, 같은 상세 설명에는 **DC 5 V 동작 / HIGH 5 V 출력**이라고 쓰여 있어 **페이지 내부 모순(P1)**. 실물 모델 확인 전 3.3 V 직결 후보로 승인하지 않음.
+- 위 두 상품은 서로 같은 PCB·회로라는 근거가 없습니다. 국내 판매처 가격·재고·표제는 데이터시트나 보드 레벨 변환 회로의 증거가 아닙니다.
+
 ### Basys3 3.3 V GPIO 연결 예 (일반 5 V ECHO형에 한함)
 
 ```text
