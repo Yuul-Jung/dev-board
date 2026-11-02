@@ -22,7 +22,7 @@
 
 **정적 검증 (이 실행에서 실제 수행):** GitHub 원본 파일의 최신 브랜치 내용을 다시 읽고 JSON 49개 항목 파싱, P0/P1 가드·출처 SHA·주소·PGA 필드·MSB·OS·200회 timeout·5 V ECHO·XADC 0~1 V·I²C 풀업·기존 WSTRB 누락을 코드/문서 문자열 및 구조로 교차 검사(12개 조건 확인). ADS1115 문서 상대 링크 6개를 추출하여 경로 구조 대조. **문자열/구조 정적 확인은 C 컴파일·호스트 모의시험·RTL 시뮬레이션·보드 검증과 다름**.
 
-**자동시험·실물 상태:** `gcc` + `devices/i2c/tb/test_ads1115.c`, 전체 `run_host_tests.sh`, `devices/tools/check_links.py`, `gen_pages.py --check`는 PR CI에서 결과 확인 필요. 이 기록 자체는 해당 명령의 로컬 실행 성공을 주장하지 않음. 실물 ADS1115 전압/풀업·XADC 연결은 **미검증**.
+**자동시험 결과 (2026-11-02, 실제 CI 확인):** [GitHub Actions 41443931037](https://github.com/Yuul-Jung/dev-board/actions/runs/41443931037) **success** — Python 구문·JSON 파싱 PASS, Markdown 상대 링크 **1,827개 오류 0**, 핵심 HTML 상대 링크 **43개 오류 0**, `gen_pages.py --check` **변경 0**, `bash devices/run_host_tests.sh` **45/45 PASS**(ADS1115 NULL 포인터 회귀 포함). **이 결과는 호스트 모의시험이며 RTL 시뮬레이션·합성·실물 ADS1115 전압/풀업·XADC 연결 검증을 의미하지 않음.**
 
 ## 2026-11-02 PIR 모듈 갱신 → 같은 실행 적대적 검증 (후속 회차)
 
