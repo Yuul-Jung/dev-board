@@ -584,6 +584,20 @@
   "channels": "4 단일 종단 또는 2 차동",
   "resolution_bits": 16,
   "max_sps": 860,
+  "analog_ain_recommended_v": "GND..VDD (each pin; TI SBAS444E §5.3)",
+  "analog_ain_absolute_max_v": "GND-0.3..VDD+0.3 (stress rating only)",
+  "pga_fsr_is_not_input_voltage_rating": true,
+  "fpga_3v3_i2c_direct_approved": false,
+  "breakout_variants": [
+   {"model":"bare ADS1115 IC", "i2c_addresses":"0x48..0x4B via ADDR", "pullup_rail":"external, verify"},
+   {"model":"Seeed Grove ADS1115", "power_v":"3.3/5 manufacturer claim", "i2c_default":"0x48", "analog_a0_a1":"shared with Grove analog connector", "pullup_rail":"schematic check required"},
+   {"model":"DFRobot DFR0553", "power_v":"3.3..5", "i2c_high_v":"3.3 manufacturer claim", "address_switch":"two selectable addresses"}
+  ],
+  "source_urls": [
+   "https://www.ti.com/document-viewer/ADS1115/datasheet",
+   "https://wiki.seeedstudio.com/Grove-16-bit-ADC-ADS1115/",
+   "https://www.dfrobot.com/product-1730.html"
+  ],
   "evidence": "D1 (TI 데이터시트 웹 문서, 비교기·ALERT 미사용)"
  },
  {

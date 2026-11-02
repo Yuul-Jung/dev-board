@@ -35,6 +35,20 @@ GitHub 의 Arduino C/C++ 라이브러리는 FPGA 에 합성되는 RTL 이 아닙
 | 9.3 | [arduino-libraries/Ethernet](https://github.com/arduino-libraries/Ethernet) | W5x00 소켓 API | 28 | 미기록 | 미기록 |
 | 5 | adafruit/RTClib, DHT-sensor-library, Adafruit_NeoPixel, Adafruit_BME280_Library, Adafruit_MPU6050, Adafruit_SSD1306, Adafruit-PWM-Servo-Driver-Library, Adafruit_ADS1X15, Adafruit_MCP3008 | §5 의 장치별 참고 라이브러리 | 21–23, 26 등 | 미기록 | 미기록 |
 
+## 2026-11-02 추가 원문 대조 — ADS1115 ADC·보드 변형
+
+| 구분 | 원본 | 직접 확인한 내용 | 고정 버전·라이선스 / 한계 |
+|---|---|---|---|
+| TI ADS1115 | [SBAS444E Rev.E](https://www.ti.com/document-viewer/ADS1115/datasheet) §5.1/§5.3/§7.3.3 | **AIN 권장 GND~VDD**, 절대최대 GND−0.3~VDD+0.3, PGA ±6.144 V는 입력 허용 전압이 아님 | D1, TI 공식 웹 데이터시트(2024-12), Git 커밋 해당 없음 |
+| Arduino UNO R4 Minima | [Hardware Docs](https://docs.arduino.cc/hardware/uno-r4-minima) | 보드 I/O 5 V, ADC 14비트까지 지원. Arduino 실습 연결과 Basys3 전압을 혼용하지 않음 | D1, Arduino 공식 웹 문서, 웹 페이지 재배포 라이선스 미검토 |
+| Seeed Grove 4-channel ADS1115 | [Wiki](https://wiki.seeedstudio.com/Grove-16-bit-ADC-ADS1115/) | 제조사 3.3/5 V, I²C 0x48, Grove A0/A1과 나사 단자 A0/A1 공유 | D1, 보드 풀업 레일·실제 커넥터 핀 순서는 회로도/실물 미확인 |
+| DFRobot Gravity DFR0553 | [제조사 상품](https://www.dfrobot.com/product-1730.html) | VCC 3.3~5 V, 제조사 표기 **I²C HIGH 3.3 V**, 2주소 선택 스위치, 4채널 | D1, 제조사 표기를 실물 전압 측정으로 오인하지 않음 |
+| 국내 VCTEC DFR0553 | [판매 상품](https://vctec.co.kr/product/16%EB%B9%84%ED%8A%B8-i2c-adc-%EB%AA%A8%EB%93%88-ads1115-gravity-i2c-ads1115-16-bit-adc-module-arduino-/13354/) | DFRobot 제조사 사양을 재기재 | D3, 실제 납품 기판 변형·가격·재고 미검증 |
+| Seeed Arduino ADS1115 소스 | [커밋 `00beed48708bae7cce1f78ad05448e1af132e0a3`](https://github.com/Seeed-Studio/Seeed_Arduino_ADS1115/tree/00beed48708bae7cce1f78ad05448e1af132e0a3) · [License.txt](https://github.com/Seeed-Studio/Seeed_Arduino_ADS1115/blob/00beed48708bae7cce1f78ad05448e1af132e0a3/License.txt) | 공식 Arduino 라이브러리와 라이선스 파일 확인 | **MIT**, 저작권 Seeed Technology 2020, 코드 미복제 |
+| DFRobot ADS1115 소스 | [커밋 `6d3df78d29693bf9e245a223afe0443406bd2980`](https://github.com/DFRobot/DFRobot_ADS1115/tree/6d3df78d29693bf9e245a223afe0443406bd2980) · [LICENSE](https://github.com/DFRobot/DFRobot_ADS1115/blob/6d3df78d29693bf9e245a223afe0443406bd2980/LICENSE) | 공식 Arduino 라이브러리와 라이선스 파일 확인 | **MIT**, 저작권 DFRobot 2010, 코드 미복제 |
+
+**선별 기준:** Keyestudio/Freenove 기존 튜토리얼은 주변모듈 자료 대장에 유지하지만 **동일 ADS1115 IC·기판에 대한 검증된 원본 사례가 이번 조사에서 확보되지 않아** 다른 센서의 예제를 ADS1115 원본으로 둔갑시키지 않았습니다. 원본 웹 이미지·코드는 복제하지 않았습니다. 자세한 안전 규칙: [ADS1115](i2c/ads1115.md).
+
 ## 2026-11-02 추가 원문 대조 — 초음파 모듈·교재 라이선스
 
 | 문서·저장소 | 원본 링크 | 확인한 범위 | 재사용/검증 상태 |

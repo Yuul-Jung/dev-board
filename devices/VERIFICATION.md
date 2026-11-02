@@ -4,6 +4,26 @@
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
 
+## 2026-11-02 ADS1115 외부 ADC 자료 갱신 → 즉시 적대적 검증 (3차)
+
+**자료 갱신 후 검증 순서:** TI SBAS444E §5.1/§5.3/§7.3.3·Arduino UNO R4·Seeed Grove ADS1115·DFRobot DFR0553·국내 판매 자료 조사 → [ADS1115 기술자료](i2c/ads1115.md) 및 [JSON](data/devices.json)·[출처 대장](REFERENCES.md) 갱신 → 관련 C 드라이버·호스트 모델·I²C 전원·GPIO/XADC 안전 문서 정적 대조 → 실제 결함만 수정. 2026-11-02 원본 웹 문서 확인, 외부 사진/코드 복제 없음.
+
+| 우선순위 | 검증 대상 | 발견·판정·수정 |
+|---|---|---|
+| **P0 수정** | 기존 `ads1115.md`의 “3.3 V 공급 시 3.6 V까지 입력 허용” | TI **정상 동작 GND~VDD**, **절대최대 GND−0.3~VDD+0.3** 구분. 3.6 V는 **절대최대 스트레스 정격**이지 정상 측정 허용 전압이 아님. 문서·구조화 데이터·C 헤더 주석 수정 |
+| **P0 예방** | ADS1115 PGA ±6.144 V를 실제 AIN 6.144 V 입력 가능으로 오인 | PGA는 ADC 출력 코드 스케일. VDD 3.3 V에서 AIN 0~3.3 V 권장. **Basys3 내장 XADC 0~1 V와 ADS1115 외부 AIN을 분리** |
+| **P0 예방** | 5 V I²C 풀업 → FPGA 3.3 V SDA/SCL 과전압 | 원본 칩·Seeed Grove·DFRobot DFR0553·국내 판매 모듈을 분리. **DFR0553의 3.3 V HIGH는 제조사 보드 특정 사양**, Seeed/범용 모듈의 풀업 레일은 실물/회로도 미확인. 직결 승인 플래그 false |
+| **P1 수정** | `gpio/analog-sensors.md`의 ADS1115 링크가 일반 `i2c/sensors.md`로 연결 | 실제 ADC 설명 `i2c/ads1115.md`로 수정. 링크 자체는 존재했지만 대상 문서가 잘못됨 |
+| **P1 수정** | `sw/ads1115.c` 공개 레지스터 API가 NULL 장치/버스/출력 포인터를 역참조 | `ads1115_write_reg`·`ads1115_read_reg`에 `IIC_ERR_ARGS` 가드 추가. `tb/test_ads1115.c`에 5개 회귀 검사 추가. 정상 변환·Config·폴링 경로 유지 |
+| **P1 확인** | ADS1115 7비트 주소 0x48~0x4B, Config 비트, MSB 순서, OS 폴링, timeout | `ads1115.c`·`axi_iic.c`·`test_ads1115.c` 정적 대조. 주소 변환(`addr7 << 1`), 비트필드, 원시값 환산은 정상으로 판단해 유지 |
+| **P1 미해결** | AXI IIC 실제 FIFO·Repeated START·400 kHz 풀업 타이밍, 외부 ADS1115 실물 연결 | 기존 호스트 모델은 실제 I²C 버스 전기적 특성·실제 IP FIFO·FPGA 연결을 검증하지 못함. 실물·로직애널라이저 시험 전 완료 표시 금지 |
+| **P1 기존 미해결** | `gpio/rtl/us_axil_top.v` WSTRB·독립 AW/W 처리 | 이번 ADS1115 수정 범위와 무관. 기존 미해결 유지; 테스트벤치 없이 구조 변경 금지 |
+| **저작권·근거** | Seeed/DFRobot GitHub 원본 | Seeed 커밋 `00beed48708bae7cce1f78ad05448e1af132e0a3`, DFRobot 커밋 `6d3df78d29693bf9e245a223afe0443406bd2980`; 양쪽 **MIT LICENSE 직접 확인**, 코드는 복제하지 않음 |
+
+**정적 검증 (이 실행에서 실제 수행):** GitHub 원본 파일의 최신 브랜치 내용을 다시 읽고 JSON 49개 항목 파싱, P0/P1 가드·출처 SHA·주소·PGA 필드·MSB·OS·200회 timeout·5 V ECHO·XADC 0~1 V·I²C 풀업·기존 WSTRB 누락을 코드/문서 문자열 및 구조로 교차 검사(12개 조건 확인). ADS1115 문서 상대 링크 6개를 추출하여 경로 구조 대조. **문자열/구조 정적 확인은 C 컴파일·호스트 모의시험·RTL 시뮬레이션·보드 검증과 다름**.
+
+**자동시험 결과 (2026-11-02, 실제 CI 확인):** [GitHub Actions 41443931037](https://github.com/Yuul-Jung/dev-board/actions/runs/41443931037) **success** — Python 구문·JSON 파싱 PASS, Markdown 상대 링크 **1,827개 오류 0**, 핵심 HTML 상대 링크 **43개 오류 0**, `gen_pages.py --check` **변경 0**, `bash devices/run_host_tests.sh` **45/45 PASS**(ADS1115 NULL 포인터 회귀 포함). **이 결과는 호스트 모의시험이며 RTL 시뮬레이션·합성·실물 ADS1115 전압/풀업·XADC 연결 검증을 의미하지 않음.**
+
 ## 2026-11-02 PIR 모듈 갱신 → 같은 실행 적대적 검증 (후속 회차)
 
 **자료 갱신 대상:** [HC-SR501](gpio/hc-sr501.md), [devices.json](data/devices.json), [출처 대장](REFERENCES.md), [RTL10 문서](../rtl/rtl10_pir_event/README.md). 기존 HC-SR04 문서·코드와 AXI 드라이버는 변경하지 않음.

@@ -1,7 +1,8 @@
 /* ADS1115 16비트 I2C ADC. axi_iic 드라이버 위에서 동작.
  * 근거: TI SBAS444 데이터시트 웹 문서 (D1) — 레지스터 포인터, Config 비트 필드·리셋값 8583h,
  *   주소표(ADDR→GND/VDD/SDA/SCL = 0x48/49/4A/4B), 바이트 순서(MSB 먼저), LSB 표, 출력 코드(2의 보수),
- *   변환 시간 = 1/DR, VDD 2.0~5.5 V, 입력은 VDD+0.3 V 초과 금지, SCL 400 kHz(고속 모드 3.4 MHz).
+ *   변환 시간 = 1/DR, VDD 2.0~5.5 V, AIN 정상 동작 GND~VDD, 절대최대 GND-0.3~VDD+0.3 V,
+ *   SCL 400 kHz(고속 모드 3.4 MHz). PGA FSR ±6.144 V는 AIN 전압 허용치를 뜻하지 않는다.
  * 비교기/ALERT 기능은 쓰지 않는다(COMP_QUE=11 로 비활성). 보드에서 실행해 보지 않았다. */
 #ifndef ADS1115_H
 #define ADS1115_H

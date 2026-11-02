@@ -2,7 +2,7 @@
 
 <!-- nav -->[저장소 홈](../../README.md) › [devices](../README.md) › [gpio](README.md)
 
-교재 8·16장에 해당합니다. ADC 에 의존하지 않는 순수 변환 함수입니다: [`sw/analog_sensors.h`](sw/analog_sensors.h), [`sw/analog_sensors.c`](sw/analog_sensors.c), 시험 [`tb/test_analog_sensors.c`](tb/test_analog_sensors.c), 사실표 [`ref/analog_sensors_facts.txt`](ref/analog_sensors_facts.txt). 전압은 [ADS1115](../i2c/sensors.md)(`ads1115_raw_to_uv`) 또는 [MCP3008](../spi/sensor-adc-dac.md)(`mcp3008_to_mv`)에서 얻습니다. FPGA 보드의 내장 XADC 는 이 저장소에서 다루지 않았습니다.
+교재 8·16장에 해당합니다. ADC 에 의존하지 않는 순수 변환 함수입니다: [`sw/analog_sensors.h`](sw/analog_sensors.h), [`sw/analog_sensors.c`](sw/analog_sensors.c), 시험 [`tb/test_analog_sensors.c`](tb/test_analog_sensors.c), 사실표 [`ref/analog_sensors_facts.txt`](ref/analog_sensors_facts.txt). 전압은 [ADS1115](../i2c/ads1115.md)(`ads1115_raw_to_uv`) 또는 [MCP3008](../spi/sensor-adc-dac.md)(`mcp3008_to_mv`)에서 얻습니다. FPGA 보드의 내장 XADC 는 이 저장소에서 다루지 않았습니다.
 
 ## LM35 (D1 요약 경유, TI LM35 데이터시트)
 | 항목 | 값 |
