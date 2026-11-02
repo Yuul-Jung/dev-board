@@ -17,8 +17,11 @@
 | **P1 수정** | `tools/gen_pages.py`가 수작업 `devices/capstone/index.html`을 자동 덮어씀 | `MANUAL_PAGES`에 등록하여 덮어쓰기 방지, 페이지 누락은 `--check`에서 검출하도록 변경 |
 | **P1 미해결** | `us_axil_top.v`에 WSTRB 포트가 없음 | [RTL README](gpio/rtl/README.md)에 **완전한 AXI4-Lite IP 검증 전**이라고 명시. 표준 채널·WSTRB·독립 AW/W 타이밍·응답·백프레셔를 시뮬레이션 후 IP화해야 함. 코드 무검증 재설계 금지 |
 | **P1 확인** | Keyestudio/Freenove 저작권·원본 커밋 | Keyestudio 원본 루트에 LICENSE 없음(재배포 권한 미확인), Freenove README/라이선스는 **CC BY-NC-SA 3.0**. 각 GitHub SHA·출처 링크를 [대장](REFERENCES.md)에 기록. 외부 사진·코드 복제 없음 |
-| **유지** | HC-SR04 C 드라이버·호스트 모의시험 | 기존 `us_poll`/W1C 플래그 처리·거리 범위·헤더 상수와 RTL 주소를 정적으로 대조. 이번 변경에 기능 수정 없음. **이 감사에서 재실행 전에는 기존 호스트 시험 통과 기록만 참고** |
+| **유지·실행 통과** | HC-SR04 C 드라이버·호스트 모의시험 | 기존 `us_poll`/W1C 플래그 처리·거리 범위·헤더 상수와 RTL 주소를 정적으로 대조. 드라이버 기능 변경 없음. 아래 CI의 `ultrasonic` 호스트 모의시험 **PASS** |
+| **P1 수정·재현** | 기존 DNS→HTTP 호스트 모의시험에서 HTTP 본문 sink가 `memcpy()` 뒤 `strlen()`을 다시 호출 | 종료 NUL이 아직 없는 새 데이터에서 버퍼 밖 읽기가 발생할 수 있는 **테스트 코드 결함**. `devices/ethernet/tb/test_dns.c`의 복사 전 길이를 저장해 정확한 끝에 NUL을 쓰도록 수정하고 조각·버퍼 센티넬 회귀 시험 추가. **C 드라이버 자체는 변경 없음** |
 | **유지** | I²C PCF8574 LCD 5 V 풀업 위험 | [lcd1602.md](i2c/lcd1602.md)의 SDA/SCL 풀업 전원 미확인 경고 유지. 실제 백팩 회로가 없으므로 안전한 직결로 승격하지 않음 |
+
+**자동 검증 결과 (2026-11-02):** [GitHub Actions 실행 41413151486](https://github.com/Yuul-Jung/dev-board/actions/runs/41413151486) **성공** — Python 구문·`devices.json` JSON 파싱 통과, Markdown 상대 링크 **1,806개 중 오류 0개**, `gen_pages.py --check` 변경 대상 **0개**, C 드라이버 **호스트 모의시험 45개 PASS** (`dns-model`, `ultrasonic` 포함). **ASan/UBSan 및 실제 Verilog 시뮬레이션은 이번 CI에 포함하지 않음.**
 
 **검증 수준 구분:** 위의 정적 원본·소스 대조는 보드 동작 확인이 아닙니다. RTL 32과제의 GitHub Actions 시뮬레이션 기록과 `devices/gpio/rtl`의 초음파 AXI 래퍼 시뮬레이션은 **서로 다른 검증 범위**입니다. 후자는 본 작업에서 합성·타이밍·실물 검증하지 않았습니다. 자동 검사 결과는 CI 실행 후 별도 기록해야 합니다.
 
