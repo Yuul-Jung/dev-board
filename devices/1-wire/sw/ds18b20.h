@@ -1,9 +1,10 @@
 /* DS18B20 드라이버 (AXI4-Lite 1-Wire 마스터 `rtl/onewire_axil_*` 위에서 비트 단위로 동작).
- * 근거: DS18B20 데이터시트(웹 가져오기 요약 경유, D1 요약 경유): 스크래치패드 9바이트(0,1 온도 LSB/MSB, 2 TH, 3 TL, 4 설정,
+ * 근거: Analog Devices DS18B20 Rev.6(2019-07) 데이터시트 원문 PDF 확인(2026-11-03): 스크래치패드 9바이트(0,1 온도 LSB/MSB, 2 TH, 3 TL, 4 설정,
  *   5~7 예약, 8 CRC), 설정 바이트 비트 6:5 = R1R0 (9/10/11/12비트 = 1Fh/3Fh/5Fh/7Fh), 온도는 부호 확장 2의 보수 16비트,
  *   9/10/11비트일 때 하위 3/2/1비트 미정의, 전원 투입 값 +85 °C(0550h), 변환 시간 93.75/187.5/375/750 ms,
  *   CRC 다항식 x^8+x^5+x^4+1 (스크래치패드 0~7 바이트), 외부 전원일 때 Convert T 뒤 읽기 슬롯이 0 이면 변환 중, 1 이면 끝.
  *   명령: Skip ROM CCh, Convert T 44h, Read Scratchpad BEh, Write Scratchpad 4Eh.
+ * AXI4-Lite: AW/W 독립 수락, CMD/IRQ_EN은 WSTRB[0] 유효 시에만 변경. WSTRB=0은 부작용 없음.
  * 레지스터는 `rtl/README.md`(CMD 0x00: [1:0] 0=리셋 1=쓰기 2=읽기, [2] 쓸 비트 / STATUS 0x04: busy, done, presence, rbit).
  * 설계안: 변환 대기를 읽기 슬롯 폴링 횟수(max_polls)로 제한한다(슬롯 약 80 µs, 750 ms ≈ 9400 회). 기생 전원은 지원하지 않는다
  *   (강한 풀업 제어가 RTL 에 없음 — 기생 전원이면 변환 상태 비트를 읽을 수 없어 이 드라이버는 시간 초과로 끝난다).
