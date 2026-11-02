@@ -15,6 +15,7 @@
 |---|---|
 | [mock_motor.h](mock_motor.h) | 모의 레지스터. 읽기/쓰기를 함수로 받아 DUTY 폭(mock_duty_mask)을 흉내 내고 쓰기 순서를 기록한다. |
 | [mock_servo.h](mock_servo.h) | endif |
+| [tb_dcmotor_axil_regs.v](tb_dcmotor_axil_regs.v) | DC 모터 AXI4-Lite: 독립 AW/W, WSTRB, 읽기 전용 STATUS, B/R 백프레셔 검증. |
 | [tb_dcmotor_engine.v](tb_dcmotor_engine.v) | 엔진 단독 테스트. 1 MHz 클럭, 주기 100, 듀티 25로 줄여 돌린다. |
 | [tb_servo_engine.v](tb_servo_engine.v) | 자체 점검 테스트벤치 (미실행: 시뮬레이터 없음). |
 | [test_dcmotor.c](test_dcmotor.c) | motor/tb/test_dcmotor.c — dcmotor.c 호스트 모의 시험. |
