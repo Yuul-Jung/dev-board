@@ -273,7 +273,16 @@ static void thook(int sock, int proto, const uint8_t ip[4], uint16_t port, const
         if (memcmp(ip, answer_ip, 4) == 0) { static const char resp[] = "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nhello"; inject_rx(sock, (const uint8_t *)resp, sizeof resp - 1); }
     }
 }
-static int sink(void *c, const uint8_t *d, unsigned n) { char *p = c; memcpy(p + strlen(p), d, n); p[strlen(p) + n] = 0; return 0; }
+// (변경) memcpy 후 strlen()은 새 데이터가 NUL 종료되지 않아 버퍼 밖을 읽을 수 있다.
+// 복사 전 길이를 저장하고, 복사한 끝 위치에 종료 문자를 넣는다.
+static int sink(void *c, const uint8_t *d, unsigned n)
+{
+    char *p = c;
+    size_t used = strlen(p);
+    memcpy(p + used, d, n);
+    p[used + n] = 0;
+    return 0;
+}
 static void setup(int mode) { nwire = 0; dmode = mode; dsends = 0; wire_hits_http = 0; peer_hook = thook; memcpy(answer_ip, R1, 4); }
 
 static void t_resolve(void)
