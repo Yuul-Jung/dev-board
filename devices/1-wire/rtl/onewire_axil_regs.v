@@ -9,6 +9,8 @@ module onewire_axil_regs (
     input  wire        awvalid,
     output wire        awready,
     input  wire [31:0] wdata,
+    // (추가) AXI4-Lite 바이트 스트로브: 하위 8비트 CMD/IRQ_EN에 WSTRB[0] 적용.
+    input  wire [3:0]  wstrb,
     input  wire        wvalid,
     output wire        wready,
     output wire [1:0]  bresp,
@@ -33,24 +35,57 @@ module onewire_axil_regs (
     reg done_flag;
     reg irq_en;
 
-    wire do_wr = awvalid && wvalid && !bvalid;
-    assign awready = do_wr;
-    assign wready  = do_wr;
-    assign bresp   = 2'b00;
-    assign rresp   = 2'b00;
+    // (변경) AW/W는 AXI4-Lite 독립 채널이므로 순서와 관계없이 별도 수락.
+    // 한 쌍이 완성될 때 한 번만 레지스터를 갱신하고 B 응답을 보낸다.
+    reg [3:0]  awaddr_hold;
+    reg        aw_pending;
+    reg [31:0] wdata_hold;
+    reg [3:0]  wstrb_hold;
+    reg        w_pending;
 
-    wire wr_cmd = do_wr && (awaddr[3:2] == 2'd0);
+    assign awready = rstn && !aw_pending && !bvalid;
+    assign wready  = rstn && !w_pending  && !bvalid;
+    wire take_aw = awvalid && awready;
+    wire take_w  = wvalid  && wready;
+    wire commit_wr = aw_pending && w_pending && !bvalid;
+    wire write_low_byte = commit_wr && wstrb_hold[0];
+    wire [1:0] widx = awaddr_hold[3:2];
+    assign bresp = 2'b00;
+    assign rresp = 2'b00;
+
+    // (변경) 버퍼에 저장된 주소/데이터를 사용하여 정확히 한 클록 시작.
+    // WSTRB=0 또는 상위 바이트 쓰기는 명령 시작·IRQ 변경이 없어야 한다.
+    wire wr_cmd = write_low_byte && (widx == 2'd0);
     assign cmd_start = wr_cmd && !busy;
-    assign cmd_op    = wdata[1:0];
-    assign cmd_wbit  = wdata[2];
+    assign cmd_op    = wdata_hold[1:0];
+    assign cmd_wbit  = wdata_hold[2];
 
     always @(posedge clk) begin
         if (!rstn) begin
-            bvalid <= 1'b0; done_flag <= 1'b0; irq_en <= 1'b0;
+            awaddr_hold <= 4'd0;
+            aw_pending <= 1'b0;
+            wdata_hold <= 32'd0;
+            wstrb_hold <= 4'd0;
+            w_pending <= 1'b0;
+            bvalid <= 1'b0;
+            done_flag <= 1'b0;
+            irq_en <= 1'b0;
         end else begin
-            if (do_wr) begin
+            if (take_aw) begin
+                awaddr_hold <= awaddr;
+                aw_pending <= 1'b1;
+            end
+            if (take_w) begin
+                wdata_hold <= wdata;
+                wstrb_hold <= wstrb;
+                w_pending <= 1'b1;
+            end
+            if (commit_wr) begin
+                aw_pending <= 1'b0;
+                w_pending <= 1'b0;
                 bvalid <= 1'b1;
-                if (awaddr[3:2] == 2'd2) irq_en <= wdata[0];
+                if (write_low_byte && widx == 2'd2)
+                    irq_en <= wdata_hold[0];
             end else if (bvalid && bready) begin
                 bvalid <= 1'b0;
             end
@@ -59,7 +94,7 @@ module onewire_axil_regs (
         end
     end
 
-    assign arready = arvalid && !rvalid;
+    assign arready = rstn && !rvalid;
 
     always @(posedge clk) begin
         if (!rstn) begin
