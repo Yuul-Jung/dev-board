@@ -19,7 +19,9 @@
 | [mock_timer_b.h](mock_timer_b.h) | 기준 주소를 구분하는 AXI Timer 모의 (RGB 처럼 인스턴스가 여러 개인 시험용) |
 | [mock_us.h](mock_us.h) | endif |
 | [model_quad.py](model_quad.py) | rtl/quad_engine.v 의 전이 표(00->10->11->01->00 = +1)와 필터를 옮긴 파이썬 모델. Verilog 검증이 아님. |
+| [tb_dht22_axil_regs.v](tb_dht22_axil_regs.v) | DHT22 AXI4-Lite 독립 AW/W, WSTRB, 명령 단일 펄스, IRQ, R/B 백프레셔 검증. |
 | [tb_dht22_engine.v](tb_dht22_engine.v) | 엔진 단독 테스트. 소자 모델이 데이터시트 서술의 파형으로 응답한다. |
+| [tb_quad_axil_regs.v](tb_quad_axil_regs.v) | 로터리 엔코더 AXI4-Lite 독립 AW/W, WSTRB, W1C 이벤트, clear, IRQ 검증. |
 | [tb_ultrasonic.v](tb_ultrasonic.v) | 코어 단독 테스트. 트리거 뒤 에코를 만들어 넣어 거리 변환과 타임아웃을 확인한다. |
 | [tb_us_axil_regs.v](tb_us_axil_regs.v) | 초음파 AXI4-Lite 레지스터 독립 채널/WSTRB/응답 백프레셔 회귀 테스트. |
 | [test_analog_sensors.c](test_analog_sensors.c) | 아날로그 센서 변환 시험: 손으로 계산한 값, 경계, 독립 계산(__int128 정수 반올림)과의 대조, 단조성·범위 불변식. 보드 측정이 아니다. |
