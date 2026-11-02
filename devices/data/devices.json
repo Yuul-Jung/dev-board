@@ -10,6 +10,10 @@
   ],
   "trig_us": 10,
   "formula": "cm = echo_us / 58",
+  "variant": "classic HC-SR04 (5V type; not HC-SR04-33 or Grove single-SIG)",
+  "echo_level": "5V logic on standard HC-SR04; measure actual module",
+  "fpga_3v3_direct_echo": false,
+  "source_urls": ["https://www.sparkfun.com/ultrasonic-distance-sensor-hc-sr04.html", "https://learn.adafruit.com/ultrasonic-sonar-distance-sensors/pinouts"],
   "evidence": "D1"
  },
  {
