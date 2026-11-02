@@ -21,14 +21,17 @@
 | 0x0C | BCD (R) | [11:0] BCD 3자리 |
 | 0x10 | IRQ_EN (RW) | [0] 측정 완료, [1] 타임아웃 |
 
-## AXI4-Lite 통합 주의 (2026-11-02 정적 감사)
+## AXI4-Lite 버스 정정 (2026-11-03)
 
-- **P1 미해결:** `us_axil_top.v`의 쓰기 채널에 **WSTRB[3:0] 포트가 없고**, `us_axil_regs.v`는 AWVALID와 WVALID가 동시에 유효할 때만 쓰기 핸드셰이크를 합니다. 내부 레지스터 실습용 단순 인터페이스일 수 있으나, **완전한 AXI4-Lite 슬레이브 IP로 검증되었다고 표현할 수 없습니다.**
-- 실제 Vivado IP Integrator에 넣기 전 표준 AXI4-Lite 채널·WSTRB·독립 AW/W 수락·리셋·응답·백프레셔를 점검하고, AW/W 도착 시차·BREADY 지연·WSTRB 마스킹을 시험해야 합니다.
-- **이 감사에서는 기존 HDL 동작을 변경하지 않았습니다.** 시뮬레이션 없이 임의의 AXI 버스 재설계를 합격 처리하지 않기 위함입니다. 전압 안전 및 비트 명칭 오류는 별도로 문서에 반영했습니다.
+- **P1 수정:** `us_axil_top.v`에 `s_axi_wstrb[3:0]`을 추가하고, `us_axil_regs.v`는 **AW와 W를 별도의 1단 버퍼로 수락**한 뒤 양쪽 수락이 완료되면 한 번만 레지스터를 갱신하고 B 응답을 생성하도록 변경했습니다.
+- `WSTRB[0]`이 1일 때만 하위 바이트의 `CTRL[0]`, `IRQ_EN[1:0]`, `STATUS[3:2]` W1C를 갱신합니다. `WSTRB=0` 또는 상위 바이트만 선택한 쓰기는 레지스터 상태를 변경하지 않지만 정상 B 응답은 발생합니다.
+- `BVALID` 동안에는 새 AW/W를 받지 않으며, `BREADY`가 늦어져도 응답을 유지합니다. AR/R 채널은 독립 동작하며 `RREADY`가 늦어져도 `RDATA`와 `RVALID`를 유지합니다.
+- **회귀시험:** `../tb/tb_us_axil_regs.v`에서 AW 먼저, W 먼저, 동시 수락, WSTRB 마스킹, W1C, IRQ, B/R 백프레셔, 읽기/쓰기 병행을 검사합니다. `.github/workflows/devices-check.yml`에서 Icarus Verilog로 `us_axil_top` 합성 전 **컴파일**과 레지스터 **RTL 시뮬레이션**을 수행합니다.
+- **검증 단계:** 테스트벤치/CI의 실제 결과 확인 전에는 통과로 기록하지 않습니다. 본 회차는 AXI VIP·Vivado IP Integrator·합성·Timing·실물 Basys3 시험을 수행하지 않았습니다.
+- 공식 규격 대조: [Arm AXI4 소개](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf), [AMD PG138 AXI4-Lite 신호](https://docs.amd.com/r/en-US/pg138-axi-ethernet/AXI4-Lite-Interface), [PG267 프로토콜 검사](https://docs.amd.com/r/en-US/pg267-axi-vip/AXI-Protocol-Checks-and-Descriptions). `../sw/ultrasonic.[ch]` 레지스터 오프셋은 변경하지 않았습니다.
 
 ## 확인 필요
-- **시뮬레이션과 합성은 하지 않았습니다.** 이 환경에 시뮬레이터가 없습니다. AXI 래퍼는 눈으로만 검토했습니다.
+- **합성·타이밍·실물 검증은 하지 않았습니다.** 새 AXI 테스트벤치의 시뮬레이션 결과는 GitHub Actions 실행 기록을 별도로 확인합니다.
 - 에코 입력은 5 V일 수 있으므로 분압 또는 레벨 시프터 뒤에서 연결해야 합니다.
 - 코어는 active-high 리셋이라 래퍼에서 `rstn`을 반전해 넘깁니다.
 - 코어의 `distance_valid`는 다음 측정 전까지 1로 유지됩니다. 새 값 알림은 `done` 플래그를 쓰세요.
