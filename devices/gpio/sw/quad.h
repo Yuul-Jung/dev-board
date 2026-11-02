@@ -16,7 +16,12 @@
 #define QD_ST_EVENTS (QD_ST_PRESS | QD_ST_ERR | QD_ST_STEP)
 static inline int32_t quad_count(uintptr_t b) { return (int32_t)QD_RD(b, QD_COUNT); }
 static inline void quad_clear(uintptr_t b) { QD_WR(b, QD_COUNT, 0); }
-static inline void quad_set_invert(uintptr_t b, int inv) { QD_WR(b, QD_CTRL, inv ? 1u : 0u); }
+/* (변경) INVERT만 수정한다. 기존 구현은 IRQ_EN[1]까지 0으로 덮어썼다. */
+static inline void quad_set_invert(uintptr_t b, int inv)
+{
+    uint32_t ctrl = QD_RD(b, QD_CTRL);
+    QD_WR(b, QD_CTRL, (ctrl & ~1u) | (inv ? 1u : 0u));
+}
 /* 래치된 이벤트(press/err/step)를 읽고 지움. 반환: 읽은 STATUS 의 이벤트 비트 */
 static inline uint32_t quad_take_events(uintptr_t b)
 { uint32_t e = QD_RD(b, QD_STAT) & QD_ST_EVENTS; if (e) QD_WR(b, QD_STAT, e); return e; }

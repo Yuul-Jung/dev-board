@@ -12,6 +12,8 @@ module dht22_axil_regs (
     input  wire        awvalid,
     output wire        awready,
     input  wire [31:0] wdata,
+    // (추가) 하위 바이트 쓰기만 CMD/IRQ_EN에 부작용을 준다.
+    input  wire [3:0]  wstrb,
     input  wire        wvalid,
     output wire        wready,
     output wire [1:0]  bresp,
@@ -38,20 +40,50 @@ module dht22_axil_regs (
     assign bresp = 2'b00;
     assign rresp = 2'b00;
 
-    wire do_wr = awvalid && wvalid && !bvalid;
-    assign awready = do_wr;
-    assign wready  = do_wr;
-    wire [2:0] widx = awaddr[4:2];
+    // (변경) AW 주소와 W 데이터는 독립적으로 한 번씩 수락한다.
+    reg [4:0]  awaddr_hold;
+    reg        aw_pending;
+    reg [31:0] wdata_hold;
+    reg [3:0]  wstrb_hold;
+    reg        w_pending;
 
-    assign cmd_start = do_wr && (widx == 3'd0) && wdata[0] && !busy;
+    assign awready = rstn && !aw_pending && !bvalid;
+    assign wready  = rstn && !w_pending  && !bvalid;
+    wire take_aw = awvalid && awready;
+    wire take_w  = wvalid  && wready;
+    wire commit_wr = aw_pending && w_pending && !bvalid;
+    wire [2:0] widx = awaddr_hold[4:2];
+    wire write_low_byte = commit_wr && wstrb_hold[0];
+
+    // (변경) 1회 커밋에서만 단일 클록 명령 펄스 발생.
+    assign cmd_start = write_low_byte && (widx == 3'd0) && wdata_hold[0] && !busy;
 
     always @(posedge clk) begin
         if (!rstn) begin
-            bvalid <= 1'b0; done_flag <= 1'b0; irq_en <= 1'b0;
+            awaddr_hold <= 5'd0;
+            aw_pending <= 1'b0;
+            wdata_hold <= 32'd0;
+            wstrb_hold <= 4'd0;
+            w_pending <= 1'b0;
+            bvalid <= 1'b0;
+            done_flag <= 1'b0;
+            irq_en <= 1'b0;
         end else begin
-            if (do_wr) begin
+            if (take_aw) begin
+                awaddr_hold <= awaddr;
+                aw_pending <= 1'b1;
+            end
+            if (take_w) begin
+                wdata_hold <= wdata;
+                wstrb_hold <= wstrb;
+                w_pending <= 1'b1;
+            end
+            if (commit_wr) begin
+                aw_pending <= 1'b0;
+                w_pending <= 1'b0;
                 bvalid <= 1'b1;
-                if (widx == 3'd5) irq_en <= wdata[0];
+                if (write_low_byte && widx == 3'd5)
+                    irq_en <= wdata_hold[0];
             end else if (bvalid && bready) begin
                 bvalid <= 1'b0;
             end
@@ -60,13 +92,16 @@ module dht22_axil_regs (
         end
     end
 
-    assign arready = arvalid && !rvalid;
+    // (변경) ARVALID와 ARREADY가 실제로 핸드셰이크한 경우만 읽기 응답.
+    assign arready = rstn && !rvalid;
+    wire take_ar = arvalid && arready;
     wire [2:0] ridx = araddr[4:2];
 
     always @(posedge clk) begin
         if (!rstn) begin
-            rvalid <= 1'b0; rdata <= 32'd0;
-        end else if (arready) begin
+            rvalid <= 1'b0;
+            rdata <= 32'd0;
+        end else if (take_ar) begin
             rvalid <= 1'b1;
             case (ridx)
                 3'd1:    rdata <= {28'd0, csum_ok, err, done_flag, busy};

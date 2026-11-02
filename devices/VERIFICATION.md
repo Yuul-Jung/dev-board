@@ -1,5 +1,27 @@
 # 적대적 검증 결과
 
+## 2026-11-03 DHT22·로터리 엔코더 자료 갱신 → AXI4-Lite 적대적 검증
+
+**1단계 자료 갱신:** [Arduino Modulino Thermo](https://docs.arduino.cc/hardware/modulino-thermo), [Modulino Knob](https://docs.arduino.cc/tutorials/modulino-knob/how-knob/), [Keyestudio KS0430](https://docs.keyestudio.com/projects/KS0430/en/latest/docs/KS0430.html)·[KS0431](https://docs.keyestudio.com/projects/KS0431/en/latest/docs/KS0431.html)·[KS0013](https://docs.keyestudio.com/projects/KS0013/en/latest/docs/KS0013.html), [Seeed Grove DHT22](https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/)·[Grove Encoder](https://wiki.seeedstudio.com/Grove-Encoder/), [국내 DHT22 3핀 판매처](https://eduiot.kr/product/디지털-온습도센서-dht22-고정밀-pcb-모듈-am2302-3pin/), [KY-040 국내 판매처](https://www.11st.co.kr/products/2227891483)를 대조하여 `gpio/dht22.md`, `gpio/rotary-encoder.md`, `REFERENCES.md`를 보완했습니다. 공식 Arduino_Modulino 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`/MPL-2.0, Seeed Grove DHT 라이브러리 `826ce8f2593f810a6063cb1cbc788fc6519dc25e`/MIT는 LICENSE 파일로 확인했습니다. 원본 이미지·예제코드는 복제하지 않았습니다.
+
+**2단계 직후 적대적 검증:** `gpio/rtl/dht22_axil_regs.v`, `quad_axil_regs.v`와 두 Top, `gpio/sw/dht22.[ch]`, `gpio/sw/quad.h`를 기존 수정된 `gpio/rtl/us_axil_regs.v` 및 [Arm AXI4](https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/102202_0100_01_Introduction_to_AMBA_AXI.pdf) 규칙과 비교했습니다.
+
+| 등급 | 발견 사항 | 조치 |
+|---|---|---|
+| **P0 예방** | DHT22 단품·3핀 PCB·RJ11·Grove의 VCC와 DATA 풀업 전압/핀배열을 동일하게 취급할 위험 | 5 V DATA→3.3 V FPGA 직접 연결 금지, 실물 저항·핀맵·레벨 확인 요구 |
+| **P0 예방** | KS0013(5 V)·Grove Encoder(4.5~5.5 V)를 Basys3 GPIO에 직접 연결할 위험 | 전원·A/B/SW HIGH 실측 또는 회로 확인 전 직결 미승인 |
+| **P1 분류** | Modulino Thermo(HS3003 I²C), Knob(STM32 경유 I²C)를 DHT22/직접 GPIO 엔코더와 혼동 | 인터페이스·실제 IC·I²C 주소·풀업 전원을 분리해 기록 |
+| **P1 수정** | DHT22와 Quad AXI4-Lite의 AWVALID && WVALID 동시 도착 요구 | AW/W 독립 1단 버퍼, 단일 커밋 및 B 응답 백프레셔 구현 |
+| **P1 수정** | DHT22/Quad의 WSTRB 포트 누락 및 부작용 무조건 실행 | WSTRB[0] 적용, 0/상위 바이트 쓰기는 레지스터 상태·펄스 무변경 |
+| **P1 유지** | Quad STATUS W1C와 새 이벤트의 우선순위 | 새 이벤트가 우선하는 기존 동작 유지 |
+| **P1 수정** | C `quad_set_invert()`가 CTRL[1] IRQ_EN까지 지우는 문제 | 읽기-수정-쓰기로 IRQ_EN 보존, 호스트 회귀시험 2건 추가 |
+| **미확인** | XADC 0~1 V, 5 V ECHO, I²C 풀업 등은 이번 직접 GPIO 모듈과 다른 경로 | 혼용하지 않음. 기존 HC-SR04·ADS1115 감사 결과 유지 |
+
+**검증 명령(자동 CI 설정):** `python3 devices/tools/check_links.py`, `python3 devices/tools/gen_pages.py --check`, `bash devices/run_host_tests.sh`, `iverilog -g2012 -Wall -s tb_dht22_axil_regs ...` 및 `tb_quad_axil_regs` 지정 시나리오, Top 컴파일. `tb_dht22_axil_regs.v`·`tb_quad_axil_regs.v`를 추가하고 `.github/workflows/devices-check.yml`에 등록했습니다.
+
+**검증 상태:** [GitHub Actions 실행 41518512735](https://github.com/Yuul-Jung/dev-board/actions/runs/41518512735)에서 Python/JSON, Markdown 상대 링크·HTML 재생성 일치, C 드라이버 호스트 시험, 초음파·1-Wire 기존 RTL, **신규 DHT22·Quad AXI4-Lite Top 컴파일 및 지정 시나리오 시뮬레이션이 모두 SUCCESS**로 기록되었습니다(검증한 커밋 `edd90f39225cacc165ec1aa6559ec8ff1e0b9171`). 이후 문서 목록 변경은 기능 코드에 영향을 주지 않지만 최종 커밋 CI도 별도 확인합니다. AXI VIP 전수 검증·Vivado 합성/타이밍·실물 Basys3 연결은 미실시입니다. DHT22/Quad 엔진 기능 코드는 변경하지 않았으며, 엔진의 단독 동작·실물 센서 응답은 별도로 검증해야 합니다.
+
+
 <!-- nav -->[저장소 홈](../README.md) › [devices](README.md)
 
 작성한 자료를 "틀렸다고 가정하고" 깨뜨려 본 결과입니다. 통과한 항목뿐 아니라 **발견해서 고친 결함**과 **검증하지 못한 것**을 함께 적습니다. 재현 명령은 맨 아래.
