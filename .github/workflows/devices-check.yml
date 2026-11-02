@@ -73,3 +73,14 @@ jobs:
             devices/gpio/rtl/quad_axil_regs.v \
             devices/gpio/tb/tb_quad_axil_regs.v
           vvp /tmp/tb_quad_axil_regs
+
+      - name: AXI4-Lite DC motor RTL directed simulation
+        run: |
+          iverilog -g2012 -Wall -s dcmotor_axil_top -o /tmp/dcmotor_axil_top \
+            devices/motor/rtl/dcmotor_axil_top.v \
+            devices/motor/rtl/dcmotor_axil_regs.v \
+            devices/motor/rtl/dcmotor_engine.v
+          iverilog -g2012 -Wall -s tb_dcmotor_axil_regs -o /tmp/tb_dcmotor_axil_regs \
+            devices/motor/rtl/dcmotor_axil_regs.v \
+            devices/motor/tb/tb_dcmotor_axil_regs.v
+          vvp /tmp/tb_dcmotor_axil_regs
