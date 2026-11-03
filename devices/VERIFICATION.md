@@ -17,7 +17,7 @@
 | **미해결** | AXI 레지스터에 직접 PERIOD=0 등 무효 설정 시 C 드라이버 검증을 우회함 | `servo_init()`의 검증은 유지. HW 레지스터 범위 제한 정책·엔진 fail-safe는 추후 검토 |
 | **기존 P0 유지** | XADC 0~1 V, HC-SR04 5 V ECHO, I²C 3.3 V 풀업 | SG90 자체의 인터페이스와 혼동하지 않으며 기존 게이트 유지 |
 
-**검증 범위:** GitHub Actions에서 Python·JSON 파싱, Markdown 상대 링크, HTML 재생성 일치, C 호스트 모의시험, 기존 AXI RTL 시험 및 신규 서보 AXI Top 컴파일·지정 시나리오 실행을 확인한다. **현재 PR CI 최종 결과 확인 전**이므로 통과를 선기록하지 않는다. AXI VIP 전수 검증·Vivado 합성·타이밍·Basys3 실물 서보 구동/전압 측정은 수행하지 않았다.
+**검증 범위:** GitHub Actions에서 Python·JSON 파싱, Markdown 상대 링크, HTML 재생성 일치, C 호스트 모의시험, 기존 AXI RTL 시험 및 신규 서보 AXI Top 컴파일·지정 시나리오 실행을 확인한다. **PR #13 지정 검증 성공:** [GitHub Actions 실행 41551779497](https://github.com/Yuul-Jung/dev-board/actions/runs/41551779497)에서 Python·JSON, Markdown/HTML 링크, HTML 재생성 일치, C 호스트 시험, 기존 초음파·1-Wire·DHT22·엔코더·DC 모터 AXI 시험 및 **신규 서보 AXI Top 컴파일/지정 시나리오** 단계가 성공했다. 이는 PR 브랜치 검증이며 병합 후 main 최종 SHA와 CI는 별도로 확인한다. AXI VIP 전수 검증·Vivado 합성·타이밍·Basys3 실물 서보 구동/전압 측정은 수행하지 않았다.
 
 
 ## 2026-11-03 DC 모터 자료 갱신 → AXI4-Lite 적대적 검증
