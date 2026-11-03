@@ -12,6 +12,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+# (추가) 코드·신호명에 대응하는 결정적 SVG와 구조화 메타데이터
+from capstone_visual import write_assets, figure
+
 ROOT = Path(__file__).resolve().parents[2]
 
 # Original teaching scenarios; these are independent capstone projects, not
@@ -166,7 +169,7 @@ def create(root=None):
               "I²C 모듈은 칩과 브레이크아웃의 전원·풀업 전압을 각각 확인한다.")
     md_text = f"""# {title_full}
 
-[캡스톤 목록](README.md) · [독립 HTML]({page.name}) · [주변모듈 기술자료](../README.md)
+[캡스톤 목록](README.md) · [독립 HTML]({page.name}) · [시스템 구조도]({name}.svg) · [구조화 JSON]({name}.json) · [주변모듈 기술자료](../README.md)
 
 **분류:** 독립 창작·응용 융합형 캡스톤. **현재 상태: 설계안 작성 완료 / 신규 통합 RTL·C·AXI·Vivado·실물 시험 미실시.**
 
@@ -244,7 +247,7 @@ flowchart LR
 <div class="card"><b>제어</b><p>capstone_controller (신규 제안)</p></div>
 <div class="card"><b>출력</b><p><a href="{esc(out_doc,quote=True)}">{esc(out)}</a></p></div></div>
 <h2>2. 동작 정책</h2><p>{esc(policy)}</p>
-<h2>3. 개념 구조 (실제 RTL 포트 아님)</h2><pre>{esc(a)} → input_a_interface ─┐
+<h2>3. 개념 구조 (실제 RTL 포트 아님)</h2>{figure(name)}<pre>{esc(a)} → input_a_interface ─┐
 {esc(b)} → input_b_interface ─┤→ capstone_controller → output_driver → {esc(out)}
                          └→ status_registers (MicroBlaze V 확장)</pre>
 <h2>4. 상태 흐름</h2><table><tr><th>상태</th><th>역할</th></tr>
@@ -260,6 +263,8 @@ flowchart LR
 """
     md.write_text(md_text, encoding="utf-8")
     page.write_text(html_text, encoding="utf-8")
+    # (추가) 실제 렌더링 가능한 SVG와 검증 단계별 구조화 JSON 동시 발행
+    write_assets(cap, name, title_full, a, b, out)
     update_catalog(cap)
     return number, name
 
@@ -276,6 +281,9 @@ def selftest():
         assert a[0] == 2 and b[0] == 3 and a[1] != b[1]
         assert "capstone-03" in (cap / "README.md").read_text(encoding="utf-8")
         assert "capstone-03" in (cap / "index.html").read_text(encoding="utf-8")
+        assert (cap / (b[1] + ".svg")).is_file()
+        assert (cap / (b[1] + ".json")).is_file()
+        assert 'class="system-diagram"' in (cap / (b[1] + ".html")).read_text(encoding="utf-8")
         print("PASS capstone factory: distinct Markdown, HTML and indexes")
 
 
