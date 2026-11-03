@@ -38,7 +38,7 @@ capstone_dir = os.path.join(root, 'devices', 'capstone')
 capstone_pages = tuple(
     'devices/capstone/' + filename
     for filename in sorted(os.listdir(capstone_dir))
-    if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename)
+    if re.fullmatch(r'capstone-\d{2}-[a-z0-9-]+\.html', filename)
 )
 site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html') + capstone_pages
 site_count = 0
