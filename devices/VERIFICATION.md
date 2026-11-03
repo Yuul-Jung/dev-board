@@ -379,3 +379,12 @@ python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(52
 - P0: FPGA 3.3V I/O에 5V 풀업 직접 연결 금지, XADC 0~1V 및 HC-SR04 5V ECHO 제한 유지. 실물 기판/풀업/멀티플렉서 검증 없음.
 - P1: 주소 충돌 설명 정정. RTL 비트폭/FSM/타이밍, AXI 핸드셰이크, C 모의시험, CI는 이번 실행에서 미실시. 외부 원본 라이선스 추가 확인 없음; 기존 출처 링크·원본 버전 유지.
 - 재검증: GitHub 원격 파일 재조회로 변경 문자열·상위 링크·Mermaid 블록·CSV 기존 행 보존을 검사한다. 검사 결과는 실행 보고서에 별도 기재.
+
+
+## 2026-11-04 INA228 신규 후보 조사 → 갱신 → 적대적 검증
+- 조사: 기존 module-status.csv에 INA219(I11)은 있으나 INA228 독립 항목 없음. TI INA228 Rev.A(2022-05-11), Adafruit INA228 공개 PCB 및 제품 5832 확인. INA226 후보와도 별도 IC. 신규 후보 1, 정식 추가 0, 기존 갱신 0.
+- 갱신: i2c/ina228-candidate.md 신규 문서, i2c/README.md 목차 링크. 기계 판독 목록·기존 32차시·RTL/AXI/C 변경 없음. HTML 게시 미확인.
+- 정적 게이트: 시각화(실제 신호 SCL/SDA, IN+/IN-, VBUS, ALERT 명시), 구조화(목적/입출력/전기/RTL·AXI·C/근거/미확인), 체계화(상위 링크/선수관계/32차시·캡스톤·SoC) 모두 문서 내용 확인. Mermaid 실제 렌더·전체 링크·CI는 미검증.
+- P0: INA228의 85V 측정은 FPGA/XADC 입력 허용을 뜻하지 않음. 실제 PCB 풀업/레벨변환·션트·ALERT 전압 미검증으로 FPGA 연결 미승인. HC-SR04 5V ECHO 및 XADC 0~1V 기존 기준 유지.
+- P1: 20비트 데이터/부호/보정/누산·FSM·타이밍·핸드셰이크의 전용 구현이 없으므로 미검증. 원본 도면·코드 복제 없음. Adafruit PCB의 라이선스 정확한 조건 및 Git SHA 미확인.
+- 후속: 실제 Mermaid 렌더, 링크/HTML 자동검사, 실물 회로 대조 및 CI 수행 전 통합 PASS 금지.
