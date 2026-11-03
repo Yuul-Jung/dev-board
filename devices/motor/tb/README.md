@@ -17,7 +17,7 @@
 | [mock_servo.h](mock_servo.h) | endif |
 | [tb_dcmotor_axil_regs.v](tb_dcmotor_axil_regs.v) | DC 모터 AXI4-Lite: 독립 AW/W, WSTRB, 읽기 전용 STATUS, B/R 백프레셔 검증. |
 | [tb_dcmotor_engine.v](tb_dcmotor_engine.v) | 엔진 단독 테스트. 1 MHz 클럭, 주기 100, 듀티 25로 줄여 돌린다. |
-| [tb_servo_engine.v](tb_servo_engine.v) | 자체 점검 테스트벤치 (미실행: 시뮬레이터 없음). |
+| [tb_servo_axil_regs.v](tb_servo_axil_regs.v) | 서보 AXI4-Lite: 독립 AW/W·WSTRB·읽기 전용 APPLIED·B/R 백프레셔·리셋 지정 시나리오. |\n| [tb_servo_engine.v](tb_servo_engine.v) | 자체 점검 테스트벤치 (미실행: 시뮬레이터 없음). |
 | [test_dcmotor.c](test_dcmotor.c) | motor/tb/test_dcmotor.c — dcmotor.c 호스트 모의 시험. |
 | [test_hb5.c](test_hb5.c) | motor/tb/test_hb5.c — Pmod HB5 드라이버 호스트 모의 시험. |
 | [test_servo.c](test_servo.c) | 서보 드라이버 호스트 시험. 모의 레지스터는 servo_axil_regs.v 머리말(리터럴 오프셋)과 servo_engine.v 의 제한 동작(MIN>MAX 면  |

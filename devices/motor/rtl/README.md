@@ -35,13 +35,17 @@ L298과 TB6612FNG는 둘 다 `PWM + 방향 2핀`으로 구동되므로 같은 RT
 - 리셋 후 enable = 0이라 코스트 상태로 시작합니다.
 
 ## 확인 필요
-- **새 AXI 레지스터 테스트벤치는 CI 검증 대상으로 추가했습니다.** 전체 AXI VIP 검증, Vivado 합성·타이밍 및 실물 모터 시험은 수행하지 않았습니다. 서보 AXI 래퍼는 아직 이번 수정 대상이 아닙니다.
+- **새 AXI 레지스터 테스트벤치는 CI 검증 대상으로 추가했습니다.** 전체 AXI VIP 검증, Vivado 합성·타이밍 및 실물 모터 시험은 수행하지 않았습니다. 서보 AXI 래퍼는 별도 지정 시나리오 회귀시험 대상으로 추가했습니다. 전체 AXI VIP·Vivado 합성·실물 시험은 별개입니다.
 - 사용자 노션의 `l298_distance_motor_controller`(CdS + 초음파 + 거리 비례 속도)는 응용 계층입니다. 이 레지스터 맵 위에서 소프트웨어로 만들 수도 있고, 노션 RTL을 그대로 쓸 수도 있습니다.
 - 전원·GND 분리(포토커플러), 모터 전원 용량은 하드웨어 설계 몫입니다. 일반 L298N 모듈은 환류 다이오드 8개가 이미 있고, **ENA 점퍼를 꽂은 채 FPGA 가 ENA 를 구동하면 5 V 레일과 맞붙으므로 점퍼를 빼야 합니다**([l298.md](../l298.md)). SENSE 핀은 모듈에서 GND 에 직결이라 전류 감지는 못 씁니다.
 
 ## 서보 PWM (SG90 등)
 `servo_engine.v`, `servo_axil_regs.v`, `servo_axil_top.v` — 주기·폭을 µs 단위로 받는 PWM. 폭은 MIN/MAX 레지스터(기본 1000/2000 µs)로 제한하며, SG90 자료마다 펄스 범위가 달라서(500–2400 µs vs 1–2 ms) 소프트웨어가 안전한 범위를 정하도록 했습니다.
-레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기). 테스트벤치 `tb/tb_servo_engine.v`. 시뮬레이션 전. C 드라이버 `../sw/servo.[ch]`, 호스트 시험 `../tb/test_servo.c`.
+레지스터: 0x00 CTRL(enable) · 0x04 WIDTH · 0x08 PERIOD(기본 20000) · 0x0C MIN · 0x10 MAX · 0x14 APPLIED(읽기 전용).
+- (변경) `servo_axil_top`은 `s_axi_wstrb[3:0]`를 그대로 `servo_axil_regs`에 전달합니다. AW/W는 독립 수락 후 한 번만 쓰기 응답합니다.
+- (변경) WIDTH/PERIOD/MIN/MAX의 하위 2바이트만 WSTRB에 따라 부분 변경하며, CTRL은 WSTRB[0]일 때만 갱신합니다. 상위 2바이트 WSTRB와 WSTRB=0은 상태 변경이 없습니다.
+- (추가) `../tb/tb_servo_axil_regs.v`는 AW/W 순서, 부분 쓰기, APPLIED 읽기 전용, B/R 백프레셔, 리셋을 검증합니다. 기존 `../tb/tb_servo_engine.v`는 펄스 엔진 별도 시험입니다.
+- C 드라이버 `../sw/servo.[ch]`는 호스트 모의시험 대상이며, AXI 레지스터에 직접 쓴 잘못된 PERIOD/MIN/MAX는 C 검증을 우회할 수 있습니다. AXI VIP·Vivado 합성/타이밍·실물 SG90 시험은 미실시입니다.
 
 ## 이 폴더의 목록
 
