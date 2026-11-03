@@ -388,3 +388,14 @@ python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(52
 - P0: INA228의 85V 측정은 FPGA/XADC 입력 허용을 뜻하지 않음. 실제 PCB 풀업/레벨변환·션트·ALERT 전압 미검증으로 FPGA 연결 미승인. HC-SR04 5V ECHO 및 XADC 0~1V 기존 기준 유지.
 - P1: 20비트 데이터/부호/보정/누산·FSM·타이밍·핸드셰이크의 전용 구현이 없으므로 미검증. 원본 도면·코드 복제 없음. Adafruit PCB의 라이선스 정확한 조건 및 Git SHA 미확인.
 - 후속: 실제 Mermaid 렌더, 링크/HTML 자동검사, 실물 회로 대조 및 CI 수행 전 통합 PASS 금지.
+
+
+## 2026-11-04 INA228 공개 PCB 출처·라이선스 재검증
+
+- 조사: 기존 INA228 후보와 Adafruit 원본 저장소의 최신 커밋 및 `license.txt` 직접 확인. 신규 독립 모듈 0종, 기존 후보 1종 보강.
+- 원본: `adafruit/Adafruit-INA228-PCB` 커밋 `61b0d990f8e5f2e6df1ee5d270c501d17f53242d` (2025-01-28, `rev C`); 라이선스 CC BY-SA 3.0 Unported. 원본 파일 재배포 없음.
+- 갱신: `devices/i2c/ina228-candidate.md` 출처 버전/라이선스·실물 개정 미확인 구분. 정식 ID/CSV/32차시/RTL/C 변경 없음.
+- 시각화 게이트: **정적 PASS** (기존 Mermaid 신호명과 개념도/실제 넷 구분 유지), 렌더 미실시.
+- 구조화 게이트: **정적 PASS** (전원/인터페이스/전기 안전/RTL·AXI·C/원본 SHA·라이선스/미확인 포함).
+- 체계화 게이트: **정적 PASS** (I²C 상위 README 링크, INA219·INA226 비교, 32차시·캡스톤·SoC 대응 유지). HTML 생성·링크 전수검사는 **미검증**.
+- P0: FPGA 3.3V I/O/5V 풀업/XADC 입력 제한 및 실제 PCB 실측 **미승인**. P1: RTL/AXI/C 시뮬레이션·CI **미검증**. 정상 소스 미변경.
