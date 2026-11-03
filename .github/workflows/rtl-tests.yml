@@ -1,5 +1,8 @@
 name: RTL 32 lessons directed verification
 on:
+  # (추가) 하네스 반복 검증: RTL 기능 회귀는 코드 변경이 없어도 수행한다.
+  schedule:
+    - cron: '12 * * * *'
   push:
     paths:
       - 'rtl/**'
