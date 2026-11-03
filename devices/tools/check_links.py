@@ -33,7 +33,8 @@ class HTMLLinks(HTMLParser):
             if key in ('href', 'src') and value:
                 self.links.append(value)
 
-site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html')
+site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html',
+              'devices/capstone/capstone-02-sg90-position.html')
 site_count = 0
 for rel in site_pages:
     source = os.path.join(root, rel)
@@ -65,7 +66,8 @@ with open(os.path.join(root, 'index.html'), encoding='utf-8') as stream:
     home = stream.read()
 for dest in ('arduino/index.html', 'devices/index.html', 'rtl/index.html',
              'soc-map/index.html', 'atlas/index.html', 'catalog/index.html',
-             'devices/capstone/index.html'):
+             'devices/capstone/index.html',
+             'devices/capstone/capstone-02-sg90-position.html'):
     if 'href="' + dest + '"' not in home:
         bad.append(('index.html', '메인 탐색 누락: ' + dest))
 
