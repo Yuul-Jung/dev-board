@@ -12,6 +12,9 @@ on:
 
 permissions:
   contents: write
+  # (추가) GITHUB_TOKEN 커밋은 다른 push 워크플로를 자동 실행하지 않으므로
+  # 검증 워크플로를 workflow_dispatch로 명시적으로 실행한다.
+  actions: write
 
 concurrency:
   group: dev-board-creative-capstone
@@ -73,3 +76,10 @@ jobs:
           done
           echo "ERROR: capstone publication failed after three retries" >&2
           exit 1
+
+      # (추가) 자동 생성 커밋의 실제 최신 main을 전체 CI로 재검증한다.
+      # 이 요청의 성공과 전체 CI의 최종 통과는 구분한다.
+      - name: Request full regression on published capstone
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run devices-check.yml --ref main
