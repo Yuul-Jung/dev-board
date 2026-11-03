@@ -1,0 +1,53 @@
+{
+  "id": "CAPSTONE-09",
+  "title": "CAPSTONE-09 — UART·터치 이중 승인 저전압 타이머 스위치",
+  "slug": "capstone-09-dual-consent-timed-switch",
+  "category": "UART/터치 이중승인 저전압 제어",
+  "stage": "design_only",
+  "inputs": [
+    "UART ARM",
+    "TTP223 touch",
+    "Basys3 cancel button"
+  ],
+  "outputs": [
+    "Basys3 LED",
+    "UART status optional"
+  ],
+  "controller": "dual_consent_controller (proposed)",
+  "fsm": [
+    "IDLE",
+    "WAIT_TOUCH",
+    "ACTIVE",
+    "EXPIRED",
+    "CANCELLED"
+  ],
+  "timeouts_ms": {
+    "approval": 5000,
+    "output": 10000
+  },
+  "prerequisites": [
+    "UART RX/command parser",
+    "input synchronization",
+    "FSM",
+    "timer"
+  ],
+  "progression": [
+    "RTL",
+    "AXI GPIO",
+    "Custom AXI4-Lite",
+    "MicroBlaze V SoC"
+  ],
+  "verification": {
+    "documentation": "created",
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "board": "not_run"
+  },
+  "original_design": true,
+  "source_links": [
+    "../gpio/ttp223.md",
+    "../uart/README.md",
+    "../../rtl/README.md",
+    "../../soc-map/README.md"
+  ]
+}
