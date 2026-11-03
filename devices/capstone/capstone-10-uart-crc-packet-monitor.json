@@ -1,0 +1,70 @@
+{
+  "id": "CAPSTONE-10",
+  "title": "UART 프레임 CRC-8 무결성 감시·오류 계수기",
+  "slug": "capstone-10-uart-crc-packet-monitor",
+  "category": "UART/CRC/communication integrity",
+  "stage": "design_only",
+  "inputs": [
+    "PC USB-UART 8N1",
+    "rx_data[7:0]",
+    "rx_valid",
+    "clear_stats"
+  ],
+  "outputs": [
+    "led_ok",
+    "led_error",
+    "packet_ok_count[15:0]",
+    "packet_error_count[15:0]",
+    "error_code[2:0]"
+  ],
+  "controller": "uart_crc_packet_monitor (proposed)",
+  "fsm": [
+    "WAIT_SOF",
+    "READ_LEN",
+    "READ_PAYLOAD",
+    "READ_CRC",
+    "ACCEPT",
+    "ERROR"
+  ],
+  "protocol": {
+    "sof": "0xA5",
+    "len_min": 1,
+    "len_max": 16,
+    "crc": {
+      "name": "CRC-8/ATM",
+      "poly": "0x07",
+      "init": "0x00",
+      "refin": false,
+      "refout": false,
+      "xorout": "0x00",
+      "coverage": "LEN+PAYLOAD"
+    },
+    "timeout_ms": 20
+  },
+  "power": "Basys3 built-in USB-UART and LED only; 3.3V I/O",
+  "prerequisites": [
+    "UART 8N1",
+    "Byte Stream",
+    "FSM",
+    "CRC",
+    "register map"
+  ],
+  "progression": [
+    "RTL controller + TB",
+    "AXI UART Lite",
+    "Custom AXI4-Lite registers",
+    "MicroBlaze V SoC"
+  ],
+  "verification": {
+    "documentation": "created",
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "board": "not_run"
+  },
+  "original_design": true,
+  "source_links": [
+    "../uart/README.md",
+    "../../rtl/rtl03_uart_led/README.md",
+    "../VERIFICATION.md"
+  ]
+}
