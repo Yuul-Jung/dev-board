@@ -11,8 +11,13 @@ on:
       - '.github/workflows/devices-check.yml'
   workflow_dispatch:
 
+# (변경) 자동 생성 HTML을 검증 후 main에 동기화할 수 있도록 쓰기 권한을 부여한다.
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: dev-board-html-sync-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   devices-check:
@@ -24,6 +29,9 @@ jobs:
         run: |
           python3 -m py_compile devices/tools/gen_pages.py devices/tools/check_links.py
           python3 -m json.tool devices/data/devices.json > /dev/null
+      # (추가) 캡스톤/모듈 갱신 후 오래된 HTML 목차를 먼저 재생성한다.
+      - name: Regenerate HTML indexes before validation
+        run: python3 devices/tools/gen_pages.py
       - name: Markdown links and HTML regeneration consistency
         run: |
           python3 devices/tools/check_links.py
@@ -99,3 +107,41 @@ jobs:
             devices/motor/rtl/servo_engine.v \
             devices/motor/tb/tb_servo_engine.v
           vvp /tmp/tb_servo_engine
+
+      # (추가) push 검증이 모두 통과한 경우에만 생성된 HTML을 저장소에 반영한다.
+      # 동시 커밋 충돌 시 최신 main에서 다시 생성하고 검증한 뒤 최대 3회 재시도한다.
+      - name: Publish validated generated HTML indexes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- '*.html' '.nojekyll'
+          if git diff --cached --quiet; then
+            echo "Generated HTML already matches current sources."
+            exit 0
+          fi
+          git commit -m "docs: sync generated HTML indexes after validation"
+          if git push origin HEAD:main; then
+            exit 0
+          fi
+          for attempt in 1 2 3; do
+            echo "Concurrent update detected; regenerating from latest main (attempt $attempt)"
+            git fetch origin main
+            git reset --hard origin/main
+            python3 devices/tools/gen_pages.py
+            python3 devices/tools/check_links.py
+            python3 devices/tools/gen_pages.py --check
+            git add -A -- '*.html' '.nojekyll'
+            if git diff --cached --quiet; then
+              echo "Latest main already has matching generated HTML."
+              exit 0
+            fi
+            git commit -m "docs: sync generated HTML indexes after concurrent update"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          echo "ERROR: failed to publish generated HTML after three retries" >&2
+          exit 1
