@@ -1,5 +1,25 @@
 # 적대적 검증 결과
 
+## 2026-11-03 SG90 서보 자료 갱신 → AXI4-Lite 적대적 검증
+
+**1단계 자료 갱신:** [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/)·[SG90 360°](https://towerpro.com.tw/product/sg90-360-degree-continuous-rotation-servo/), [Keyestudio KS0194](https://docs.keyestudio.com/projects/KS0194/en/latest/docs/KS0194.html), [Seeed Grove Servo](https://wiki.seeedstudio.com/Grove-Servo/), [Arduino Servo API](https://github.com/arduino-libraries/Servo/blob/440b319ec11ea2664df8ce201c271c935de28a2d/docs/api.md), [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5), 국내 [디바이스마트 SG90 Analog](https://www.devicemart.co.kr/goods/view?no=12503474)를 교차 확인. **위치 제어형 SG90 Analog와 360° 연속 회전형을 구분**하고, Keyestudio 갈색 GND/빨강 VCC/주황 신호, Grove 커넥터 차이, 외부 서보 전원과 공통 GND, 3.3 V 신호 HIGH 미보증을 `motor/sg90.md`에 기록했습니다. Arduino Servo 기준 커밋 `440b319ec11ea2664df8ce201c271c935de28a2d`(LGPL-2.1), Freenove 기준 커밋 `5315f61497eea49553aa1b70721751fb16a497e5`(CC BY-NC-SA 3.0). 웹 문서의 Git SHA·재배포 라이선스는 미확인; 원본 그림·코드 복제 없음.
+
+**2단계 직후 적대적 검증:** `motor/rtl/servo_axil_regs.v`·`servo_axil_top.v`, `servo_engine.v`, `motor/sw/servo.[ch]`를 확인하고 DC 모터·초음파 AXI 수정 패턴과 대조했습니다.
+
+| 등급 | 발견 사항 | 조치 |
+|---|---|---|
+| **P0 예방** | 서보 모터 전원 4.8~5 V를 FPGA 3.3 V GPIO/Pmod 신호와 혼동하거나 서보 전류를 I/O 핀에서 공급할 위험 | 서보 별도 전원·공통 GND·전원 용량·실물 핀 순서 확인 전 연결 금지 |
+| **P0 미확인** | 보유 SG90의 3.3 V 입력 HIGH 인식 임계값은 제조사 페이지에서 확인되지 않음 | 직접 연결 동작 보증하지 않음. 필요 시 적합한 버퍼 사용 |
+| **P1 수정** | `awvalid && wvalid`가 같은 클록에 도착해야만 쓰기 수락 | AW 주소·W 데이터/스트로브 독립 1단 버퍼, 양쪽 수락 뒤 1회 커밋 |
+| **P1 수정** | WSTRB 입력 부재, CTRL 및 WIDTH/PERIOD/MIN/MAX에서 부분 바이트 쓰기 불가 | Top WSTRB 전달, CTRL 하위 바이트·16비트 레지스터 하위 2바이트만 선택 쓰기 |
+| **P1 지정 검증** | B/R 응답 백프레셔, APPLIED 읽기 전용, 리셋 중 미완료 W 처리 | `tb_servo_axil_regs.v`에 시나리오 추가, CI 연결 |
+| **정상 유지** | `servo_engine.v` 펄스 생성, `servo.c`의 정상 입력 검증·각도 변환 | 기능 코드 변경하지 않음. C 헤더 인터페이스 설명만 갱신 |
+| **미해결** | AXI 레지스터에 직접 PERIOD=0 등 무효 설정 시 C 드라이버 검증을 우회함 | `servo_init()`의 검증은 유지. HW 레지스터 범위 제한 정책·엔진 fail-safe는 추후 검토 |
+| **기존 P0 유지** | XADC 0~1 V, HC-SR04 5 V ECHO, I²C 3.3 V 풀업 | SG90 자체의 인터페이스와 혼동하지 않으며 기존 게이트 유지 |
+
+**검증 범위:** GitHub Actions에서 Python·JSON 파싱, Markdown 상대 링크, HTML 재생성 일치, C 호스트 모의시험, 기존 AXI RTL 시험 및 신규 서보 AXI Top 컴파일·지정 시나리오 실행을 확인한다. **현재 PR CI 최종 결과 확인 전**이므로 통과를 선기록하지 않는다. AXI VIP 전수 검증·Vivado 합성·타이밍·Basys3 실물 서보 구동/전압 측정은 수행하지 않았다.
+
+
 ## 2026-11-03 DC 모터 자료 갱신 → AXI4-Lite 적대적 검증
 
 **1단계 자료 갱신:** ST [L298 공식](https://www.st.com/en/motor-drivers/l298.html), [Keyestudio KS0063](https://docs.keyestudio.com/projects/KS0063/en/latest/docs/KS0063.html), [Seeed Grove I2C Motor Driver v1.2](https://wiki.seeedstudio.com/Grove-I2C_Motor_Driver_V1.2/), Arduino [Motor Shield Rev3](https://docs.arduino.cc/hardware/motor-shield-rev3)·[Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors), [Freenove 키트](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5), 국내 [디바이스마트](https://www.devicemart.co.kr/goods/view?no=1278835)를 교차 확인했습니다. 칩/직접 GPIO·PWM 기판/ATmega8L 경유 I²C/Arduino Shield/MAX22211 Qwiic I²C를 구분하고, 모터·로직·I²C 전원과 점퍼·풀업·핀맵을 분리했습니다. `motor/l298.md`, `REFERENCES.md` 갱신. Arduino_Modulino 기준 커밋 `24d08a94ac4e8f83aed211df0fa6f38e9994b164`(MPL-2.0 확인), Freenove 기준 커밋 `5315f61497eea49553aa1b70721751fb16a497e5`(라이선스 NOASSERTION, 재배포 미승인). 제조사 웹 문서의 SHA는 미확인으로 기록하고 원본 그림·코드는 복제하지 않았습니다.
