@@ -84,3 +84,13 @@ jobs:
             devices/motor/rtl/dcmotor_axil_regs.v \
             devices/motor/tb/tb_dcmotor_axil_regs.v
           vvp /tmp/tb_dcmotor_axil_regs
+      - name: AXI4-Lite servo RTL directed simulation
+        run: |
+          iverilog -g2012 -Wall -s servo_axil_top -o /tmp/servo_axil_top \
+            devices/motor/rtl/servo_axil_top.v \
+            devices/motor/rtl/servo_axil_regs.v \
+            devices/motor/rtl/servo_engine.v
+          iverilog -g2012 -Wall -s tb_servo_axil_regs -o /tmp/tb_servo_axil_regs \
+            devices/motor/rtl/servo_axil_regs.v \
+            devices/motor/tb/tb_servo_axil_regs.v
+          vvp /tmp/tb_servo_axil_regs
