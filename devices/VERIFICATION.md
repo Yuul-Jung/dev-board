@@ -414,3 +414,11 @@ python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(52
 - 구조화 게이트: **정적 PASS** (전원/인터페이스/전기 안전/RTL·AXI·C/원본 SHA·라이선스/미확인 포함).
 - 체계화 게이트: **정적 PASS** (I²C 상위 README 링크, INA219·INA226 비교, 32차시·캡스톤·SoC 대응 유지). HTML 생성·링크 전수검사는 **미검증**.
 - P0: FPGA 3.3V I/O/5V 풀업/XADC 입력 제한 및 실제 PCB 실측 **미승인**. P1: RTL/AXI/C 시뮬레이션·CI **미검증**. 정상 소스 미변경.
+
+
+## 2026-11-04 SGP40 공식 IC 자료 교차검증
+- 조사: 기존 후보 4종과 정식 목록을 기준으로 SGP40 후보의 미확인 IC 사양을 Sensirion 공식 데이터시트(`https://sensirion.com/resource/datasheet/sgp40`) 및 Seeed Grove 위키(`https://wiki.seeedstudio.com/grove_voc_gas_sensor_sgp40/`, 2023-06-06)와 대조. 신규 확정 0종; 기존 후보 갱신 1종. 신규 탐색 범위 확대(판매처·Keyestudio/Freenove·Arduino Hardware Docs)는 미완료.
+- 갱신: `i2c/sgp40-candidate.md`에 IC 1.7~3.6 V, 7비트 0x59, I²C 100/400 kHz, 16비트 명령과 16비트 데이터+8비트 CRC 구분 추가; `data/module-candidates.csv` 원본 근거 표시 갱신. 원본 문서/도면 재배포 없음; 라이선스·PDF 내부 revision 미확인.
+- 적대적 검증: **P0 미승인**(실제 Grove PCB 풀업 레일·레귤레이터·5V 공급 시 SDA/SCL 레벨 미확인). **P1 미검증**(CRC 다항식·명령/지연·실제 ACK·RTL/AXI/C 시험 미실시). 32차시·기존 정상 소스 변경 없음.
+- 3대 게이트: 시각화 **정적 PASS**(기존 Mermaid SCL/SDA와 실제 센서명 유지; 렌더 미실시); 구조화 **정적 PASS**(IC/모듈 사양 분리·전기 제약·출처); 체계화 **정적 PASS**(후보 CSV와 상위 목차 연결). 실제 렌더/HTML/CI는 **미검증**, 따라서 통합 완료 **FAIL**.
+- 재검증: GitHub 원격 재조회로 CSV 후보 4종·SGP40 중복 없음·문서 필수 항목·상위 링크·정식 목록 미변경 여부를 확인할 것. 게시 여부는 별도 확인 전 미확인.
