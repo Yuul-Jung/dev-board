@@ -11,6 +11,7 @@
 | 05 | CAPSTONE-05 — 터치·버튼 이중 입력 반응시간 측정기 | [설계서](capstone-05-touch-reaction-timer.md) | [HTML](capstone-05-touch-reaction-timer.html) | 설계안·통합 미구현 |
 | 06 | CAPSTONE-06 — 움직임·조도 융합 야간 복도 조명 | [설계서](capstone-06-night-hallway.md) | [HTML](capstone-06-night-hallway.html) | 설계안·통합 미구현 |
 | 07 | CAPSTONE-07 — 출입 움직임·터치 확인 창고 경보 | [설계서](capstone-07-warehouse-door.md) | [HTML](capstone-07-warehouse-door.html) | 설계안·통합 미구현 |
+| 09 | CAPSTONE-09 — UART·터치 이중 승인 저전압 타이머 스위치 | [설계서](capstone-09-dual-consent-timed-switch.md) | [HTML](capstone-09-dual-consent-timed-switch.html) | 자체 설계안·신규 RTL 미구현 |
 | 08 | CAPSTONE-08 — 온습도·엔코더 기반 쾌적 환기 | [설계서](capstone-08-fan-comfort.md) | [HTML](capstone-08-fan-comfort.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
