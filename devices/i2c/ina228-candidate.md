@@ -2,7 +2,7 @@
 
 [devices 목차](../README.md) › [I²C 목차](README.md) › INA228 후보
 
-> 상태: TI IC 사양 및 Adafruit PCB 공개 자료 조사. 실제 보드 연결·RTL/AXI/C 시험 미완료. INA219(I11)·INA226 후보와 별도 IC.
+> 상태: TI IC 사양 및 Adafruit PCB 공개 자료 조사. 실제 보드 연결·RTL/AXI/C 시험 미완료. 공개 PCB 저장소의 최신 확인 커밋은 `rev C`이나 실제 판매 보드의 개정판과 동일하다는 증거는 없음. INA219(I11)·INA226 후보와 별도 IC.
 
 ## 1. 목적·분류·선수관계
 - 분류: I²C 전류·전압·전력·에너지·전하 측정.
@@ -40,13 +40,19 @@ flowchart LR
 | 원본 | URL | 버전·라이선스 |
 |---|---|---|
 | TI INA228 | https://www.ti.com/product/INA228 | 데이터시트 Rev. A (2022-05-11). 제조사 원본 재배포 권한 미확인 |
-| Adafruit INA228 PCB | https://github.com/adafruit/Adafruit-INA228-PCB | 공개 EagleCAD 회로/PCB; README에 CC Attribution/Share-Alike 안내, 정확한 조건은 저장소 license.txt 확인 필요. 고정 SHA 미확보 |
+| Adafruit INA228 PCB | https://github.com/adafruit/Adafruit-INA228-PCB | 공개 EagleCAD 회로/PCB; 저장소 `license.txt` 직접 확인: Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0). 원본 파일 재배포 없음. 고정 SHA `61b0d990f8e5f2e6df1ee5d270c501d17f53242d` (2025-01-28, 커밋 메시지 `rev C`) |
 | Adafruit 제품 | https://www.adafruit.com/product/5832 | 제조사 제품 설명. 보드 개정/실측 미확인 |
 | Arduino Hardware Docs | https://docs.arduino.cc/hardware/ | 일반 보드 참고, 이 브레이크아웃의 회로 증거로 사용하지 않음 |
 
 Keyestudio/Freenove/Seeed/국내 판매처/AliExpress의 **동일 PCB·개정·라이선스는 미확인**. 공개 원본 회로·코드는 복제하지 않음.
 
-## 5. P0/P1 및 산출물 게이트
+## 5. 원본 기판 개정·라이선스 검증 (2026-11-04)
+
+- PCB 원본 고정 링크: [Adafruit INA228 PCB rev C 커밋](https://github.com/adafruit/Adafruit-INA228-PCB/commit/61b0d990f8e5f2e6df1ee5d270c501d17f53242d). 커밋 작성일 2025-01-28, 메시지 `rev C` 확인. **실제 판매품의 PCB 실크·회로 개정판과 동일하다고 판정하지 않음.**
+- 라이선스 원본: [license.txt](https://github.com/adafruit/Adafruit-INA228-PCB/blob/61b0d990f8e5f2e6df1ee5d270c501d17f53242d/license.txt) — CC BY-SA 3.0 Unported 명시. 원본 회로도/PCB 파일을 본 저장소로 복제하지 않으며, 재사용 시 저작자 표시·동일조건변경허락 요건 별도 검토.
+- 시각화의 `BOARD`, `IC`, `SHUNT`, `VBUS`는 **개념 노드**이고 EagleCAD의 실제 넷명·핀 번호로 확정하지 않는다. 실제 PCB 회로 검토·전압 실측 전 연결 승인 불가.
+
+## 6. P0/P1 및 산출물 게이트
 | 검사 | 결과 | 근거 |
 |---|---|---|
 | 시각화 | 정적 PASS | Mermaid SCL/SDA, IN+/IN-, VBUS, ALERT 역할 표시. 실제 렌더 미검증 |
