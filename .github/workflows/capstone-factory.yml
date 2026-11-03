@@ -48,6 +48,28 @@ jobs:
             exit 1
           fi
           git commit -m "automation: generate one new creative Arduino capstone"
-          git fetch origin main
-          git rebase origin/main
-          git push origin HEAD:main
+          if git push origin HEAD:main; then
+            exit 0
+          fi
+          # (변경) 다른 예약 작업이 먼저 main을 갱신했으면 최신 소스에서
+          # 신규 캡스톤을 다시 생성하여 번호 충돌과 비-fast-forward 실패를 방지한다.
+          for attempt in 1 2 3; do
+            echo "Concurrent update; rebuild a NEW capstone from latest main (attempt $attempt)"
+            git fetch origin main
+            git reset --hard origin/main
+            python3 devices/tools/capstone_factory.py
+            python3 devices/tools/gen_pages.py
+            python3 devices/tools/check_links.py
+            python3 devices/tools/gen_pages.py --check
+            git add -A
+            if git diff --cached --quiet; then
+              echo "ERROR: no new capstone after retry" >&2
+              exit 1
+            fi
+            git commit -m "automation: generate a new capstone after concurrent update"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          echo "ERROR: capstone publication failed after three retries" >&2
+          exit 1
