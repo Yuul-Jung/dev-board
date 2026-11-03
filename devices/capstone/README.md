@@ -1,3 +1,12 @@
+# 캡스톤 프로젝트 모음
+
+## 캡스톤 목록
+
+| 번호 | 주제 | 문서 | 독립 HTML | 구현 상태 |
+|---|---|---|---|---|
+| 01 | PIR 침입 감지·HC-SR04 거리 연동 | [CAPSTONE-01](README.md#capstone-01--pir-침입-감지와-거리-연동-보안-제어) | [HTML](index.html) | 기존 센서 소스 재사용 제안, 보안 통합 미구현 |
+| **02 (신규)** | **SG90 버튼 위치 제어** | [설계서](capstone-02-sg90-position.md) | [독립 HTML](capstone-02-sg90-position.html) | 기존 서보 엔진·AXI 소스 참조, 버튼 통합 미구현 |
+
 # CAPSTONE-01 — PIR 침입 감지와 거리 연동 보안 제어
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
