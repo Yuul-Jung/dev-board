@@ -1,3 +1,11 @@
+## 2026-11-04 SGP40 후보 조사 → 갱신 → 적대적 검증
+
+- ① 조사: Seeed 공식 Grove SGP40 VOC 모듈 문서(https://wiki.seeedstudio.com/grove_voc_gas_sensor_sgp40/; 위키 갱신 2023-06-06)를 확인. 기존 작업 브랜치 전체 경로 트리에서 SGP40 파일명 0건, 기존 후보 CSV에도 없음. 신규 조사 후보 **1종**, 정식 신규 등록 **0종**, 기존 정식 모듈 갱신 **0종**. Seeed 문서의 3.3/5 V는 모듈 전원이며 IC 전원·I²C 풀업 허용을 뜻하지 않음. 회로 개정·Git SHA·재배포 라이선스 미확인, 원본 복제 없음. Keyestudio ENS160, Seeed SGP41도 외부 탐색했으나 이번 회차에는 미등록/기판 중복·데이터시트 검증을 마치지 못해 추가 확정하지 않음. Arduino Hardware Docs·Freenove·국내·AliExpress 교차검증 미완료.
+- ② 갱신: `i2c/sgp40-candidate.md` 신규 생성, `data/module-candidates.csv`에 후보 1행 추가(기존 3→4), `i2c/README.md`에 목차·Mermaid 승인 흐름 반영. `module-status.csv` 정식 목록, 32차시, RTL/AXI/C 정상 소스 불변. HTML 생성/게시 없음.
+- ③ 적대적 검증: GitHub 원격 재조회로 후보 문서 Mermaid SCL/SDA 존재, 구조 필수 섹션, README 상대 링크, CSV 후보 중복 0, 정식 상태표 헤더 포함 74줄(기존 모듈 73행) 확인. 시각화 **정적 PASS**, 구조화 **정적 PASS**, 체계화 **정적 PASS**. **Mermaid 실제 렌더링, 링크 대상 전체 검사, HTML·CI, 실물 측정은 미검증**이므로 통합 게이트 **FAIL/미충족**.
+- P0: 3.3 V FPGA I/O에 5 V 풀업 직결 금지, XADC 0~1 V와 5 V ECHO 경고 유지. SGP40 기판 풀업·레귤레이터 미확인으로 실물 연결 미승인. P1: I²C 주소·명령·CRC·타이밍·FSM·AXI 핸드셰이크·C 구현 미검증. 오류 확정 없는 정상 소스 수정 금지.
+- 변경 파일 4개: `i2c/sgp40-candidate.md`, `data/module-candidates.csv`, `i2c/README.md`, `VERIFICATION.md`. HTML 게시 미확인/미실시.
+
 ## 2026-11-04 후보 목록 기계 판독 동기화 (조사 → 갱신 → 적대적 검증)
 
 - ① 조사: 현재 작업 브랜치 `devices/data/module-status.csv`에서 INA219(I11)·SHT31 관련 기존 항목과 I²C README의 SHT40/INA226/INA228 후보 3종을 대조. **이번 회차 신규 외부 후보 0종, 정식 추가 0종, 기존 정식 모듈 수정 0종**. 기존 후보 3종의 원본 링크·버전·라이선스 상태는 각 기술문서에 근거. Keyestudio/Freenove/Seeed/국내/AliExpress의 새 기판 변형은 추가 확인하지 못했으므로 미확인 유지.
