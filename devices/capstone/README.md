@@ -8,6 +8,7 @@
 | 02 | CAPSTONE-02 — 버튼 기반 SG90 위치 서보 제어·상태 표시 | [설계서](capstone-02-sg90-position.md) | [HTML](capstone-02-sg90-position.html) | 설계안·통합 미구현 |
 | 03 | CAPSTONE-03 — 로터리 엔코더 회전 카운터와 Basys3 LED 상태판 | [설계서](capstone-03-encoder-led-counter.md) | [HTML](capstone-03-encoder-led-counter.html) | 설계안·통합 미구현 |
 | 04 | CAPSTONE-04 — 차량 접근형 스마트 주차장 차단기 | [설계서](capstone-04-smart-parking-gate.md) | [HTML](capstone-04-smart-parking-gate.html) | 설계안·통합 미구현 |
+| 05 | CAPSTONE-05 — 터치·버튼 이중 입력 반응시간 측정기 | [설계서](capstone-05-touch-reaction-timer.md) | [HTML](capstone-05-touch-reaction-timer.html) | 자체 설계안·신규 통합 RTL 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
