@@ -1,5 +1,21 @@
 # GitHub 참고 자료 대장
 
+## 2026-11-03 SG90 서보 제품 변형·전원·명령 펄스 교차 검증
+
+| 원본 URL | 유형·고정 기준 | 전기·라이선스·검증 한계 |
+|---|---|---|
+| [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/) | 제조사 제품 페이지(D1), 2026-11-03 열람 | 4.8 V, 위치 제어용. Basys3 3.3 V 신호 HIGH 임계값 미제공. 웹 페이지 SHA·재배포 라이선스 미확인 |
+| [TowerPro SG90 360°](https://towerpro.com.tw/product/sg90-360-degree-continuous-rotation-servo/) | 제조사 다른 제품(D1), 2026-11-03 열람 | 연속 회전 110/130 RPM, **각도 서보와 다름**. 웹 SHA·라이선스 미확인 |
+| [Keyestudio KS0194](https://docs.keyestudio.com/projects/KS0194/en/latest/docs/KS0194.html) | 제조사 교육 모듈 문서(D1), 2026-11-03 열람 | 갈색 GND·빨강 4.8~6 V VCC·주황 SIGNAL, 20 ms/500~2500 µs, stall 850~1000 mA. KS0194에만 적용. 페이지 SHA·라이선스 미확인 |
+| [Seeed Grove Servo](https://wiki.seeedstudio.com/Grove-Servo/) | 공식 Grove 튜토리얼(D1), 2026-11-03 열람 | 4.8~6 V 서보를 Grove 커넥터로 재배선. 직접 3선식 커넥터와 핀 순서 혼동 금지. 라이선스 미확인 |
+| [Arduino Servo library](https://github.com/arduino-libraries/Servo/tree/440b319ec11ea2664df8ce201c271c935de28a2d) | GitHub 고정 커밋 `440b319ec11ea2664df8ce201c271c935de28a2d`, [API](https://github.com/arduino-libraries/Servo/blob/440b319ec11ea2664df8ce201c271c935de28a2d/docs/api.md) | [LICENSE.txt](https://github.com/arduino-libraries/Servo/blob/440b319ec11ea2664df8ce201c271c935de28a2d/LICENSE.txt) LGPL-2.1. `attach()`의 기본 544~2400 µs는 SG90 보증치가 아님. 코드 복제 없음 |
+| [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5) | 고정 커밋 `5315f61497eea49553aa1b70721751fb16a497e5` | [LICENSE.txt](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/5315f61497eea49553aa1b70721751fb16a497e5/LICENSE.txt) CC BY-NC-SA 3.0. SG90 특정 제조사 사양 근거로 오용하지 않음 |
+| [국내 디바이스마트 SG90 Analog](https://www.devicemart.co.kr/goods/view?no=12503474) | 국내 판매처(D3), 2026-11-03 열람 | 4.8 V/위치형 아날로그 상품. 정품/재고/가격/신호 임계값은 별도 확인 |
+| [국내 TowerPro 브랜드 목록](https://www.devicemart.co.kr/goods/brand?code=2187) | 국내 판매처(D3), 2026-11-03 열람 | SG90 Analog·Digital·360° 변형 별도 판매. 제품명만으로 PWM 각도 대응 확정 금지 |
+
+원본 자료는 링크와 요약으로만 사용하며 외부 그림·코드를 복제하지 않습니다. P0: 서보 모터 전원은 FPGA 3.3 V I/O와 분리하고 공통 GND를 사용합니다. 서보 신호 3.3 V HIGH 수용 여부는 보유품 확인 전 **미검증**입니다.
+
+
 ## 2026-11-03 모터 드라이버·전기 인터페이스 교차 확인
 
 | 원본 URL | 원본 종류·재현 기준 | 검증/라이선스/한계 |
