@@ -1,6 +1,9 @@
 name: Devices docs, sources and host verification
 
 on:
+  # (추가) 30분마다 기존 문서·드라이버·AXI RTL 회귀검사를 반복한다.
+  schedule:
+    - cron: '0,30 * * * *'
   push:
     paths:
       - 'devices/**'
@@ -29,13 +32,23 @@ jobs:
         run: |
           python3 -m py_compile devices/tools/gen_pages.py devices/tools/check_links.py
           python3 -m json.tool devices/data/devices.json > /dev/null
-      # (추가) 캡스톤/모듈 갱신 후 오래된 HTML 목차를 먼저 재생성한다.
-      - name: Regenerate HTML indexes before validation
-        run: python3 devices/tools/gen_pages.py
-      - name: Markdown links and HTML regeneration consistency
+      # (변경) 검증 → 안전한 HTML 재생성 → 재검증을 최대 3회 수행한다.
+      # 수작업 HTML, RTL, AXI, 전기적 제약은 자동 수정하지 않는다.
+      - name: Repair generated HTML and recheck links (max 3)
+        shell: bash
         run: |
-          python3 devices/tools/check_links.py
-          python3 devices/tools/gen_pages.py --check
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Generated HTML repair/check attempt $attempt/3"
+            python3 devices/tools/gen_pages.py
+            if python3 devices/tools/check_links.py && python3 devices/tools/gen_pages.py --check; then
+              echo "HTML/link repair loop PASS"
+              exit 0
+            fi
+            echo "::warning::HTML/link validation failed on attempt $attempt"
+          done
+          echo "::error::HTML/link repair failed after three attempts; manual review required."
+          exit 1
       - name: C driver host tests (mock only, not board verification)
         run: bash devices/run_host_tests.sh
       - name: AXI4-Lite ultrasonic RTL directed simulation
@@ -111,7 +124,7 @@ jobs:
       # (추가) push 검증이 모두 통과한 경우에만 생성된 HTML을 저장소에 반영한다.
       # 동시 커밋 충돌 시 최신 main에서 다시 생성하고 검증한 뒤 최대 3회 재시도한다.
       - name: Publish validated generated HTML indexes
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
