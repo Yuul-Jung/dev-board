@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPSTONE-02 | SG90 버튼 위치 제어</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.65}
+body{margin:0;background:Canvas;color:CanvasText}main{max-width:940px;margin:auto;padding:24px 20px 70px}
+a{color:#3483b8}nav{font-size:14px}h1{line-height:1.3}h2{margin-top:32px;border-bottom:1px solid #9997;padding-bottom:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.card{border:1px solid #9997;border-radius:10px;padding:16px}
+.arrow{text-align:center;font-size:22px}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #9997;text-align:left;padding:9px;vertical-align:top}
+.notice{padding:12px 15px;border-left:4px solid #c98e33;background:color-mix(in srgb,CanvasText 5%,Canvas)}
+footer{margin-top:38px;border-top:1px solid #9997;padding-top:12px;font-size:14px}
+</style></head><body><main>
+<nav><a href="../../index.html">메인</a> › <a href="../index.html">주변모듈</a> › <a href="index.html">캡스톤</a> › 02</nav>
+<h1>CAPSTONE-02 · 버튼 기반 SG90 위치 서보 제어</h1>
+<p class="notice"><strong>신규 자체 통합 설계안 · 미구현</strong> — 기존 서보 엔진/AXI 지정 시험은 별도 검증 범위입니다. 버튼 통합 RTL, Vivado 합성, 실물 서보 구동은 수행하지 않았습니다.</p>
+<h2>1. 교육용 구성</h2>
+<div class="cards"><div class="card"><b>입력</b><p>Basys3 버튼 2개<br>좌 / 우 위치 명령</p></div><div class="card"><b>Controller (제안)</b><p>동기화·디바운스·단발 펄스<br>명령 폭 100 µs 증감</p></div><div class="card"><b>출력</b><p>LED 상태<br>SG90 위치형 서보 신호</p></div></div>
+<div class="arrow">↓</div>
+<div class="cards"><div class="card"><b>순수 RTL 경로</b><p>버튼 Controller → 기존 <code>servo_engine</code> → PWM</p></div><div class="card"><b>SoC 확장 경로</b><p>MicroBlaze V → 기존 <code>servo_axil_regs</code> → <code>servo_engine</code></p></div></div>
+<p>두 경로는 대안입니다. 하나의 엔진을 동시에 구동하지 않으며, Top은 보드 핀과 모듈 연결만 담당합니다.</p>
+<h2>2. 제안 명령 규칙</h2>
+<table><tr><th>입력</th><th>명령</th></tr><tr><td>Reset</td><td>PWM 비활성, 초기 폭 1500 µs</td></tr><tr><td>Enable</td><td>20 ms 주기, 1500 µs 중심 명령</td></tr><tr><td>왼쪽 버튼 단발</td><td>100 µs 감소, 하한 1000 µs</td></tr><tr><td>오른쪽 버튼 단발</td><td>100 µs 증가, 상한 2000 µs</td></tr><tr><td>동시/길게 누름</td><td>동시 입력은 무시, 길게 눌러도 1회만 처리</td></tr></table>
+<p>1000~2000 µs는 교육용 보수적 시작 범위이며 모든 SG90의 기계적 안전 범위를 보증하지 않습니다. LED는 명령 상태만 나타내며 실제 축 위치 피드백은 아닙니다.</p>
+<h2>3. 실제 전기 연결 게이트</h2>
+<p><strong>SG90 전원은 별도 4.8~5 V 전원</strong>에서 공급하고 Basys3와 공통 GND를 사용합니다. 서보 전류를 FPGA GPIO에서 공급하지 않습니다. 3.3 V PWM HIGH 인식은 실제 제품에서 확인 전 미보증이며, 필요 시 적합한 버퍼·레벨 변환이 필요합니다. 위치형 SG90과 360° 연속 회전형을 혼동하지 않습니다.</p>
+<h2>4. 기존 구현 자료와 시험 근거</h2>
+<table><tr><th>자료</th><th>현재 상태</th></tr>
+<tr><td><a href="../motor/rtl/servo_engine.v">servo_engine.v</a></td><td>펄스 생성 RTL 소스 존재</td></tr>
+<tr><td><a href="../motor/rtl/servo_axil_regs.v">servo_axil_regs.v</a></td><td>AXI AW/W 독립 수락·WSTRB 지정 시험 보고</td></tr>
+<tr><td><a href="../motor/sw/servo.c">servo.c</a></td><td>C 소프트웨어 드라이버 소스 존재</td></tr>
+<tr><td><a href="../VERIFICATION.md">적대적 검증 기록</a></td><td>PR 브랜치 <a href="https://github.com/Yuul-Jung/dev-board/actions/runs/41551779497">CI 지정 시험 성공 기록</a>. 통합 캡스톤 검증 아님</td></tr></table>
+<h2>5. 원본 출처와 라이선스</h2>
+<p><a href="https://towerpro.com.tw/product/sg90-analog/">TowerPro SG90 Analog</a> · <a href="https://towerpro.com.tw/product/sg90-360-degree-continuous-rotation-servo/">360° 변형</a> · <a href="https://docs.keyestudio.com/projects/KS0194/en/latest/docs/KS0194.html">Keyestudio KS0194</a> · <a href="https://wiki.seeedstudio.com/Grove-Servo/">Seeed Grove Servo</a></p>
+<p><a href="https://github.com/arduino-libraries/Servo/blob/440b319ec11ea2664df8ce201c271c935de28a2d/LICENSE.txt">Arduino Servo LGPL-2.1</a> · <a href="https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/blob/5315f61497eea49553aa1b70721751fb16a497e5/LICENSE.txt">Freenove CC BY-NC-SA 3.0</a>. 제조사 웹 문서의 재배포 라이선스는 미확인입니다. 원본 코드·이미지를 복제하지 않았습니다.</p>
+<h2>6. 미완료 게이트</h2>
+<p>버튼 Controller/디바운스 통합 RTL 및 TB, 무효 레지스터 설정에 대한 하드웨어 안전 정책, AXI VIP, Vivado 합성·Timing, 3.3 V 신호 수용 및 실물 전원·전류 측정, MicroBlaze V 통합은 모두 미실시입니다.</p>
+<footer><a href="capstone-02-sg90-position.md">전체 Markdown 설계서</a> · <a href="index.html">캡스톤 목록</a> · <a href="../../index.html">메인</a></footer>
+</main></body></html>
