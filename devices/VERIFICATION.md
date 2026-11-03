@@ -1,5 +1,14 @@
 # 적대적 검증 결과
 
+## 2026-11-03 AHT20 신규 I13 등록 후 P0/P1 검토
+
+- 조사: 기존 72개 CSV에 AHT20 항목 없음 확인. 기존 I12 VL53L0X와 중복되지 않는 온습도 I²C 후보 1종. 신규 등록 1종, 기존 갱신 0종. 제조사 데이터시트 V1.0.03과 Grove 기판/IC 판매 자료 비교; 특정 무명 기판 회로는 미확인.
+- 갱신: `data/module-status.csv` I13 문서 상태, `STATUS.md` 73개 집계, `i2c/README.md`, `REFERENCES.md` 반영. 기존 32차시 및 RTL/C 코드 보존.
+- P0: FPGA SDA/SCL은 3.3V 풀업만 허용. 보드의 전원·풀업·핀 배열을 실물 확인하기 전 직접 연결 미승인. XADC 0~1V 및 HC-SR04 5V ECHO는 별도 경로.
+- P1: AHT20 I²C 0x38, 초기화·busy·20비트 조립·CRC·측정 타이밍은 드라이버 미구현이므로 미검증. 기존 AXI RTL/C 기능에 신규 변경 없음. 전체 회귀·HTML 생성 일치 및 CI는 별도 실행 결과 전까지 미검증.
+- 출처: PDF 원본 버전 명시, Git SHA 없는 웹 원본은 라이선스 미확인; 코드·이미지 복제 없음.
+
+
 ## 2026-11-03 I12 후속 상태표 정합성 감사
 
 - **조사:** 기존 PR #16의 ST VL53L0X IC·Pololu #2490·Adafruit breakout 2종을 재대조했다. 신규 등록 후보 0종, 새 모듈 ID 0건, 기존 I12 문서 상태 갱신 1건. Keyestudio/Freenove/Seeed·국내/AliExpress 특정 기판의 원본 회로도는 확인하지 못했으므로 호환성 추정 금지.
