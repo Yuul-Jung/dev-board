@@ -1,5 +1,17 @@
 # 적대적 검증 결과
 
+## 2026-11-03 SG90 서보 무효 설정 fail-safe 후속 검증
+
+**1단계 갱신:** 기존 [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/) 제조사 사양(4.8V 외부 전원, 신호 HIGH 3.3V 인식 임계값 미표기)과 [Arduino Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors)(MAX22211, Qwiic I²C 기반, 5~24V 모터 전원)를 다시 대조했다. 둘은 제어 인터페이스가 달라 같은 RTL/핀맵으로 대체할 수 없다. 기존 Keyestudio·Seeed·Freenove 및 국내 판매처의 SG90 변형·핀맵·라이선스 근거는 `motor/sg90.md`에 유지하며 확인되지 않은 사양을 승격하지 않는다. 제조사 웹페이지는 고정 Git SHA와 원본 재배포 라이선스가 없으므로 링크로만 인용한다.
+
+**2단계 적대적 검증:** `servo_axil_regs.v`는 C 드라이버의 `servo_init()` 유효성 검사를 우회하여 PERIOD=0 등 무효 설정을 수락한다. 기존 `servo_engine.v`는 PERIOD=0일 때 마이크로초 카운터가 매 tick 0으로 돌아가고 `w_clamped > 0`이면 PWM이 계속 HIGH가 될 수 있었다. **P1 기능·구동 안전 문제**로 판정한다.
+
+- **수정:** `servo_engine.v`에서 `0 < MIN <= MAX < PERIOD`일 때만 PWM을 생성하고, 위반하면 PWM LOW 및 APPLIED=0으로 만든다. 정상 설정의 클램프·주기 계산은 유지한다.
+- **회귀:** `tb_servo_engine.v`에 PERIOD=0, MIN=0, MIN>MAX, MAX>=PERIOD, 정상 복귀 시나리오를 추가하고 `devices-check.yml`에서 실행한다. CI 통과 여부는 PR/최종 main Actions 기록으로 확인한다.
+- **P0 유지:** SG90 전원은 FPGA GPIO가 아닌 적합한 외부 4.8V 공급원으로 공급하고 GND를 공유한다. 3.3V 제어 HIGH 인식은 실제 보유품에서 미검증이다. XADC 0~1V, HC-SR04 5V ECHO, I²C 풀업 3.3V 기준도 기존 게이트 유지.
+- **미해결:** RTL에서 PWM LOW는 물리적 모터 무전원·기계적 정지를 뜻하지 않는다. 동적 설정 변경 중 글리치 없는 주기 경계 반영, AXI VIP 전체 검증, Vivado 합성·타이밍, 실물 부하·전압 측정은 미실시.
+
+
 ## 2026-11-03 SG90 서보 자료 갱신 → AXI4-Lite 적대적 검증
 
 **1단계 자료 갱신:** [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/)·[SG90 360°](https://towerpro.com.tw/product/sg90-360-degree-continuous-rotation-servo/), [Keyestudio KS0194](https://docs.keyestudio.com/projects/KS0194/en/latest/docs/KS0194.html), [Seeed Grove Servo](https://wiki.seeedstudio.com/Grove-Servo/), [Arduino Servo API](https://github.com/arduino-libraries/Servo/blob/440b319ec11ea2664df8ce201c271c935de28a2d/docs/api.md), [Freenove Ultimate Starter Kit](https://github.com/Freenove/Freenove_Ultimate_Starter_Kit/tree/5315f61497eea49553aa1b70721751fb16a497e5), 국내 [디바이스마트 SG90 Analog](https://www.devicemart.co.kr/goods/view?no=12503474)를 교차 확인. **위치 제어형 SG90 Analog와 360° 연속 회전형을 구분**하고, Keyestudio 갈색 GND/빨강 VCC/주황 신호, Grove 커넥터 차이, 외부 서보 전원과 공통 GND, 3.3 V 신호 HIGH 미보증을 `motor/sg90.md`에 기록했습니다. Arduino Servo 기준 커밋 `440b319ec11ea2664df8ce201c271c935de28a2d`(LGPL-2.1), Freenove 기준 커밋 `5315f61497eea49553aa1b70721751fb16a497e5`(CC BY-NC-SA 3.0). 웹 문서의 Git SHA·재배포 라이선스는 미확인; 원본 그림·코드 복제 없음.
