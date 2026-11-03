@@ -1,5 +1,14 @@
 # 적대적 검증 결과
 
+## 2026-11-03 SHT40 후보 — 조사 → 갱신 → 적대적 검증
+
+- 조사 후보 1종(SHT40), 정식 신규 등록 0종, 기존 모듈 갱신 0종. Sensirion SHT40 IC와 DFRobot SEN0428 기판 구분. IC 1.08~3.6V와 보드 3.3~5V 차이를 확인했으나 실제 SDA/SCL 풀업 레일·회로 리비전은 미검증.
+- 갱신: `i2c/sht40-candidate.md`(Mermaid 신호도·목적/전원/핀/RTL·AXI·C/출처/선수관계/검증 상태), `i2c/README.md`(상위 목차 링크). CSV·기존 32차시·RTL/C 정상 소스 미변경. 기계 판독 목록 및 생성 HTML에는 미등록 상태로 남겨 완료 주장 금지.
+- 적대적 검증: GitHub 재읽기 정적 검사 — Mermaid `flowchart LR`와 SCL/SDA 명칭 PASS, 구조 섹션 PASS, 상위 링크 PASS, 5V 풀업 직결 금지 PASS, 출처 및 GPL-2.0 참고 커밋 표기 PASS. Mermaid 실제 렌더, 상대 링크 전체 검사, 생성 HTML 동기화, RTL/AXI/C 시험, Vivado, 실물 측정 **미실시**.
+- P0: FPGA 3.3V I/O, XADC 0~1V, HC-SR04 5V ECHO 기존 제한 유지. SHT40 기판 전원과 I²C 풀업 분리 검증 전 연결 미승인. P1: 16비트 데이터/CRC, FSM, NACK, 타이밍 및 AXI 핸드셰이크 미구현·미검증.
+- 자료 출처: https://d.sensirion.com/product-support/sht4x-humidity-and-temperature-sensor , https://wiki.dfrobot.com/sen0428/ , Linux 문서 고정 SHA 5358248961ae23f7253d010ddfde1cfd2556ce22 (GPL-2.0). 원본 코드·그림 복제 없음.
+
+
 ## 2026-11-03 AHT20 신규 I13 등록 후 P0/P1 검토
 
 - 조사: 기존 72개 CSV에 AHT20 항목 없음 확인. 기존 I12 VL53L0X와 중복되지 않는 온습도 I²C 후보 1종. 신규 등록 1종, 기존 갱신 0종. 제조사 데이터시트 V1.0.03과 Grove 기판/IC 판매 자료 비교; 특정 무명 기판 회로는 미확인.
