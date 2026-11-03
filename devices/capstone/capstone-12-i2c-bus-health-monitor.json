@@ -1,0 +1,65 @@
+{
+  "id": "CAPSTONE-12",
+  "slug": "capstone-12-i2c-bus-health-monitor",
+  "title": "I²C 버스 응답 지연·장애 감시기",
+  "category": "I2C bus diagnostics",
+  "level": "design-only",
+  "prerequisites": [
+    "GPIO synchronization",
+    "I2C START STOP",
+    "FSM",
+    "timer",
+    "AXI4-Lite"
+  ],
+  "components": [
+    {
+      "name": "Basys3",
+      "voltage": "3.3V GPIO"
+    },
+    {
+      "name": "3.3V I2C bus test source",
+      "voltage": "pullups measured <=3.3V"
+    }
+  ],
+  "inputs": [
+    "scl_in",
+    "sda_in",
+    "clear_pulse"
+  ],
+  "outputs": [
+    "fault_led",
+    "fault_flags",
+    "event_count",
+    "low_ticks"
+  ],
+  "controller": "i2c_bus_watchdog (proposed)",
+  "fsm": [
+    "IDLE",
+    "ACTIVE",
+    "FAULT"
+  ],
+  "implementation": [
+    "RTL synchronizer",
+    "watchdog FSM",
+    "self-checking testbench",
+    "AXI4-Lite registers",
+    "MicroBlaze V driver"
+  ],
+  "verification": {
+    "documentation": "authored",
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "board": "not_run"
+  },
+  "source_type": "original_design",
+  "source_refs": [
+    "devices/i2c/README.md",
+    "devices/VERIFICATION.md"
+  ],
+  "artifacts": [
+    "capstone-12-i2c-bus-health-monitor.md",
+    "capstone-12-i2c-bus-health-monitor.html",
+    "capstone-12-i2c-bus-health-monitor.svg",
+    "capstone-12-i2c-bus-health-monitor.json"
+  ]
+}
