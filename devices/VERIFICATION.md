@@ -1,5 +1,14 @@
 # 적대적 검증 결과
 
+## 2026-11-03 I12 후속 상태표 정합성 감사
+
+- **조사:** 기존 PR #16의 ST VL53L0X IC·Pololu #2490·Adafruit breakout 2종을 재대조했다. 신규 등록 후보 0종, 새 모듈 ID 0건, 기존 I12 문서 상태 갱신 1건. Keyestudio/Freenove/Seeed·국내/AliExpress 특정 기판의 원본 회로도는 확인하지 못했으므로 호환성 추정 금지.
+- **갱신:** `data/module-status.csv` I12를 `없음`에서 `문서`로, 경로를 `i2c/vl53l0x.md`로 수정. `STATUS.md`의 I12 행·집계(완비 29, 일부 8, 문서만 8, 없음 25, 제외 2; 합계 72) 동기화. VL53L1X는 미검증이며 별도 모듈 ID를 생성하지 않음.
+- **P0/P1 적대적 검증:** VIN=5V일 때 Pololu I²C HIGH 레일이 5V가 될 수 있으므로 Basys3 직접 연결 불승인. XSHUT/GPIO1 비레벨변환, 보드별 풀업/핀맵 미확인 유지. XADC 0~1V 및 HC-SR04 5V ECHO는 별도 경로. 해당 센서 전용 RTL/AXI/C 코드가 없어 비트폭·FSM·타이밍·핸드셰이크 시험 PASS 주장 불가.
+- **검증 증거/한계:** CSV I12 원문 단일 행 변경 및 STATUS 집계·행의 정합성 확인. GitHub Actions, 생성 HTML 일치 검사, 전체 상대 링크 검사, 실물 측정은 **이번 후속 커밋에서 미실행**. 생성 HTML 및 전체 CI가 확인되기 전 PR #16 병합/게시 완료로 표시하지 않음.
+- **저작권:** Pololu·Adafruit·ST 공식 원본 링크만 인용. 고정 Git SHA 없는 웹 문서는 원본 개정/라이선스 미확인. 그림·소스 재배포 없음.
+
+
 ## 2026-11-03 SG90 서보 무효 설정 fail-safe 후속 검증
 
 **1단계 갱신:** 기존 [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/) 제조사 사양(4.8V 외부 전원, 신호 HIGH 3.3V 인식 임계값 미표기)과 [Arduino Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors)(MAX22211, Qwiic I²C 기반, 5~24V 모터 전원)를 다시 대조했다. 둘은 제어 인터페이스가 달라 같은 RTL/핀맵으로 대체할 수 없다. 기존 Keyestudio·Seeed·Freenove 및 국내 판매처의 SG90 변형·핀맵·라이선스 근거는 `motor/sg90.md`에 유지하며 확인되지 않은 사양을 승격하지 않는다. 제조사 웹페이지는 고정 Git SHA와 원본 재배포 라이선스가 없으므로 링크로만 인용한다.
