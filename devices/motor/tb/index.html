@@ -25,7 +25,7 @@ pre.code{background:var(--card);border:1px solid var(--line);border-radius:9px;p
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/tb_dcmotor_axil_regs.v">tb_dcmotor_axil_regs.v</a></td><td>DC 모터 AXI4-Lite: 독립 AW/W, WSTRB, 읽기 전용 STATUS, B/R 백프레셔 검증.</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/tb_dcmotor_engine.v">tb_dcmotor_engine.v</a></td><td>엔진 단독 테스트. 1 MHz 클럭, 주기 100, 듀티 25로 줄여 돌린다.</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/tb_servo_axil_regs.v">tb_servo_axil_regs.v</a></td><td>서보 AXI4-Lite: AW/W 독립 수락, WSTRB 부분 쓰기, 읽기 전용 APPLIED, B/R 백프레셔.</td></tr>
-<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/tb_servo_engine.v">tb_servo_engine.v</a></td><td>자체 점검 테스트벤치 (미실행: 시뮬레이터 없음).</td></tr>
+<tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/tb_servo_engine.v">tb_servo_engine.v</a></td><td>서보 엔진 펄스 폭·범위 제한·무효 레지스터 설정 fail-safe 회귀시험.</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/test_dcmotor.c">test_dcmotor.c</a></td><td>motor/tb/test_dcmotor.c — dcmotor.c 호스트 모의 시험.</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/test_hb5.c">test_hb5.c</a></td><td>motor/tb/test_hb5.c — Pmod HB5 드라이버 호스트 모의 시험.</td></tr>
 <tr><td class="f"><a href="https://github.com/Yuul-Jung/dev-board/blob/main/devices/motor/tb/test_servo.c">test_servo.c</a></td><td>서보 드라이버 호스트 시험. 모의 레지스터는 servo_axil_regs.v 머리말(리터럴 오프셋)과 servo_engine.v 의 제한 동작(MIN&gt;MAX 면 </td></tr>
