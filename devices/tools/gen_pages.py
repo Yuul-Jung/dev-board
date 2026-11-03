@@ -147,7 +147,8 @@ def page(d):
             ('soc-map/index.html', 'MicroBlaze V SoC', 'AXI·주변장치 대응'),
             ('atlas/index.html', '회로 연결 아틀라스', 'Basys3 전기 연결'),
             ('catalog/index.html', '개발보드 카탈로그', '보드·모듈 비교'),
-            ('devices/capstone/index.html', '캡스톤 사례', 'PIR 침입 감지·거리 연동 확장'),
+            ('devices/capstone/index.html', '캡스톤 01', 'PIR 침입 감지·거리 연동 확장'),
+            ('devices/capstone/capstone-02-sg90-position.html', '캡스톤 02 · 신규', 'SG90 버튼 위치 제어·AXI 확장 설계안'),
         ]
         o.append('<h2>학습 분야 바로가기</h2><div class="grid">')
         for url, label, summary in nav:
