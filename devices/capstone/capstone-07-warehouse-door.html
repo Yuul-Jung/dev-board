@@ -8,7 +8,8 @@
 <div class="card"><b>제어</b><p>capstone_controller (신규 제안)</p></div>
 <div class="card"><b>출력</b><p><a href="../gpio/buzzer.md">능동 부저</a></p></div></div>
 <h2>2. 동작 정책</h2><p>움직임 이벤트를 래치하고 터치 확인으로만 경보를 해제한다.</p>
-<h2>3. 개념 구조 (실제 RTL 포트 아님)</h2><pre>HC-SR501 PIR → input_a_interface ─┐
+<h2>3. 개념 구조 (실제 RTL 포트 아님)</h2>
+<figure class="system-visual"><img class="system-diagram" src="capstone-07-warehouse-door.svg" alt="입력 A와 B에서 제어기, 출력 구동기, SoC 상태 레지스터까지의 신호 흐름" style="display:block;width:100%;height:auto;max-width:940px;margin:auto"><figcaption>설계 개념도: 제안된 인터페이스·모듈명이며 실제 RTL 포트 확정 전입니다. <a href="capstone-07-warehouse-door.svg">SVG 원본</a> · <a href="capstone-07-warehouse-door.json">구조화 데이터(JSON)</a></figcaption></figure><pre>HC-SR501 PIR → input_a_interface ─┐
 TTP223 터치 → input_b_interface ─┤→ capstone_controller → output_driver → 능동 부저
                          └→ status_registers (MicroBlaze V 확장)</pre>
 <h2>4. 상태 흐름</h2><table><tr><th>상태</th><th>역할</th></tr>
