@@ -1,0 +1,56 @@
+{
+  "id": "CAPSTONE-13",
+  "title": "UART 하트비트 감시·안전 정지 상태기",
+  "slug": "capstone-13-uart-heartbeat-failsafe",
+  "category": "UART 통신 장애 감시",
+  "stage": "설계형",
+  "prerequisites": [
+    "UART RX byte stream",
+    "FSM",
+    "1ms clock enable",
+    "AXI4-Lite"
+  ],
+  "components": [
+    "Basys3 USB-UART",
+    "Basys3 BTN",
+    "Basys3 LED"
+  ],
+  "power": "Basys3 board supply only",
+  "inputs": [
+    "rx_out_data[7:0]",
+    "rx_out_valid",
+    "reset_pulse"
+  ],
+  "outputs": [
+    "rx_out_ready",
+    "safe_led",
+    "fault_led",
+    "fault_pending",
+    "age_ms[15:0]",
+    "event_count[15:0]"
+  ],
+  "controller": "heartbeat_failsafe_controller (proposed)",
+  "fsm": [
+    "WAIT_FIRST",
+    "RUN",
+    "FAULT"
+  ],
+  "policy": "H=0x48; 1500ms timeout priority; manual recovery; saturating count",
+  "extension": [
+    "RTL",
+    "AXI4-Lite",
+    "MicroBlaze V"
+  ],
+  "sources": [
+    "../../rtl/README.md",
+    "../uart/README.md"
+  ],
+  "external_copied": false,
+  "verification": {
+    "documentation": "authored",
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "board": "not_run"
+  },
+  "tests": 12
+}
