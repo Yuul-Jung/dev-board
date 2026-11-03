@@ -34,7 +34,8 @@ class HTMLLinks(HTMLParser):
                 self.links.append(value)
 
 site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html',
-              'devices/capstone/capstone-02-sg90-position.html')
+              'devices/capstone/capstone-02-sg90-position.html',
+              'devices/capstone/capstone-03-encoder-led-counter.html')
 site_count = 0
 for rel in site_pages:
     source = os.path.join(root, rel)
