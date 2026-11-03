@@ -6,6 +6,8 @@
 
 ## 신규 조사 후보 (정식 모듈 ID 미부여)
 
+- [INA228 전력·에너지 모니터 — 신규 조사 후보, Adafruit 기판 자료 확인·실물 미검증](ina228-candidate.md): INA219/INA226과 별도 IC. 3.3 V I²C 풀업·션트·보드 개정 확인 전 정식 등록 보류.
+
 - [INA226 전류·전압·전력 모니터 — 신규 조사 후보, 실장 기판 미확인](ina226-candidate.md): INA219(I11)과 구분, 3.3 V I²C·션트·ALERT 안전 검증 전 정식 등록 보류.
 - [SHT40 온습도 센서 — 기판 변형·3.3V 안전·I²C 대응 및 검증 게이트](sht40-candidate.md): DFRobot SEN0428과 원본 IC 구분. 실물/RTL 미검증.
 
