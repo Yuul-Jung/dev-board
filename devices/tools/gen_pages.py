@@ -151,7 +151,7 @@ def page(d):
         ]
         cap_dir = os.path.join(root, 'devices', 'capstone')
         for filename in sorted(os.listdir(cap_dir)):
-            if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename):
+            if re.fullmatch(r'capstone-\d{2}-[a-z0-9-]+\.html', filename):
                 number = filename.split('-', 2)[1]
                 nav.append(('devices/capstone/' + filename,
                             '캡스톤 ' + number, '신규·기존 통합 설계 과제'))
@@ -164,7 +164,7 @@ def page(d):
         o.append('<h2>캡스톤 프로젝트</h2><div class="grid">')
         o.append('<a class="card" href="index.html"><b>CAPSTONE-01</b><span>PIR 침입 감지·거리 연동 보안 제어</span></a>')
         for filename in sorted(os.listdir(d)):
-            if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename):
+            if re.fullmatch(r'capstone-\d{2}-[a-z0-9-]+\.html', filename):
                 number = filename.split('-', 2)[1]
                 o.append('<a class="card" href="' + e(filename) +
                          '"><b>CAPSTONE-' + e(number) +
