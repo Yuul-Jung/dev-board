@@ -11,6 +11,20 @@
 - [INA226 전류·전압·전력 모니터 — 신규 조사 후보, 실장 기판 미확인](ina226-candidate.md): INA219(I11)과 구분, 3.3 V I²C·션트·ALERT 안전 검증 전 정식 등록 보류.
 - [SHT40 온습도 센서 — 기판 변형·3.3V 안전·I²C 대응 및 검증 게이트](sht40-candidate.md): DFRobot SEN0428과 원본 IC 구분. 실물/RTL 미검증.
 
+
+**기계 판독 후보 목록:** [module-candidates.csv](../data/module-candidates.csv) — SHT40·INA226·INA228 3종은 정식 모듈 ID가 없는 조사 후보이며, 기존 [정식 상태표](../data/module-status.csv)의 행 수나 ID를 변경하지 않는다.
+
+```mermaid
+flowchart LR
+  A["기존 정식 목록: INA219(I11), SHT31 등"] --> B["후보 중복·IC/기판 구분"]
+  B --> C["SHT40 / INA226 / INA228 후보 CSV"]
+  C --> D["P0: 3.3V I/O·풀업·션트·기판 확인"]
+  D --> E["P1: RTL/AXI/C·링크·렌더 검증"]
+  E --> F["승인 시에만 정식 상태표·HTML 동기화"]
+```
+
+위 흐름도는 **문서 승인 절차**이며 실제 RTL 신호·기판 핀맵이 아니다. 후보별 SCL/SDA 및 전기적 신호 흐름은 각 후보 기술문서를 참조한다.
+
 ## AXI IIC (PG090 v2.1, 2024-12-18) — 확인 (문서 본문 열람)
 | 항목 | 값 |
 |---|---|
