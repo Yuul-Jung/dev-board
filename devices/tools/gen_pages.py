@@ -147,19 +147,28 @@ def page(d):
             ('soc-map/index.html', 'MicroBlaze V SoC', 'AXI·주변장치 대응'),
             ('atlas/index.html', '회로 연결 아틀라스', 'Basys3 전기 연결'),
             ('catalog/index.html', '개발보드 카탈로그', '보드·모듈 비교'),
-            ('devices/capstone/index.html', '캡스톤 01', 'PIR 침입 감지·거리 연동 확장'),
-            ('devices/capstone/capstone-02-sg90-position.html', '캡스톤 02 · 신규', 'SG90 버튼 위치 제어·AXI 확장 설계안'),
-            ('devices/capstone/capstone-03-encoder-led-counter.html', '캡스톤 03', '엔코더 카운트·LED 상태판 (설계안)'),
+            ('devices/capstone/index.html', '캡스톤 전체', '신규·기존 프로젝트 목록 및 설계·검증 상태'),
         ]
+        cap_dir = os.path.join(root, 'devices', 'capstone')
+        for filename in sorted(os.listdir(cap_dir)):
+            if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename):
+                number = filename.split('-', 2)[1]
+                nav.append(('devices/capstone/' + filename,
+                            '캡스톤 ' + number, '신규·기존 통합 설계 과제'))
         o.append('<h2>학습 분야 바로가기</h2><div class="grid">')
         for url, label, summary in nav:
             o.append(f'<a class="card" href="{e(url)}"><b>{e(label)}</b><span>{e(summary)}</span></a>')
         o.append('</div>')
-        o.append(f'<p class="lede">자료화·적대적 검증 2시간 주기 / 프로젝트 문서화 5시간 주기 · <a href="{GH}/blob/main/HARNESS.md">운영 하네스 문서</a></p>')
+        o.append(f'<p class="lede">자료 조사·갱신·적대적 검증 70분 주기 / 캡스톤 신규 제작 3시간 주기 · <a href="{GH}/blob/main/HARNESS.md">운영 하네스 문서</a></p>')
     if rel == 'devices/capstone':
         o.append('<h2>캡스톤 프로젝트</h2><div class="grid">')
         o.append('<a class="card" href="index.html"><b>CAPSTONE-01</b><span>PIR 침입 감지·거리 연동 보안 제어</span></a>')
-        o.append('<a class="card" href="capstone-02-sg90-position.html"><b>CAPSTONE-02</b><span>SG90 버튼 위치 제어·AXI 확장 (설계안)</span></a>')
+        for filename in sorted(os.listdir(d)):
+            if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename):
+                number = filename.split('-', 2)[1]
+                o.append('<a class="card" href="' + e(filename) +
+                         '"><b>CAPSTONE-' + e(number) +
+                         '</b><span>독립 설계·구현 자료</span></a>')
         o.append('</div>')
     if rel == 'devices':
         o.append('<p><a href="capstone/index.html">캡스톤 01 — PIR 침입 감지와 거리 연동 보안 제어</a> (원본 공개 튜토리얼과 별도 확장 설계안 구분)</p>')
