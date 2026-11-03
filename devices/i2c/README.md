@@ -65,6 +65,8 @@ RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를
 
 - [VL53L0X ToF 거리센서 — 기판별 3.3V I²C 안전 조사](vl53l0x.md) — I12 기존 후보, 문서만/드라이버·실물 미검증.
 
+- [AHT20 온습도 — 신규 후보, 문서만](aht20.md) — 보드별 전원·I²C 풀업·측정 타이밍 미검증.
+
 <!-- nav-foot -->← [1-wire](../1-wire/README.md) · [devices 목차](../README.md) · [spi](../spi/README.md) →
 
 ## 이 폴더의 목록
