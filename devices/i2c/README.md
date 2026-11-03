@@ -62,6 +62,9 @@
 ## 한계
 RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를 확인했고 드라이버(`sw/`)는 호스트 모의 테스트까지만 했습니다(위 "드라이버" 절). BME280 드라이버는 [bme280.md](bme280.md). 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
 
+
+- [VL53L0X ToF 거리센서 — 기판별 3.3V I²C 안전 조사](vl53l0x.md) — I12 기존 후보, 문서만/드라이버·실물 미검증.
+
 <!-- nav-foot -->← [1-wire](../1-wire/README.md) · [devices 목차](../README.md) · [spi](../spi/README.md) →
 
 ## 이 폴더의 목록
