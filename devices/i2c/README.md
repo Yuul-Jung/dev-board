@@ -15,8 +15,25 @@
 | 기능 | 마스터/슬레이브/멀티 마스터, 7/10비트 주소, 동적 시작·정지 생성, GPO 포트(1~8비트) |
 | 디바이스 | 지원 계열에 7 series 포함, Artix-7 최대 주파수 표 있음 |
 | 인터페이스 | AXI4-Lite |
-| 3상태 포트 | sda_i, sda_o, sda_t, scl_i, scl_o, scl_t (t = 3상태 출력 활성). IOBUF는 상위에서 연결 (IP Integrator에서는 자동 삽입되는 `iic` 인터페이스 사용) |
+| 3상태 포트 | sda_i, sda_o, sda_t, scl_i, scl_o, scl_t (t=1: 출력 Hi-Z/해제, t=0: 출력 구동; I²C는 Low만 구동하고 High는 풀업으로 형성). IOBUF는 상위에서 연결 (IP Integrator에서는 자동 삽입되는 `iic` 인터페이스 사용) |
 | 파라미터 | SCL Clock Frequency(IIC_FREQ_KHZ, 기본 100), Address Mode(7/10), SCL/SDA Inertial delay(0~255 AXI clk), AXI Clock Frequency(25~300 MHz), GPO 폭·기본값 |
+
+### IOBUF 3상태 극성 및 오픈드레인 검증 (2026-11-04)
+
+| IOBUF `T` | `I` | 외부 SCL/SDA | 의미 |
+|---|---|---|---|
+| 1 | 0 (무관) | Z → 외부 풀업으로 High | 버스 해제, 출력 버퍼 비활성 |
+| 0 | 0 | Low | 버스 Low 구동 |
+| 0 | 1 | High 강제 구동 | **I²C 오픈드레인 연결에서 사용 금지** |
+
+```mermaid
+flowchart LR
+  CORE["AXI IIC: scl_o/scl_t, sda_o/sda_t"] --> BUF["IOBUF: T=1 해제 / T=0 Low 구동"]
+  BUF <-->|"SCL / SDA"| BUS["3.3 V I²C 버스 (설계안)"]
+  PULL["3.3 V 풀업 (기판별 확인 필요)"] --> BUS
+```
+
+이 그림은 **신호 관계 개념도**이며 RTL 인스턴스·실제 보드 핀맵이 아니다. `scl_t/sda_t`의 극성을 반대로 해석하면 High를 강제로 구동하거나 버스를 계속 해제하는 오류가 생긴다. 외부 5 V 풀업은 Basys3 3.3 V I/O에 직접 연결하지 않는다. 근거: [AMD IOBUF 논리표](https://docs.amd.com/r/2022.2-English/ug1353-versal-architecture-ai-libraries/IOBUF) (2022.2, 출력 High-Z 극성); [AMD UG571 IOBUF](https://docs.amd.com/api/khub/documents/kFbaUC5HGcXyGNauhgU6Gw/content) (v1.16, 2025-01-14). 출처의 재배포 라이선스 미확인, 원본 그림·코드 복제 없음. AXI IIC IP의 실제 `scl_o/scl_t` 파형·Vivado IOBUF 결선은 별도 시험 전 미검증.
 
 **SCL 타이밍 (확인)**: THIGH/TLOW 레지스터 기본값은 IP가 설정한 SCL 주파수와 AXI 클럭으로 자동 계산됩니다. 식은 `값 = (AXI 클럭 Hz / (2 × IIC Hz)) − 7 − SCL_INERTIAL_DELAY`. 문서 예시: 25 MHz / 100 kHz / 지연 0 → 118.
 계산: AXI 100 MHz, 400 kHz, 지연 0 → 100,000,000 / 800,000 − 7 = 118. 맞지 않으면 레지스터를 읽어 조정(문서 설명). TSUSTA 등은 I2C 규격 시간 + Tr 을 클럭 수로 환산(예: 4.7 µs + 1 µs, 100 MHz → 570).
