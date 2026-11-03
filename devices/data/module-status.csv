@@ -43,6 +43,7 @@ I09,I2C,PCA9685 16채널 PWM,I2C,심화,,없음,,,
 I10,I2C,ADS1115,I2C,심화,8,완비,i2c/ads1115.md,,XADC(내장 12비트)
 I11,I2C,INA219,I2C,심화,,없음,,,
 I12,I2C,VL53L0X / L1X,I2C,심화,,문서,i2c/vl53l0x.md,VL53L0X 기판 비교 문서만; VL53L1X 별도 미검증; RTL·C·실물 시험 없음,
+I13,I2C,AHT20 온습도,I2C,응용,,문서,i2c/aht20.md,신규 후보 문서만; 3.3V 풀업·보드 리비전·CRC/타이밍·실물 미검증,
 S01,SPI,MFRC522 RFID,SPI,응용,,문서,spi/comm-storage-io.md,드라이버 없음,
 S02,SPI,microSD (SPI),SPI,심화,20,문서,spi/comm-storage-io.md,조사 문서만. 규격 자료 막힘(미확인),
 S03,SPI,MAX7219 매트릭스,SPI,기초,12,완비,spi/display.md,"체인 8개, 8x8 (모델 시험)",
