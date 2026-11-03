@@ -1,0 +1,60 @@
+{
+  "id": "CAPSTONE-15",
+  "title": "CAPSTONE-15 — UART 명령 속도 제한·과부하 차단기",
+  "category": "UART communication reliability",
+  "stage": "design",
+  "original_design": true,
+  "prerequisites": [
+    "UART RX",
+    "FSM",
+    "counter",
+    "register map"
+  ],
+  "power": "Basys3 USB 3.3V I/O only",
+  "inputs": [
+    "uart_rx_data",
+    "uart_rx_valid",
+    "rst"
+  ],
+  "outputs": [
+    "uart_rx_ready",
+    "led_state",
+    "led_blocked",
+    "accepted_count",
+    "rejected_count",
+    "overload_pending"
+  ],
+  "fsm": [
+    "IDLE",
+    "DECODE",
+    "APPLY",
+    "REJECT"
+  ],
+  "policy": {
+    "token_capacity": 4,
+    "refill_ms": 100,
+    "consume": [
+      "T",
+      "R"
+    ],
+    "query": "S"
+  },
+  "artifacts": [
+    "capstone-15-uart-rate-limiter.md",
+    "capstone-15-uart-rate-limiter.html",
+    "capstone-15-uart-rate-limiter.svg"
+  ],
+  "verification": {
+    "design_document": "written",
+    "rtl": "not implemented",
+    "simulation": "not run",
+    "synthesis": "not run",
+    "board": "not run"
+  },
+  "source": "Original authored design; no external code or image copied",
+  "roadmap": [
+    "RTL",
+    "AXI4-Lite",
+    "MicroBlaze V"
+  ]
+}
