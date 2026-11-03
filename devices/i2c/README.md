@@ -69,7 +69,7 @@ RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를
 
 - [VL53L0X ToF 거리센서 — 기판별 3.3V I²C 안전 조사](vl53l0x.md) — I12 기존 후보, 문서만/드라이버·실물 미검증.
 
-- [AHT20 온습도 — 신규 후보, 문서만](aht20.md) — 보드별 전원·I²C 풀업·측정 타이밍 미검증.
+- [AHT20 온습도 — I13 등록, 문서만](aht20.md) — 보드별 전원·I²C 풀업·측정 타이밍 미검증.
 
 <!-- nav-foot -->← [1-wire](../1-wire/README.md) · [devices 목차](../README.md) · [spi](../spi/README.md) →
 
@@ -101,9 +101,9 @@ RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를
 
 <!-- index:end -->
 
-## 신규 조사 후보 — SHT40 (2026-11-03, 미등록·미검증)
+## SHT40 후보 근거 요약 (2026-11-03, 미등록·미검증)
 
-- 기존 73종 목록에 **SHT40 독립 항목 없음**을 확인했으나 이번 회차에는 정식 ID를 부여하지 않았다. SHT31과 동일 온습도 범주이지만 IC와 명령 프로토콜이 다른 후보이다.
+- 기존 73종 목록에 **SHT40 독립 항목 없음**을 확인했으나 정식 ID를 부여하지 않았다. 상세 구조도·전기 제약·출처·검증 게이트는 [SHT40 후보 기술문서](sht40-candidate.md)를 참조한다. SHT31과 동일 온습도 범주이지만 IC와 명령 프로토콜이 다른 후보이다.
 - [Sensirion SHT40 공식 제품](https://sensirion.com/products/catalog/SHT40): IC 전원 1.08~3.6 V, I²C; SHT4x 데이터시트 2025-04. 원본 웹/PDF 저작권·재배포 라이선스 미확인, Git 커밋 해당 없음.
 - [DFRobot Fermion SHT40 기판](https://www.dfrobot.com/product-2437.html/): 모듈 전원 3.3~5 V 표기. **IC 5 V 허용이라는 의미가 아니며**, 실제 PCB 레귤레이터·SDA/SCL 풀업 전압·핀맵을 회로도로 확인하기 전 5 V 구동 상태의 Basys3 직결 금지. 기판 개정·회로도·라이선스·Git SHA 미확인.
 - Keyestudio/Freenove/Seeed/Arduino Hardware Docs 및 국내·AliExpress의 **동일 실장 PCB** 대조는 미완료. 기존 RTL/C 드라이버 재사용 및 SHT31 프로토콜 호환성은 검증하지 않았다.
