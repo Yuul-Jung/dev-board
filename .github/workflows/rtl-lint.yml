@@ -1,5 +1,8 @@
 name: RTL Verilator lint
 on:
+  # (추가) 하네스 반복 검증: RTL 기능 회귀는 코드 변경이 없어도 수행한다.
+  schedule:
+    - cron: '22 */2 * * *'
   push:
     paths:
       - 'rtl/rtl*/src/**'
