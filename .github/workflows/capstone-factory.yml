@@ -7,6 +7,8 @@ on:
     branches: [main]
     paths:
       - devices/tools/capstone_factory.py
+      - devices/tools/capstone_visual.py
+      - devices/tools/publication_gate.py
       - .github/workflows/capstone-factory.yml
   workflow_dispatch:
 
@@ -35,11 +37,14 @@ jobs:
         run: python3 devices/tools/capstone_factory.py --selftest
       - name: Create at least one genuinely new project and its HTML
         run: python3 devices/tools/capstone_factory.py
-      - name: Regenerate site navigation and verify links
+      # (추가) 시각화→구조화→체계화 3대 품질 게이트를 통과해야 게시한다.
+      - name: Visualize, structure, organize and verify every capstone
         run: |
+          python3 devices/tools/capstone_visual.py --repair
           python3 devices/tools/gen_pages.py
           python3 devices/tools/check_links.py
           python3 devices/tools/gen_pages.py --check
+          python3 devices/tools/publication_gate.py
       - name: Commit and publish new capstone
         run: |
           set -euo pipefail
@@ -61,9 +66,11 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             python3 devices/tools/capstone_factory.py
+            python3 devices/tools/capstone_visual.py --repair
             python3 devices/tools/gen_pages.py
             python3 devices/tools/check_links.py
             python3 devices/tools/gen_pages.py --check
+            python3 devices/tools/publication_gate.py
             git add -A
             if git diff --cached --quiet; then
               echo "ERROR: no new capstone after retry" >&2
