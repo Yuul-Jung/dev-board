@@ -280,3 +280,14 @@ pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg
 python3 -I tools/crosscheck_pdf.py <폴더>              # PDF 텍스트 블록 + 사실표 블록(PDF 포함 총합은 이번에 못 돌림, 계산상 586)
 python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(524항목, PDF 텍스트 없이 저장소의 ref/ 만으로 돎, run_host_tests.sh 에도 포함)
 ```
+
+
+## 2026-11-03 I12 VL53L0X 자료 조사 → 문서 갱신 → 적대적 검증
+
+- **조사:** 기존 I12 후보(VL53L0X/L1X) 중 VL53L0X에 대해 Pololu #2490·Adafruit 기판과 ST IC를 분리했다. 신규 후보로 검토한 VL53L0X는 기존 상태표에 이미 있어 **새 모듈 ID 0건**, 신규 기술 문서 1건, 기존 모듈 1건 자료 보강으로 집계한다. Keyestudio/Freenove/Seeed·국내·AliExpress 특정 PCB의 공식 회로 및 라이선스는 미확인.
+- **갱신:** [i2c/vl53l0x.md](i2c/vl53l0x.md) 신규, REFERENCES 출처·버전·라이선스 상태 추가. 기존 32차시·RTL·C는 수정하지 않음.
+- **P0 적대적 검증:** Pololu 기판 SDA/SCL은 VIN 레일로 레벨 변환되므로 VIN=5V에서 Basys3 직접 연결 불가. Adafruit GPIO와 Pololu XSHUT/GPIO1은 I²C 레벨 시프터를 경유하지 않는다. 무명 보드 전원/풀업/핀맵 미검증 → 실물 연결 미승인. XADC 0~1V 및 HC-SR04 ECHO 5V는 해당 I²C 센서와 구분.
+- **P1 적대적 검증:** 기본 주소 0x29, 다중 센서 주소 재설정 시 XSHUT 필요. VL53L0X 초기화/API, RTL·AXI·C 핸드셰이크·비트폭·FSM·타이밍·회귀시험은 구현·검증되지 않았으므로 PASS로 표시하지 않음.
+- **출처/저작권:** 원본 링크만 인용. 고정 Git SHA가 없는 제조사 웹 문서는 열람일을 기록하고 라이선스 미확인으로 표시. 원본 코드/그림 복제 없음.
+- **검증 상태:** Markdown 상대 링크·CI·Vivado 합성·실물 측정은 이 기록 작성 시점에 아직 실행되지 않음. 새 문서의 상대 링크 경로는 저장소 기준 확인 필요. 게시 여부 미확인.
+- **다음 작업:** module-status.csv의 I12를 문서만으로 변경하고 생성된 STATUS.md/HTML을 일괄 재생성·CI 확인, 무명 기판 실물 회로 검증, I²C 소프트웨어/API 범위 확정.
