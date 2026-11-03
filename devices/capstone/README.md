@@ -15,8 +15,9 @@
 | 09 | CAPSTONE-09 — UART·터치 이중 승인 저전압 타이머 스위치 | [설계서](capstone-09-dual-consent-timed-switch.md) | [HTML](capstone-09-dual-consent-timed-switch.html) | 설계안·통합 미구현 |
 | 10 | CAPSTONE-10 — UART 프레임 CRC-8 무결성 감시·오류 계수기 | [설계서](capstone-10-uart-crc-packet-monitor.md) | [HTML](capstone-10-uart-crc-packet-monitor.html) | 설계안·통합 미구현 |
 | 11 | CAPSTONE-11 — 기계 회전수·온도 이상 경보 | [설계서](capstone-11-machine-guard.md) | [HTML](capstone-11-machine-guard.html) | 설계안·통합 미구현 |
-| 12 | CAPSTONE-12 — I²C 버스 응답 지연·장애 감시기 | [설계서](capstone-12-i2c-bus-health-monitor.md) | [HTML](capstone-12-i2c-bus-health-monitor.html) | 자체 설계안·통합 미구현 |
-| 13 | CAPSTONE-13 — UART 하트비트 감시·안전 정지 상태기 | [설계서](capstone-13-uart-heartbeat-failsafe.md) | [HTML](capstone-13-uart-heartbeat-failsafe.html) | 자체 설계안·통합 미구현 |
+| 12 | CAPSTONE-12 — I²C 버스 응답 지연·장애 감시기 | [설계서](capstone-12-i2c-bus-health-monitor.md) | [HTML](capstone-12-i2c-bus-health-monitor.html) | 설계안·통합 미구현 |
+| 13 | CAPSTONE-13 — UART 하트비트 감시·안전 정지 상태기 | [설계서](capstone-13-uart-heartbeat-failsafe.md) | [HTML](capstone-13-uart-heartbeat-failsafe.html) | 설계안·통합 미구현 |
+| 14 | CAPSTONE-14 — 터치 승인형 자동 분류 게이트 | [설계서](capstone-14-touch-sorter.md) | [HTML](capstone-14-touch-sorter.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
