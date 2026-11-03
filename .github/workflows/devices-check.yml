@@ -94,3 +94,8 @@ jobs:
             devices/motor/rtl/servo_axil_regs.v \
             devices/motor/tb/tb_servo_axil_regs.v
           vvp /tmp/tb_servo_axil_regs
+          # (추가) 실제 PWM 엔진의 펄스 및 무효 AXI 설정 안전 차단 시험
+          iverilog -g2012 -Wall -s tb_servo_engine -o /tmp/tb_servo_engine \
+            devices/motor/rtl/servo_engine.v \
+            devices/motor/tb/tb_servo_engine.v
+          vvp /tmp/tb_servo_engine

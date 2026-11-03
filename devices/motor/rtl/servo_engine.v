@@ -20,16 +20,20 @@ module servo_engine #(
     wire [15:0] lim_lo = (min_us > max_us) ? max_us : min_us;
     wire [15:0] lim_hi = (min_us > max_us) ? min_us : max_us;
     wire [15:0] w_clamped = (width_us < lim_lo) ? lim_lo : (width_us > lim_hi) ? lim_hi : width_us;
-    assign applied_us = w_clamped;
+    // (추가) AXI 직접 쓰기가 C 드라이버의 범위 검사를 우회할 때 출력 차단.
+    // 0 폭, 0 주기, 역전된 범위, 주기 이상 펄스는 유효한 서보 명령이 아니다.
+    wire config_valid = (period_us != 16'd0) && (min_us != 16'd0) &&
+                        (min_us <= max_us) && (max_us < period_us);
+    assign applied_us = config_valid ? w_clamped : 16'd0;
 
     always @(posedge clk) begin
-        if (!rstn || !enable) begin
+        if (!rstn || !enable || !config_valid) begin
             tick_cnt <= 8'd0; us_cnt <= 16'd0; pwm <= 1'b0;
         end else begin
             tick_cnt <= tick ? 8'd0 : tick_cnt + 8'd1;
             if (tick) begin
                 us_cnt <= (us_cnt + 16'd1 >= period_us) ? 16'd0 : us_cnt + 16'd1;
-                pwm <= ((us_cnt + 16'd1 >= period_us) ? 16'd0 : us_cnt + 16'd1) < w_clamped;
+                pwm <= ((us_cnt + 16'd1 >= period_us) ? 16'd0 : us_cnt + 16'd1) < applied_us;
             end
         end
     end
