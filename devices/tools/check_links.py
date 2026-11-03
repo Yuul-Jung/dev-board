@@ -33,11 +33,14 @@ class HTMLLinks(HTMLParser):
             if key in ('href', 'src') and value:
                 self.links.append(value)
 
-site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html',
-              'devices/capstone/capstone-02-sg90-position.html',
-              'devices/capstone/capstone-03-encoder-led-counter.html',
-              'devices/capstone/capstone-04-smart-parking-gate.html',
-              'devices/capstone/capstone-05-touch-reaction-timer.html')
+# (변경) 신규 캡스톤마다 검사 목록을 수동으로 수정하지 않도록 실제 파일을 탐색한다.
+capstone_dir = os.path.join(root, 'devices', 'capstone')
+capstone_pages = tuple(
+    'devices/capstone/' + filename
+    for filename in sorted(os.listdir(capstone_dir))
+    if re.fullmatch(r'capstone-\\d{2}-[a-z0-9-]+\\.html', filename)
+)
+site_pages = ('index.html', 'devices/index.html', 'devices/capstone/index.html') + capstone_pages
 site_count = 0
 for rel in site_pages:
     source = os.path.join(root, rel)
@@ -69,11 +72,17 @@ with open(os.path.join(root, 'index.html'), encoding='utf-8') as stream:
     home = stream.read()
 for dest in ('arduino/index.html', 'devices/index.html', 'rtl/index.html',
              'soc-map/index.html', 'atlas/index.html', 'catalog/index.html',
-             'devices/capstone/index.html',
-             'devices/capstone/capstone-02-sg90-position.html',
-             'devices/capstone/capstone-05-touch-reaction-timer.html'):
+             'devices/capstone/index.html') + capstone_pages:
     if 'href="' + dest + '"' not in home:
         bad.append(('index.html', '메인 탐색 누락: ' + dest))
+
+# (추가) 수작업 캡스톤 목차에도 모든 신규 페이지가 연결되었는지 확인한다.
+with open(os.path.join(capstone_dir, 'index.html'), encoding='utf-8') as stream:
+    capstone_home = stream.read()
+for dest in capstone_pages:
+    filename = os.path.basename(dest)
+    if 'href="' + filename + '"' not in capstone_home:
+        bad.append(('devices/capstone/index.html', '캡스톤 탐색 누락: ' + filename))
 
 for item in bad:
     # Markdown 오류는 위에서 출력했고 HTML 오류를 함께 출력해 CI에서 추적한다.
