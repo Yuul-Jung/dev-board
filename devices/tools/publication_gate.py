@@ -88,7 +88,7 @@ def audit(root=ROOT):
             legacy_svg = cap / (stem + ".svg")
             svg_ok = False
             if (legacy_svg.is_file() and
-                    re.search(r'<img\\b[^>]*class="system-diagram"[^>]*src="' +
+                    re.search(r'<img\b[^>]*class="system-diagram"[^>]*src="' +
                               re.escape(legacy_svg.name) + r'"', h)):
                 try:
                     svg_root = ET.parse(legacy_svg).getroot()
