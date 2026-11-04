@@ -20,6 +20,7 @@
 | 14 | CAPSTONE-14 — 터치 승인형 자동 분류 게이트 | [설계서](capstone-14-touch-sorter.md) | [HTML](capstone-14-touch-sorter.html) | 설계안·통합 미구현 |
 | 15 | CAPSTONE-15 — UART 명령 속도 제한·과부하 차단기 | [설계서](capstone-15-uart-rate-limiter.md) | [HTML](capstone-15-uart-rate-limiter.html) | 설계안·통합 미구현 |
 | 16 | CAPSTONE-16 — 수온 감시·경보 릴레이 제어 | [설계서](capstone-16-aquarium-temperature.md) | [HTML](capstone-16-aquarium-temperature.html) | 설계안·통합 미구현 |
+| 17 | CAPSTONE-17 — 엔코더 기반 모터 걸림 감지 | [설계서](capstone-17-motor-jam-guard.md) | [HTML](capstone-17-motor-jam-guard.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
