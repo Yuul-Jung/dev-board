@@ -422,3 +422,10 @@ python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(52
 - 적대적 검증: **P0 미승인**(실제 Grove PCB 풀업 레일·레귤레이터·5V 공급 시 SDA/SCL 레벨 미확인). **P1 미검증**(CRC 다항식·명령/지연·실제 ACK·RTL/AXI/C 시험 미실시). 32차시·기존 정상 소스 변경 없음.
 - 3대 게이트: 시각화 **정적 PASS**(기존 Mermaid SCL/SDA와 실제 센서명 유지; 렌더 미실시); 구조화 **정적 PASS**(IC/모듈 사양 분리·전기 제약·출처); 체계화 **정적 PASS**(후보 CSV와 상위 목차 연결). 실제 렌더/HTML/CI는 **미검증**, 따라서 통합 완료 **FAIL**.
 - 재검증: GitHub 원격 재조회로 CSV 후보 4종·SGP40 중복 없음·문서 필수 항목·상위 링크·정식 목록 미변경 여부를 확인할 것. 게시 여부는 별도 확인 전 미확인.
+
+
+## 2026-11-04 SGP40 v1.2 공식 판본·CRC·측정 명령 검증
+- 조사: Sensirion 공식 SGP40 PDF v1.2 (2022-02), https://sensirion.com/media/documents/296373BB/6203C5DF/Sensirion_Gas_Sensors_Datasheet_SGP40.pdf §4.6~4.7. 신규 후보 0, 기존 후보 갱신 1. 외부 기판·판매처 확대 탐색은 미완료. 라이선스 미확인, 원본 복제 없음.
+- 갱신: `i2c/sgp40-candidate.md` CRC-8(0x31, init 0xFF, BE EF → 92), 측정 명령(26 0F), 보정 미사용 인자(80 00 A2 66 66 93), 응답 3바이트, 최대 30ms, Mermaid 시퀀스 추가. `data/module-candidates.csv` 판본 동기화.
+- 적대적 검증 P0: 실제 Grove PCB 풀업/레벨·전원 미검증 → 실물 연결 승인 불가. P1: 문서값 공식 v1.2 교차확인, RTL/AXI/C 실행·타이밍·ACK/NACK 시험 미실시. 기존 32차시 및 소스 미변경.
+- 게이트: 시각화 정적 PASS(신호 흐름 및 측정 시퀀스 Mermaid), 구조화 정적 PASS(입출력/전기/CRC/근거/미확인), 체계화 정적 PASS(후보 CSV·I²C 상위 목차 연결). Mermaid 실제 렌더·전체 링크·HTML·CI는 미검증이므로 통합 완료 FAIL.
