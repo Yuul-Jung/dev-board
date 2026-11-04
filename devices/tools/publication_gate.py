@@ -83,9 +83,27 @@ def audit(root=ROOT):
             else:
                 visualized += 1
         else:
-            # Legacy hand-authored pages are preserved; card-and-arrow flows count as
-            # existing visual layouts. They are not silently rewritten.
-            if ('class="card"' in h and ("→" in h or 'class="arrow"' in h)):
+            # (변경) 수작업 SVG 신호도도 실제 파일·XML·블록·연결선을 검사해 인정한다.
+            # 카드/화살표 기존 페이지는 보존하고 자동 변환하지 않는다.
+            legacy_svg = cap / (stem + ".svg")
+            svg_ok = False
+            if (legacy_svg.is_file() and
+                    re.search(r'<img\\b[^>]*class="system-diagram"[^>]*src="' +
+                              re.escape(legacy_svg.name) + r'"', h)):
+                try:
+                    svg_root = ET.parse(legacy_svg).getroot()
+                    svg_elements = list(svg_root.iter())
+                    rects = [e for e in svg_elements if e.tag.split("}")[-1] == "rect"]
+                    paths = [e for e in svg_elements if e.tag.split("}")[-1] == "path"
+                             and (e.get("d") or "").strip()]
+                    labels = [e for e in svg_elements if e.tag.split("}")[-1] == "text"
+                              and "".join(e.itertext()).strip()]
+                    svg_ok = (svg_root.tag.split("}")[-1] == "svg" and
+                              len(rects) >= 4 and len(paths) >= 1 and len(labels) >= 4)
+                except (ET.ParseError, OSError):
+                    pass
+            card_ok = ('class="card"' in h and ("→" in h or 'class="arrow"' in h))
+            if svg_ok or card_ok:
                 visualized += 1
             else:
                 errors.append(stem + ": legacy page has no readable visual signal flow")
