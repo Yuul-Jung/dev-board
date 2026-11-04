@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "16",
+  "title": "CAPSTONE-16 — 수온 감시·경보 릴레이 제어",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "DS18B20 수온",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "수동 승인 버튼",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "릴레이 모듈",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-16-aquarium-temperature.md",
+    "html": "capstone-16-aquarium-temperature.html",
+    "diagram_svg": "capstone-16-aquarium-temperature.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
