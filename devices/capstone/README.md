@@ -22,6 +22,7 @@
 | 16 | CAPSTONE-16 — 수온 감시·경보 릴레이 제어 | [설계서](capstone-16-aquarium-temperature.md) | [HTML](capstone-16-aquarium-temperature.html) | 설계안·통합 미구현 |
 | 17 | CAPSTONE-17 — 엔코더 기반 모터 걸림 감지 | [설계서](capstone-17-motor-jam-guard.md) | [HTML](capstone-17-motor-jam-guard.html) | 설계안·통합 미구현 |
 | 18 | CAPSTONE-18 — 비상 통로 접근 감지 안내등 | [설계서](capstone-18-escape-route.md) | [HTML](capstone-18-escape-route.html) | 설계안·통합 미구현 |
+| 19 | CAPSTONE-19 — 터치 모드·온도 연동 개인용 팬 | [설계서](capstone-19-touch-fan.md) | [HTML](capstone-19-touch-fan.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
