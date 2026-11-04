@@ -185,4 +185,23 @@ Keyestudio 기준 조회 커밋: [`4adb6ce17ee454d10230b03030d5818e27cc0278`](ht
 - `Digilent/vivado-library`: 과거 Pmod IP 가 MicroBlaze V + 2024.2 에서 재현된다는 뜻이 아님.
 - `Xilinx/embeddedsw`: `master` 는 2024.2 이후 수정을 포함할 수 있어 설치된 2024.2 와 호환되는 기준으로 판단.
 
+
+## 2026-11-03 VL53L0X 신규 기판 비교 (I12 기존 후보의 문서화)
+
+| 원본 | 확인 내용 | 버전·라이선스 |
+|---|---|---|
+| [Pololu VL53L0X #2490](https://www.pololu.com/product/2490) · [회로도/데이터시트 자료](https://www.pololu.com/product/2490/resources) | 2.8V 레귤레이터, SDA/SCL VIN 레벨 변환, XSHUT/GPIO1 비변환 | 2026-11-03 열람; Git SHA 없음, 웹/회로도 재배포 라이선스 미확인 |
+| [Adafruit VL53L0X Pinouts](https://learn.adafruit.com/adafruit-vl53l0x-micro-lidar-distance-sensor-breakout/pinouts) | 기본 I²C 0x29, VIN 3~5V 기판, GPIO 비변환 | 2026-11-03 열람; 문서 고정 커밋·재배포 라이선스 미확인 |
+| [ST VL53L0X](https://www.st.com/en/imaging-and-photonics-solutions/vl53l0x.html) | 원본 데이터시트·API 확인용 제조사 기준 | 개정번호·원본 PDF 본문 정밀 대조 미실시; 원본 복제 없음 |
+
+자세한 판단: [VL53L0X 기판별 전기적 연결](i2c/vl53l0x.md). 동일 명칭의 무명 보드가 위 두 제조사 회로를 그대로 채택했다고 가정하지 않는다.
+
 <!-- nav-foot -->← [devices 목차](README.md)
+
+
+## 2026-11-03 AHT20 후보 원본 출처
+
+- [ASAIR AHT20 데이터시트 V1.0.03](https://asairsensors.com/wp-content/uploads/2021/09/Data-Sheet-AHT20-Humidity-and-Temperature-Sensor-ASAIR-V1.0.03.pdf): 제조사 PDF, 개정 V1.0.03, 재배포 라이선스 미확인, 고정 Git SHA 해당 없음.
+- [Seeed Grove AHT20 유통 기판](https://www.kiwi-electronics.com/en/grove-aht20-i2c-industrial-grade-temperature-humidity-sensor-10016): 판매처 설명이며 실제 PCB 회로도/리비전 미확인.
+- [LCSC AHT20 IC](https://www.lcsc.com/product-detail/Temperature-and-Humidity-Sensor_Aosong-Guangzhou-Elec-AHT20_C2757850.html): IC 유통 정보. 실제 브레이크아웃 회로의 증거로 사용하지 않음.
+- GitHub 라이브러리 고정 SHA/라이선스, Keyestudio·Freenove·국내·AliExpress 동일 PCB 확인: **미검증**. 원본 그림·코드 복제 없음.

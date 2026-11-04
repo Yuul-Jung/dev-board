@@ -4,6 +4,29 @@
 
 구분: **확인** = 이번 작업에서 데이터시트를 열어 확인, **계산**, **설계안**, **미확인**. 소자 문서: [sensors.md](sensors.md), [clock.md](clock.md), 기존 [bme280.md](bme280.md), 문자 LCD [lcd1602.md](lcd1602.md).
 
+## 신규 조사 후보 (정식 모듈 ID 미부여)
+
+- [SGP40 VOC 센서 — Seeed Grove 신규 조사 후보, 실물 미검증](sgp40-candidate.md): SHT31/SHT40과 측정 물리량이 다르며, 모듈 전원 3.3/5 V 표기를 FPGA I²C 5 V 허용으로 오인하지 않는다.
+
+- [INA228 전력·에너지 모니터 — 신규 조사 후보, Adafruit 기판 자료 확인·실물 미검증](ina228-candidate.md): INA219/INA226과 별도 IC. 3.3 V I²C 풀업·션트·보드 개정 확인 전 정식 등록 보류.
+
+- [INA226 전류·전압·전력 모니터 — 신규 조사 후보, 실장 기판 미확인](ina226-candidate.md): INA219(I11)과 구분, 3.3 V I²C·션트·ALERT 안전 검증 전 정식 등록 보류.
+- [SHT40 온습도 센서 — 기판 변형·3.3V 안전·I²C 대응 및 검증 게이트](sht40-candidate.md): DFRobot SEN0428과 원본 IC 구분. 실물/RTL 미검증.
+
+
+**기계 판독 후보 목록:** [module-candidates.csv](../data/module-candidates.csv) — SHT40·INA226·INA228·SGP40 4종은 정식 모듈 ID가 없는 조사 후보이며, 기존 [정식 상태표](../data/module-status.csv)의 행 수나 ID를 변경하지 않는다.
+
+```mermaid
+flowchart LR
+  A["기존 정식 목록: INA219(I11), SHT31 등"] --> B["후보 중복·IC/기판 구분"]
+  B --> C["SHT40 / INA226 / INA228 / SGP40 후보 CSV"]
+  C --> D["P0: 3.3V I/O·풀업·션트·기판 확인"]
+  D --> E["P1: RTL/AXI/C·링크·렌더 검증"]
+  E --> F["승인 시에만 정식 상태표·HTML 동기화"]
+```
+
+위 흐름도는 **문서 승인 절차**이며 실제 RTL 신호·기판 핀맵이 아니다. 후보별 SCL/SDA 및 전기적 신호 흐름은 각 후보 기술문서를 참조한다.
+
 ## AXI IIC (PG090 v2.1, 2024-12-18) — 확인 (문서 본문 열람)
 | 항목 | 값 |
 |---|---|
@@ -11,8 +34,25 @@
 | 기능 | 마스터/슬레이브/멀티 마스터, 7/10비트 주소, 동적 시작·정지 생성, GPO 포트(1~8비트) |
 | 디바이스 | 지원 계열에 7 series 포함, Artix-7 최대 주파수 표 있음 |
 | 인터페이스 | AXI4-Lite |
-| 3상태 포트 | sda_i, sda_o, sda_t, scl_i, scl_o, scl_t (t = 3상태 출력 활성). IOBUF는 상위에서 연결 (IP Integrator에서는 자동 삽입되는 `iic` 인터페이스 사용) |
+| 3상태 포트 | sda_i, sda_o, sda_t, scl_i, scl_o, scl_t (t=1: 출력 Hi-Z/해제, t=0: 출력 구동; I²C는 Low만 구동하고 High는 풀업으로 형성). IOBUF는 상위에서 연결 (IP Integrator에서는 자동 삽입되는 `iic` 인터페이스 사용) |
 | 파라미터 | SCL Clock Frequency(IIC_FREQ_KHZ, 기본 100), Address Mode(7/10), SCL/SDA Inertial delay(0~255 AXI clk), AXI Clock Frequency(25~300 MHz), GPO 폭·기본값 |
+
+### IOBUF 3상태 극성 및 오픈드레인 검증 (2026-11-04)
+
+| IOBUF `T` | `I` | 외부 SCL/SDA | 의미 |
+|---|---|---|---|
+| 1 | 0 (무관) | Z → 외부 풀업으로 High | 버스 해제, 출력 버퍼 비활성 |
+| 0 | 0 | Low | 버스 Low 구동 |
+| 0 | 1 | High 강제 구동 | **I²C 오픈드레인 연결에서 사용 금지** |
+
+```mermaid
+flowchart LR
+  CORE["AXI IIC: scl_o/scl_t, sda_o/sda_t"] --> BUF["IOBUF: T=1 해제 / T=0 Low 구동"]
+  BUF <-->|"SCL / SDA"| BUS["3.3 V I²C 버스 (설계안)"]
+  PULL["3.3 V 풀업 (기판별 확인 필요)"] --> BUS
+```
+
+이 그림은 **신호 관계 개념도**이며 RTL 인스턴스·실제 보드 핀맵이 아니다. `scl_t/sda_t`의 극성을 반대로 해석하면 High를 강제로 구동하거나 버스를 계속 해제하는 오류가 생긴다. 외부 5 V 풀업은 Basys3 3.3 V I/O에 직접 연결하지 않는다. 근거: [AMD IOBUF 논리표](https://docs.amd.com/r/2022.2-English/ug1353-versal-architecture-ai-libraries/IOBUF) (2022.2, 출력 High-Z 극성); [AMD UG571 IOBUF](https://docs.amd.com/api/khub/documents/kFbaUC5HGcXyGNauhgU6Gw/content) (v1.16, 2025-01-14). 출처의 재배포 라이선스 미확인, 원본 그림·코드 복제 없음. AXI IIC IP의 실제 `scl_o/scl_t` 파형·Vivado IOBUF 결선은 별도 시험 전 미검증.
 
 **SCL 타이밍 (확인)**: THIGH/TLOW 레지스터 기본값은 IP가 설정한 SCL 주파수와 AXI 클럭으로 자동 계산됩니다. 식은 `값 = (AXI 클럭 Hz / (2 × IIC Hz)) − 7 − SCL_INERTIAL_DELAY`. 문서 예시: 25 MHz / 100 kHz / 지연 0 → 118.
 계산: AXI 100 MHz, 400 kHz, 지연 0 → 100,000,000 / 800,000 − 7 = 118. 맞지 않으면 레지스터를 읽어 조정(문서 설명). TSUSTA 등은 I2C 규격 시간 + Tr 을 클럭 수로 환산(예: 4.7 µs + 1 µs, 100 MHz → 570).
@@ -44,11 +84,26 @@
 | HD44780 문자 LCD (PCF8574 백팩) | PCF8574 주소(0x20~0x27, 백팩은 모듈별 확인) | 100 kHz 가정 | LCD 5 V 가 흔함(미확인) | [lcd1602.md](lcd1602.md) (요약 경유 D1 + 모델 시험) |
 
 ## 버스 계획 (설계안)
-- **주소 충돌**: MPU-6050(AD0=Low)과 DS3231 이 둘 다 0x68. MPU-6050 의 AD0 를 High 로 올려 0x69 를 쓰거나 버스를 나눕니다. (확인된 주소 값에서 도출)
-- **속도**: 가장 느린 소자 한계가 400 kHz(MPU-6050, BH1750, DS3231)이므로 버스 하나를 400 kHz 로 통일. SHT3x 는 그 이하에서 문제 없음.
-- **전원**: 위 소자는 모두 3.3 V 로 문서 범위 안(MPU-6050 3.46 V 상한, BH1750 3.6 V 상한은 여유가 작으므로 3.3 V 레일 사용).
+
+### 공용 버스 신호 흐름 (설계 개념도, RTL 포트명이 아님)
+
+```mermaid
+flowchart LR
+  MASTER["I²C Master (AXI IIC 또는 독립 RTL, 설계안)"] <-->|"SCL / SDA (100 kHz 이하)"| BUS["공용 I²C 버스"]
+  PULL["3.3 V 풀업 (회로 확인 필요)"] --> BUS
+  BUS <-->|"SCL / SDA"| DEV["3.3 V 호환 모듈 (개별 검증 필요)"]
+  BUS <-->|"SCL / SDA"| SHIFT["양방향 레벨 변환 (설계안)"]
+  SHIFT <-->|"5 V측 SCL / SDA"| RTC["DS1307 (VCC 4.5~5.5 V)"]
+  NOTE["DS3231 + DS1307 동시 연결 불가: 둘 다 0x68"] -.-> RTC
+```
+
+※ 각 기판의 풀업 레일·레벨 변환 회로·실물 연결은 미검증이며, 실제 RTL 모듈명·핀 배치를 뜻하지 않는다.
+
+- **주소 충돌 (P1 정정, 2026-11-04)**: MPU-6050(AD0=Low), DS3231, DS1307은 모두 7비트 주소 `0x68`을 사용한다. MPU-6050의 AD0를 High로 설정하면 `0x69`로 분리할 수 있지만, **DS3231과 DS1307은 모두 고정 `0x68`이므로 두 소자를 같은 I²C 버스에 동시에 연결하면 주소 충돌을 해소할 수 없다.** 둘 중 하나만 선택하거나 별도 I²C 버스/멀티플렉서를 사용한다(설계안; 실제 기판·멀티플렉서 회로 미검증).
+- **속도 (P1 정정, 2026-11-03)**: 위 표에 DS1307(최대 100 kHz)과 PCF8574(표준 100 kHz)가 포함되므로 **모든 소자를 같은 버스에 연결한다면 100 kHz 이하**로 설정한다. 400 kHz는 DS1307을 분리하고 나머지 연결 소자·기판의 실제 최대 속도를 확인한 버스에 한해 검토한다. 3.3 V FPGA와 5 V DS1307 사이에는 전원·풀업·레벨 변환 조건을 별도로 충족해야 한다. 속도 조건을 만족해도 전기적 직결을 승인하는 것은 아니다.
+- **전원 (P1 정정, 2026-11-03)**: 위 표의 소자를 모두 3.3 V로 구동할 수 있는 것은 **아니다**. DS1307 원본 IC의 VCC 동작 범위는 **4.5~5.5 V**이므로 3.3 V 구동 불가. DS1307을 5 V로 구동하는 경우 SDA/SCL 풀업 레일과 3.3 V FPGA I/O를 별도 검증하고 필요하면 양방향 레벨 변환을 사용한다. MPU-6050과 BH1750 등 3.3 V 허용 IC도 **실제 모듈 기판**의 레귤레이터·풀업·핀맵은 별도 확인한다. 근거: [Analog Devices DS1307 Rev.5](https://www.analog.com/en/products/ds1307.html) (2015-03-23, 웹 열람 2026-11-03; 재배포 권한 미확인).
 - **풀업**: I2C 는 오픈 드레인이라 외부 풀업 필요(값은 보드/버스 용량에 따라; 이번에 계산하지 않음). **풀업이 5 V 에 묶인 시판 모듈(백팩·일부 브레이크아웃)을 Basys3 3.3 V 버스에 연결하면 SDA/SCL 이 5 V 로 올라갈 수 있으므로** 모듈 회로도로 풀업 전원을 확인하고 필요하면 풀업 제거 또는 레벨 시프터를 씁니다(설계안, 일반 지식·프로젝트 문서 §6-4; 개별 모듈 실물은 미확인).
-- **핀**: SCL, SDA 2핀. 한 버스에 위 5개 소자 동시 연결 가능(주소 충돌 해소 후).
+- **핀**: I²C 논리 신호는 SCL·SDA 2선이다. 동시 연결 가능 여부는 각 소자의 **주소 충돌·속도·풀업 전압·전원 및 버스 용량**을 모두 확인한 뒤 결정한다. DS3231과 DS1307의 고정 주소 충돌은 배선만으로 해소되지 않는다.
 - **인터럽트**: MPU-6050 INT, DS3231 INT/SQW(active-low), 별도 GPIO.
 
 ## 드라이버 (`sw/`, 호스트 모의 테스트 통과)
@@ -61,6 +116,11 @@
 
 ## 한계
 RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를 확인했고 드라이버(`sw/`)는 호스트 모의 테스트까지만 했습니다(위 "드라이버" 절). BME280 드라이버는 [bme280.md](bme280.md). 공통 연결 확인 읽기값: MPU-6050 WHO_AM_I(0x75)=0x68, BME280 chip id 0x60(bme280.md).
+
+
+- [VL53L0X ToF 거리센서 — 기판별 3.3V I²C 안전 조사](vl53l0x.md) — I12 기존 후보, 문서만/드라이버·실물 미검증.
+
+- [AHT20 온습도 — I13 등록, 문서만](aht20.md) — 보드별 전원·I²C 풀업·측정 타이밍 미검증.
 
 <!-- nav-foot -->← [1-wire](../1-wire/README.md) · [devices 목차](../README.md) · [spi](../spi/README.md) →
 
@@ -91,3 +151,10 @@ RTL 없음(AMD IP 사용). PG090 본문으로 레지스터·타이밍·절차를
 | [ssd1306.md](ssd1306.md) | SSD1306 OLED (I2C) 드라이버 |
 
 <!-- index:end -->
+
+## SHT40 후보 근거 요약 (2026-11-03, 미등록·미검증)
+
+- 기존 73종 목록에 **SHT40 독립 항목 없음**을 확인했으나 정식 ID를 부여하지 않았다. 상세 구조도·전기 제약·출처·검증 게이트는 [SHT40 후보 기술문서](sht40-candidate.md)를 참조한다. SHT31과 동일 온습도 범주이지만 IC와 명령 프로토콜이 다른 후보이다.
+- [Sensirion SHT40 공식 제품](https://sensirion.com/products/catalog/SHT40): IC 전원 1.08~3.6 V, I²C; SHT4x 데이터시트 2025-04. 원본 웹/PDF 저작권·재배포 라이선스 미확인, Git 커밋 해당 없음.
+- [DFRobot Fermion SHT40 기판](https://www.dfrobot.com/product-2437.html/): 모듈 전원 3.3~5 V 표기. **IC 5 V 허용이라는 의미가 아니며**, 실제 PCB 레귤레이터·SDA/SCL 풀업 전압·핀맵을 회로도로 확인하기 전 5 V 구동 상태의 Basys3 직결 금지. 기판 개정·회로도·라이선스·Git SHA 미확인.
+- Keyestudio/Freenove/Seeed/Arduino Hardware Docs 및 국내·AliExpress의 **동일 실장 PCB** 대조는 미완료. 기존 RTL/C 드라이버 재사용 및 SHT31 프로토콜 호환성은 검증하지 않았다.

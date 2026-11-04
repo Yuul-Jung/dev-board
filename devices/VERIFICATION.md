@@ -1,5 +1,98 @@
 # 적대적 검증 결과
 
+## 2026-11-04 PR #16 인계 후 통합 검사 재개
+
+- ① 조사: GitHub `main`과 `audit-vl53l0x-20261103`의 실제 HEAD 및 PR #16 상태를 재조회. 정식 상태표의 ID 행 **73개**, 정식 ID와 분리된 SHT40·INA226·INA228·SGP40 후보 **4개** 확인. 이 회차 외부 신규 후보 확정 **0종**, 정식 신규 등록 **0종**, 기존 모듈 기술 사양 갱신 **0종**. S11과 F02는 물리적으로 MCP2515가 중복되는 분류 항목이므로 73개를 서로 다른 IC 73종으로 해석하지 않음.
+- ② 갱신: 검증 기록을 추가하고 H1 목차를 문서 맨 앞으로 정렬. 기존 센서 기술문서·CSV·RTL/AXI/C·32차시 내용은 보존.
+- ③ 적대적 검증: GitHub Actions 실행 [41750860195](https://github.com/Yuul-Jung/dev-board/actions/runs/41750860195)는 Markdown 상대 링크 2,005개와 핵심 HTML 상대 링크 205개가 통과했지만 캡스톤-15 신호도 판정 오류로 게시 게이트 실패. 실제 SVG/HTML은 있었으나 게이트가 수작업 SVG를 인정하지 않는 P1 검사기 불일치였음. 별도 PR [#28](https://github.com/Yuul-Jung/dev-board/pull/28)의 최소 수정 후 [실행 41753535204](https://github.com/Yuul-Jung/dev-board/actions/runs/41753535204)에서 시각화 14/14, 구조화 14/14, 체계화 14/14, C 모의시험 및 지정 AXI RTL 시험이 PASS. #28은 `main`에 병합됨.
+- 본 PR #16의 **최신 main 병합 결과는 이 기록 작성 시 미검증**이며 새 커밋의 Actions 검사가 끝나기 전 PR 병합 완료라고 주장하지 않음. 후보별 Mermaid 실제 렌더링·실물 I²C 풀업/레귤레이터·Vivado 합성·Timing·보드 시험은 계속 **미검증**.
+- P0: 5V 풀업·ECHO 직접 연결 금지, XADC 0~1V, IC/실장 기판 전원 구분 원칙 유지. P1: 게시 게이트 오검출은 #28에서 수정, PR #16 합성 CI 결과 재확인 필요.
+- 게이트: 시각화 **캡스톤 공용 CI PASS / 신규 후보 Mermaid 렌더 미검증**; 구조화 **CSV 행 및 기존 문서 정적 확인 / 후보 전수검증 미완료**; 체계화 **main과의 변경 파일 충돌 0개 확인 / HTML 동기화·게시 최종 확인 전**. 통합 완료는 보류.
+
+## 2026-11-04 SGP40 후보 조사 → 갱신 → 적대적 검증
+
+- ① 조사: Seeed 공식 Grove SGP40 VOC 모듈 문서(https://wiki.seeedstudio.com/grove_voc_gas_sensor_sgp40/; 위키 갱신 2023-06-06)를 확인. 기존 작업 브랜치 전체 경로 트리에서 SGP40 파일명 0건, 기존 후보 CSV에도 없음. 신규 조사 후보 **1종**, 정식 신규 등록 **0종**, 기존 정식 모듈 갱신 **0종**. Seeed 문서의 3.3/5 V는 모듈 전원이며 IC 전원·I²C 풀업 허용을 뜻하지 않음. 회로 개정·Git SHA·재배포 라이선스 미확인, 원본 복제 없음. Keyestudio ENS160, Seeed SGP41도 외부 탐색했으나 이번 회차에는 미등록/기판 중복·데이터시트 검증을 마치지 못해 추가 확정하지 않음. Arduino Hardware Docs·Freenove·국내·AliExpress 교차검증 미완료.
+- ② 갱신: `i2c/sgp40-candidate.md` 신규 생성, `data/module-candidates.csv`에 후보 1행 추가(기존 3→4), `i2c/README.md`에 목차·Mermaid 승인 흐름 반영. `module-status.csv` 정식 목록, 32차시, RTL/AXI/C 정상 소스 불변. HTML 생성/게시 없음.
+- ③ 적대적 검증: GitHub 원격 재조회로 후보 문서 Mermaid SCL/SDA 존재, 구조 필수 섹션, README 상대 링크, CSV 후보 중복 0, 정식 상태표 헤더 포함 74줄(기존 모듈 73행) 확인. 시각화 **정적 PASS**, 구조화 **정적 PASS**, 체계화 **정적 PASS**. **Mermaid 실제 렌더링, 링크 대상 전체 검사, HTML·CI, 실물 측정은 미검증**이므로 통합 게이트 **FAIL/미충족**.
+- P0: 3.3 V FPGA I/O에 5 V 풀업 직결 금지, XADC 0~1 V와 5 V ECHO 경고 유지. SGP40 기판 풀업·레귤레이터 미확인으로 실물 연결 미승인. P1: I²C 주소·명령·CRC·타이밍·FSM·AXI 핸드셰이크·C 구현 미검증. 오류 확정 없는 정상 소스 수정 금지.
+- 변경 파일 4개: `i2c/sgp40-candidate.md`, `data/module-candidates.csv`, `i2c/README.md`, `VERIFICATION.md`. HTML 게시 미확인/미실시.
+
+## 2026-11-04 후보 목록 기계 판독 동기화 (조사 → 갱신 → 적대적 검증)
+
+- ① 조사: 현재 작업 브랜치 `devices/data/module-status.csv`에서 INA219(I11)·SHT31 관련 기존 항목과 I²C README의 SHT40/INA226/INA228 후보 3종을 대조. **이번 회차 신규 외부 후보 0종, 정식 추가 0종, 기존 정식 모듈 수정 0종**. 기존 후보 3종의 원본 링크·버전·라이선스 상태는 각 기술문서에 근거. Keyestudio/Freenove/Seeed/국내/AliExpress의 새 기판 변형은 추가 확인하지 못했으므로 미확인 유지.
+- ② 갱신: `data/module-candidates.csv` 신설(3행, 별도 candidate_key; 정식 ID 부여 없음), `i2c/README.md`에 후보 CSV·정식 상태표 상대 링크와 Mermaid 승인 흐름 추가. 기존 32차시·RTL·AXI·C·정식 상태표 불변. HTML은 생성/게시하지 않았으며 동기화 미검증.
+- ③ 적대적 검증: 3.3V FPGA I/O, XADC 0~1V, 5V ECHO, I²C 풀업, 실제 IC/기판 차이는 후보 기술문서의 미승인 조건 유지. INA228 20비트 부호 처리·RTL FSM·AXI 핸드셰이크·C 코드 시험 미실시. 출처 링크는 원본 재배포와 구분. 정식 등록/전기 안전 승인으로 오인 금지.
+- 3대 게이트: 시각화 **정적 PASS**(Mermaid 승인 흐름 + 각 후보별 실제 신호도), 구조화 **정적 PASS**(후보 CSV 열·기술문서 섹션), 체계화 **정적 PASS**(정식/후보 상태표 분리, I²C 목차 및 선수관계). **실제 Mermaid 렌더·HTML·전체 상대 링크·CI·실물 측정은 미검증**. 따라서 통합 완료 **FAIL(미충족)**.
+
+## 2026-11-04 INA226 신규 후보 조사 → 문서 갱신 → 적대적 검증
+
+- ① 조사: 기존 `data/module-status.csv`에서 INA219(I11)만 확인, INA226 독립 항목 없음. TI 공식 INA226 Rev. C 제품 정보와 비교하여 **신규 후보 1종(INA226)**, 정식 신규 모듈 **0종**, 기존 모듈 갱신 **0종**. TI 공식 IC 전원 2.7~5.5 V, 측정 버스 0~36 V, I²C/SMBus, 16개 주소. 특정 판매 PCB·션트·풀업·회로도는 미확인. Arduino/Keyestudio/Freenove/Seeed/국내·AliExpress·GitHub 동일 기판 대조 미완료. 제조사 원본 URL·Rev. C·저작권 미확인 항목은 후보 문서에 기록.
+- ② 갱신: `i2c/ina226-candidate.md` 신설, `i2c/README.md`에 링크. 정식 ID·기계 판독 CSV·32차시·RTL/AXI/C는 변경하지 않음. 후보 문서는 신호 흐름 Mermaid, 전기 제약, 캡스톤/SoC 선수관계, 출처 및 미확인 항목을 구분.
+- ③ 적대적 검증: IC의 36 V 측정 가능 범위를 **FPGA GPIO/XADC 전압 허용으로 오인하지 않도록** 명시; 5 V I²C 풀업 직접 연결 금지, 션트/ALERT·기판 실물 미확인, 16비트·보정·FSM·AXI 핸드셰이크 미검증. P0 실물 연결 **미승인**, P1 RTL/C 기능 **미검증**. 정상 소스/32차시 보존.
+- 산출물 3대 게이트: 시각화 **정적 PASS**(SCL/SDA·IN+/IN-·VBUS·ALERT Mermaid), 구조화 **정적 PASS**(목적·인터페이스·전기·근거·미확인), 체계화 **정적 PASS**(상위 I²C 목차·INA219 구분·32차시/캡스톤/SoC). Mermaid 렌더·전체 링크 검사·HTML 재생성/게시·CI는 **미검증**. 통합 완료 미승인.
+
+
+## 2026-11-04 I²C IOBUF T 극성·오픈드레인 감사 (조사 → 갱신 → 적대적 검증)
+
+- ① 조사: 기존 73종 목록과 I²C README/기존 SHT40 후보를 확인하고 AMD 공식 IOBUF 논리표(2022.2), UG571 v1.16(2025-01-14)을 대조. 신규 외부 모듈 후보 확정 **0종**, 정식 추가 **0종**, 기존 자료 갱신 **1건(I²C 공용 기술문서)**. Keyestudio/Freenove/Seeed/국내·AliExpress 신규 실장 기판 조사 및 후보 확장 **미완료**. 원본 자료는 링크만 사용, 재배포 라이선스 미확인.
+- ② 갱신: `i2c/README.md`의 모호한 `t = 3상태 출력 활성` 문구를 `T=1 → Hi-Z/해제, T=0 → 출력 구동`으로 구체화. I²C는 Low만 구동, High는 외부 풀업으로 형성해야 함을 표와 Mermaid 신호도로 추가. AXI IIC `scl_o/scl_t/sda_o/sda_t`와 IOBUF를 구분. 5V 풀업 직결 금지 유지. 기존 32차시·RTL/AXI/C 소스·기계 판독 목록 변경 없음.
+- ③ 적대적 검증: 수정 후 GitHub 파일 재조회, 구표현 제거·T=1/T=0 극성·High 강제 구동 금지·Mermaid 신호명·AMD 공식 출처·상위 링크 문자열 **7/7 정적 PASS**. RTL 파형/IOBUF 결선, 실제 보드, Mermaid 렌더링, HTML 재생성·상대링크 전수검사·CI **미검증**. P0(5V FPGA I/O, XADC 0~1V, 5V ECHO, 기판별 I²C 풀업)은 기존 안전 경고 유지; P1(오픈드레인 제어 설명 모호성) 문서 수정. 실제 기능 코드 결함은 발견·확정하지 않음.
+- 3대 게이트: **시각화 정적 PASS**(Mermaid SCL/SDA와 IOBUF 신호 흐름), **구조화 정적 PASS**(극성 진리표·전기 제약·근거·미검증), **체계화 정적 PASS**(기존 I²C 목차/상위 링크·32차시 보존). **통합 게이트 미완료**(렌더/HTML/CI/실물 시험 없음). 변경 파일 2개(`i2c/README.md`, `VERIFICATION.md`), HTML 게시 확인 안 됨.
+
+
+## 2026-11-03 I²C 공용 버스 속도 P1 정정 (조사 → 갱신 → 적대적 검증)
+
+- ① 조사: 기존 73종 목록과 I²C 소자 요약을 대조. DS1307은 100 kHz 전용이라고 같은 문서에 명시되어 있는데, 버스 계획은 400 kHz로 통일하도록 권장하는 내부 모순 확인. 신규 외부 후보 확정 0종, 정식 추가 0종. 신규 후보가 없어 외부 탐색을 확장해야 하나 이번 회차 Keyestudio/Freenove/Seeed/국내 판매처/AliExpress 신규 원본 확보는 미실시.
+- ② 갱신: `i2c/README.md`의 공용 버스 권장 속도를 100 kHz 이하로 수정. DS1307 분리 및 다른 장치 속도 확인 시에만 별도 400 kHz 버스 검토. 3.3 V FPGA와 5 V DS1307의 풀업·레벨 변환 제한 유지. 정상 RTL·AXI·C와 32차시는 미변경.
+- ③ 적대적 검증·수정 후 재검증: 원격 파일 재조회 정적 검사 6/6 PASS(100 kHz 권고, DS1307 100 kHz 표, 옛 400 kHz 공용 권고 제거, 5 V 풀업 경고, 상위 목차 링크). Mermaid 신호도·레벨 변환 연결을 추가하고 정적 재검증. P1 문서 내부 타이밍 모순 1건 해결. P0 실물 전기 검증, 드라이버/FSM/AXI/C 회귀, Mermaid 렌더링, HTML 생성·게시, 전체 상대링크·CI는 미실시.
+- 3대 게이트: 시각화 **PASS(공용 버스 SCL/SDA·100 kHz·레벨 변환 Mermaid 정적 검사, 실제 렌더링 미실시)**, 구조화 **PASS(기존 표·전원·속도·드라이버·근거 섹션)**, 체계화 **PASS(기존 devices/I²C 목차 및 32차시 매핑 유지)**. 통합 산출물 완료 판정 보류.
+
+
+## 2026-11-03 I13 기계 판독 상태표 재정합성 검사 (후속 회차)
+
+- ① 조사: 작업 브랜치의 기존 73행 CSV, I²C 목차, SHT40 후보 기술문서를 교차 확인. 신규 외부 후보 추가 조사·제조사 기판 실물 검증은 이번 회차에 수행하지 못함. 신규 후보 확정 0종, 신규 ID 0종.
+- ② 갱신: `data/module-status.csv`의 I13 AHT20 note가 이미 정식 목록에 등록됐음에도 '신규 후보 문서만'이라고 표현한 상태 불일치 1건을 'I13 정식 목록 등록·기술문서만'으로 정정. `status`는 '문서' 그대로 유지. RTL/AXI/C 및 32차시 변경 없음.
+- ③ 적대적 검증: GitHub 원격 파일 재조회로 전체 73행, I13 중복 없음, I13의 '문서' 상태와 `i2c/aht20.md` 경로, README의 I13 표시, SHT40 Mermaid `flowchart LR` 및 SDA/SCL, 기술문서 섹션·상위 링크 문자열 확인: 정적 검사 8/8 PASS. 실제 링크 대상 전체 검사·Mermaid 렌더·HTML 재생성·CI는 미실시.
+- 3대 게이트: 시각화 PASS(기존 SHT40 개념도 텍스트 정적 확인, 렌더 미검증), 구조화 PASS(목적·인터페이스·근거·검증 섹션), 체계화 PASS(I13 CSV/README 정합성과 SHT40 상위 링크). **통합 산출물 완료는 미승인**: HTML/생성기·게시 상태 미확인.
+- P0/P1: FPGA 3.3V, XADC 0~1V, HC-SR04 5V ECHO, I²C 5V 풀업 금지 원칙 유지. 기판별 회로·전압·실물 시험, RTL 비트폭/FSM/타이밍, AXI 핸드셰이크, C 회귀 및 출처 라이선스 전수감사는 이번 회차 미실시. 미검증을 PASS로 표시하지 않음.
+
+
+## 2026-11-03 I²C 목차 정합성 재검증 (후속 회차)
+
+- 조사: 기존 기계 판독 목록의 I13 AHT20 등록 상태와 SHT40 후보 문서를 교차 확인. 이번 회차에서 외부 신규 후보 확정 0종, 정식 신규 등록 0종, 기존 모듈 표시 갱신 1종(AHT20). 신규 제조사 원본/판매 기판의 추가 검증은 미실시.
+- 갱신: `i2c/README.md`의 AHT20 표기를 '신규 후보'에서 'I13 등록, 문서만'으로 정정하고 SHT40 후보 근거 요약에 상세 문서 상대 링크를 추가. 기계 판독 CSV·RTL·AXI·C·32차시 원본은 변경하지 않음.
+- 정적 재검증: GitHub 파일 재읽기로 CSV I13 존재, README I13 표기, SHT40의 CSV 미등록, 상세 문서 링크 문자열, Mermaid flowchart LR, SDA/SCL 및 5V 풀업 금지 문구 확인 PASS. 이는 링크 대상의 실제 렌더·HTML 게시·전체 CI PASS를 뜻하지 않음.
+- 3대 게이트: 시각화 PASS(기존 SHT40 Mermaid 코드 정적 확인), 구조화 PASS(상세 문서 목적·인터페이스·출처·검증 섹션), 체계화 PASS(README→SHT40 상대 링크 및 AHT20 상태 일치). HTML 생성/렌더, 전체 링크 자동검사, P0 실물 전기 검증, RTL/AXI/C 회귀, Vivado 및 Pages는 미검증.
+- P0/P1: Basys3 3.3V I/O·XADC 0~1V·HC-SR04 5V ECHO·I²C 5V 풀업 제한 유지. 실제 IC와 기판 리비전·레귤레이터·풀업·핀맵은 추가 근거/실측 전 미검증. 기능 코드 결함은 새로 확정하지 않아 변경하지 않음.
+
+
+## 2026-11-03 SHT40 후보 — 조사 → 갱신 → 적대적 검증
+
+- 조사 후보 1종(SHT40), 정식 신규 등록 0종, 기존 모듈 갱신 0종. Sensirion SHT40 IC와 DFRobot SEN0428 기판 구분. IC 1.08~3.6V와 보드 3.3~5V 차이를 확인했으나 실제 SDA/SCL 풀업 레일·회로 리비전은 미검증.
+- 갱신: `i2c/sht40-candidate.md`(Mermaid 신호도·목적/전원/핀/RTL·AXI·C/출처/선수관계/검증 상태), `i2c/README.md`(상위 목차 링크). CSV·기존 32차시·RTL/C 정상 소스 미변경. 기계 판독 목록 및 생성 HTML에는 미등록 상태로 남겨 완료 주장 금지.
+- 적대적 검증: GitHub 재읽기 정적 검사 — Mermaid `flowchart LR`와 SCL/SDA 명칭 PASS, 구조 섹션 PASS, 상위 링크 PASS, 5V 풀업 직결 금지 PASS, 출처 및 GPL-2.0 참고 커밋 표기 PASS. Mermaid 실제 렌더, 상대 링크 전체 검사, 생성 HTML 동기화, RTL/AXI/C 시험, Vivado, 실물 측정 **미실시**.
+- P0: FPGA 3.3V I/O, XADC 0~1V, HC-SR04 5V ECHO 기존 제한 유지. SHT40 기판 전원과 I²C 풀업 분리 검증 전 연결 미승인. P1: 16비트 데이터/CRC, FSM, NACK, 타이밍 및 AXI 핸드셰이크 미구현·미검증.
+- 자료 출처: https://d.sensirion.com/product-support/sht4x-humidity-and-temperature-sensor , https://wiki.dfrobot.com/sen0428/ , Linux 문서 고정 SHA 5358248961ae23f7253d010ddfde1cfd2556ce22 (GPL-2.0). 원본 코드·그림 복제 없음.
+
+
+## 2026-11-03 AHT20 신규 I13 등록 후 P0/P1 검토
+
+- 조사: 기존 72개 CSV에 AHT20 항목 없음 확인. 기존 I12 VL53L0X와 중복되지 않는 온습도 I²C 후보 1종. 신규 등록 1종, 기존 갱신 0종. 제조사 데이터시트 V1.0.03과 Grove 기판/IC 판매 자료 비교; 특정 무명 기판 회로는 미확인.
+- 갱신: `data/module-status.csv` I13 문서 상태, `STATUS.md` 73개 집계, `i2c/README.md`, `REFERENCES.md` 반영. 기존 32차시 및 RTL/C 코드 보존.
+- P0: FPGA SDA/SCL은 3.3V 풀업만 허용. 보드의 전원·풀업·핀 배열을 실물 확인하기 전 직접 연결 미승인. XADC 0~1V 및 HC-SR04 5V ECHO는 별도 경로.
+- P1: AHT20 I²C 0x38, 초기화·busy·20비트 조립·CRC·측정 타이밍은 드라이버 미구현이므로 미검증. 기존 AXI RTL/C 기능에 신규 변경 없음. 전체 회귀·HTML 생성 일치 및 CI는 별도 실행 결과 전까지 미검증.
+- 출처: PDF 원본 버전 명시, Git SHA 없는 웹 원본은 라이선스 미확인; 코드·이미지 복제 없음.
+
+
+## 2026-11-03 I12 후속 상태표 정합성 감사
+
+- **조사:** 기존 PR #16의 ST VL53L0X IC·Pololu #2490·Adafruit breakout 2종을 재대조했다. 신규 등록 후보 0종, 새 모듈 ID 0건, 기존 I12 문서 상태 갱신 1건. Keyestudio/Freenove/Seeed·국내/AliExpress 특정 기판의 원본 회로도는 확인하지 못했으므로 호환성 추정 금지.
+- **갱신:** `data/module-status.csv` I12를 `없음`에서 `문서`로, 경로를 `i2c/vl53l0x.md`로 수정. `STATUS.md`의 I12 행·집계(완비 29, 일부 8, 문서만 8, 없음 25, 제외 2; 합계 72) 동기화. VL53L1X는 미검증이며 별도 모듈 ID를 생성하지 않음.
+- **P0/P1 적대적 검증:** VIN=5V일 때 Pololu I²C HIGH 레일이 5V가 될 수 있으므로 Basys3 직접 연결 불승인. XSHUT/GPIO1 비레벨변환, 보드별 풀업/핀맵 미확인 유지. XADC 0~1V 및 HC-SR04 5V ECHO는 별도 경로. 해당 센서 전용 RTL/AXI/C 코드가 없어 비트폭·FSM·타이밍·핸드셰이크 시험 PASS 주장 불가.
+- **검증 증거/한계:** CSV I12 원문 단일 행 변경 및 STATUS 집계·행의 정합성 확인. GitHub Actions, 생성 HTML 일치 검사, 전체 상대 링크 검사, 실물 측정은 **이번 후속 커밋에서 미실행**. 생성 HTML 및 전체 CI가 확인되기 전 PR #16 병합/게시 완료로 표시하지 않음.
+- **저작권:** Pololu·Adafruit·ST 공식 원본 링크만 인용. 고정 Git SHA 없는 웹 문서는 원본 개정/라이선스 미확인. 그림·소스 재배포 없음.
+
+
 ## 2026-11-03 SG90 서보 무효 설정 fail-safe 후속 검증
 
 **1단계 갱신:** 기존 [TowerPro SG90 Analog](https://towerpro.com.tw/product/sg90-analog/) 제조사 사양(4.8V 외부 전원, 신호 HIGH 3.3V 인식 임계값 미표기)과 [Arduino Modulino Motors](https://docs.arduino.cc/hardware/modulino-motors)(MAX22211, Qwiic I²C 기반, 5~24V 모터 전원)를 다시 대조했다. 둘은 제어 인터페이스가 달라 같은 RTL/핀맵으로 대체할 수 없다. 기존 Keyestudio·Seeed·Freenove 및 국내 판매처의 SG90 변형·핀맵·라이선스 근거는 `motor/sg90.md`에 유지하며 확인되지 않은 사양을 승격하지 않는다. 제조사 웹페이지는 고정 Git SHA와 원본 재배포 라이선스가 없으므로 링크로만 인용한다.
@@ -280,3 +373,68 @@ pdftotext -layout pgNNN.pdf pgNNN.txt  # 각 PG 문서를 pg079.txt pg090.txt pg
 python3 -I tools/crosscheck_pdf.py <폴더>              # PDF 텍스트 블록 + 사실표 블록(PDF 포함 총합은 이번에 못 돌림, 계산상 586)
 python3 -I tools/crosscheck_pdf.py --facts-only         # 사실표 블록만(524항목, PDF 텍스트 없이 저장소의 ref/ 만으로 돎, run_host_tests.sh 에도 포함)
 ```
+
+
+## 2026-11-03 I12 VL53L0X 자료 조사 → 문서 갱신 → 적대적 검증
+
+- **조사:** 기존 I12 후보(VL53L0X/L1X) 중 VL53L0X에 대해 Pololu #2490·Adafruit 기판과 ST IC를 분리했다. 신규 후보로 검토한 VL53L0X는 기존 상태표에 이미 있어 **새 모듈 ID 0건**, 신규 기술 문서 1건, 기존 모듈 1건 자료 보강으로 집계한다. Keyestudio/Freenove/Seeed·국내·AliExpress 특정 PCB의 공식 회로 및 라이선스는 미확인.
+- **갱신:** [i2c/vl53l0x.md](i2c/vl53l0x.md) 신규, REFERENCES 출처·버전·라이선스 상태 추가. 기존 32차시·RTL·C는 수정하지 않음.
+- **P0 적대적 검증:** Pololu 기판 SDA/SCL은 VIN 레일로 레벨 변환되므로 VIN=5V에서 Basys3 직접 연결 불가. Adafruit GPIO와 Pololu XSHUT/GPIO1은 I²C 레벨 시프터를 경유하지 않는다. 무명 보드 전원/풀업/핀맵 미검증 → 실물 연결 미승인. XADC 0~1V 및 HC-SR04 ECHO 5V는 해당 I²C 센서와 구분.
+- **P1 적대적 검증:** 기본 주소 0x29, 다중 센서 주소 재설정 시 XSHUT 필요. VL53L0X 초기화/API, RTL·AXI·C 핸드셰이크·비트폭·FSM·타이밍·회귀시험은 구현·검증되지 않았으므로 PASS로 표시하지 않음.
+- **출처/저작권:** 원본 링크만 인용. 고정 Git SHA가 없는 제조사 웹 문서는 열람일을 기록하고 라이선스 미확인으로 표시. 원본 코드/그림 복제 없음.
+- **검증 상태:** Markdown 상대 링크·CI·Vivado 합성·실물 측정은 이 기록 작성 시점에 아직 실행되지 않음. 새 문서의 상대 링크 경로는 저장소 기준 확인 필요. 게시 여부 미확인.
+- **다음 작업:** module-status.csv의 I12를 문서만으로 변경하고 생성된 STATUS.md/HTML을 일괄 재생성·CI 확인, 무명 기판 실물 회로 검증, I²C 소프트웨어/API 범위 확정.
+
+## 2026-11-03 I²C 전원 문구 정정 및 SHT40 조사 후 적대적 검증
+
+- **① 조사:** 신규 후보 SHT40 1종(기존 73종 목록에서 독립 ID 없음), 제조사 Sensirion SHT40(데이터시트 2025-04, IC 1.08~3.6 V)과 DFRobot Fermion SHT40(기판 전원 3.3~5 V) 비교. 기존 모듈 DS1307의 Analog Devices Rev.5(2015-03-23) 확인. 원본 URL은 `i2c/README.md`에 기록. 웹/PDF는 Git SHA 없음; 재배포 라이선스 미확인. 국내·AliExpress·Keyestudio/Freenove/Seeed 특정 PCB는 미확인.
+- **② 갱신:** `i2c/README.md`의 '위 소자는 모두 3.3 V'라는 기존 문구가 같은 문서의 DS1307 VCC 4.5~5.5 V와 충돌하는 **실제 P1 문서 결함**임을 확인하여 수정. SHT40은 후보로만 기록, 정식 신규 등록 0종, 기존 모듈 정정 1종. RTL/C 및 기존 32차시 변경 없음.
+- **③ 적대적 검증:** 수정 파일을 다시 읽어 위험 문구 제거, DS1307 전원 조건, 5 V 풀업 차단, IC/기판 차이, 제조사 원본 링크를 문자열 수준에서 확인. SHT40의 레귤레이터/풀업·핀맵 미확인, XADC 0~1 V·5 V ECHO 제한 기존 유지. RTL 비트폭/FSM/AXI 핸드셰이크 및 C 시험은 변경 코드가 없어 **이번 실행 미실시**. 전체 링크 검사·HTML 생성·CI·실물 시험도 **미실시**이며 PASS로 기록하지 않음.
+- **후속:** 기존 73종 상태표와 PR #16 병합 전 상태 재검증, SHT40 실장 기판 회로 확인 후 등록 여부 결정. `main` 병합 및 Pages 배포는 별도 확인 전 미완료.
+
+
+## 2026-11-04 I²C 고정 주소 충돌 감사 (조사 → 갱신 → 적대적 검증)
+
+- 조사: `devices/data/module-status.csv`의 I04 MPU-6050, I05 DS3231, `i2c/README.md`의 DS1307과 SHT40 후보를 대조. 신규 후보 확정 0종, 신규 등록 0종. DS3231/DS1307의 7비트 주소가 모두 `0x68`이라는 기존 표와 본문을 교차 확인. 외부 판매 기판 추가 확정 및 탐색 확대는 이번 실행에서 미완료.
+- 갱신: `i2c/README.md`의 주소 충돌 문구가 MPU-6050과 DS3231만 언급하고 DS1307의 고정 주소 충돌을 빠뜨린 **P1 문서 오류**를 수정. DS3231/DS1307 동시 버스 사용 불가, 별도 버스/멀티플렉서 설계안, 주소·속도·전압·용량 조건을 명시. Mermaid 개념도에 충돌 주석 추가. 기존 32차시·RTL/AXI/C 코드는 변경하지 않음.
+- 시각화 게이트: Mermaid `flowchart LR`의 SCL/SDA 및 DS1307/DS3231 `0x68` 경고 문자열 정적 확인 대상. 실제 렌더링은 미실시.
+- 구조화 게이트: I²C 주소표, 충돌 규칙, 3.3V/5V 레벨 변환·100kHz 속도 제약, 미검증 사항을 연결. 정적 확인 대상.
+- 체계화 게이트: 기존 I²C 목차·상위 devices 링크 유지, I04/I05 대응 관계와 32차시 보존. HTML 생성/상대 링크 전체 검사 미실시.
+- P0: FPGA 3.3V I/O에 5V 풀업 직접 연결 금지, XADC 0~1V 및 HC-SR04 5V ECHO 제한 유지. 실물 기판/풀업/멀티플렉서 검증 없음.
+- P1: 주소 충돌 설명 정정. RTL 비트폭/FSM/타이밍, AXI 핸드셰이크, C 모의시험, CI는 이번 실행에서 미실시. 외부 원본 라이선스 추가 확인 없음; 기존 출처 링크·원본 버전 유지.
+- 재검증: GitHub 원격 파일 재조회로 변경 문자열·상위 링크·Mermaid 블록·CSV 기존 행 보존을 검사한다. 검사 결과는 실행 보고서에 별도 기재.
+
+
+## 2026-11-04 INA228 신규 후보 조사 → 갱신 → 적대적 검증
+- 조사: 기존 module-status.csv에 INA219(I11)은 있으나 INA228 독립 항목 없음. TI INA228 Rev.A(2022-05-11), Adafruit INA228 공개 PCB 및 제품 5832 확인. INA226 후보와도 별도 IC. 신규 후보 1, 정식 추가 0, 기존 갱신 0.
+- 갱신: i2c/ina228-candidate.md 신규 문서, i2c/README.md 목차 링크. 기계 판독 목록·기존 32차시·RTL/AXI/C 변경 없음. HTML 게시 미확인.
+- 정적 게이트: 시각화(실제 신호 SCL/SDA, IN+/IN-, VBUS, ALERT 명시), 구조화(목적/입출력/전기/RTL·AXI·C/근거/미확인), 체계화(상위 링크/선수관계/32차시·캡스톤·SoC) 모두 문서 내용 확인. Mermaid 실제 렌더·전체 링크·CI는 미검증.
+- P0: INA228의 85V 측정은 FPGA/XADC 입력 허용을 뜻하지 않음. 실제 PCB 풀업/레벨변환·션트·ALERT 전압 미검증으로 FPGA 연결 미승인. HC-SR04 5V ECHO 및 XADC 0~1V 기존 기준 유지.
+- P1: 20비트 데이터/부호/보정/누산·FSM·타이밍·핸드셰이크의 전용 구현이 없으므로 미검증. 원본 도면·코드 복제 없음. Adafruit PCB의 라이선스 정확한 조건 및 Git SHA 미확인.
+- 후속: 실제 Mermaid 렌더, 링크/HTML 자동검사, 실물 회로 대조 및 CI 수행 전 통합 PASS 금지.
+
+
+## 2026-11-04 INA228 공개 PCB 출처·라이선스 재검증
+
+- 조사: 기존 INA228 후보와 Adafruit 원본 저장소의 최신 커밋 및 `license.txt` 직접 확인. 신규 독립 모듈 0종, 기존 후보 1종 보강.
+- 원본: `adafruit/Adafruit-INA228-PCB` 커밋 `61b0d990f8e5f2e6df1ee5d270c501d17f53242d` (2025-01-28, `rev C`); 라이선스 CC BY-SA 3.0 Unported. 원본 파일 재배포 없음.
+- 갱신: `devices/i2c/ina228-candidate.md` 출처 버전/라이선스·실물 개정 미확인 구분. 정식 ID/CSV/32차시/RTL/C 변경 없음.
+- 시각화 게이트: **정적 PASS** (기존 Mermaid 신호명과 개념도/실제 넷 구분 유지), 렌더 미실시.
+- 구조화 게이트: **정적 PASS** (전원/인터페이스/전기 안전/RTL·AXI·C/원본 SHA·라이선스/미확인 포함).
+- 체계화 게이트: **정적 PASS** (I²C 상위 README 링크, INA219·INA226 비교, 32차시·캡스톤·SoC 대응 유지). HTML 생성·링크 전수검사는 **미검증**.
+- P0: FPGA 3.3V I/O/5V 풀업/XADC 입력 제한 및 실제 PCB 실측 **미승인**. P1: RTL/AXI/C 시뮬레이션·CI **미검증**. 정상 소스 미변경.
+
+
+## 2026-11-04 SGP40 공식 IC 자료 교차검증
+- 조사: 기존 후보 4종과 정식 목록을 기준으로 SGP40 후보의 미확인 IC 사양을 Sensirion 공식 데이터시트(`https://sensirion.com/resource/datasheet/sgp40`) 및 Seeed Grove 위키(`https://wiki.seeedstudio.com/grove_voc_gas_sensor_sgp40/`, 2023-06-06)와 대조. 신규 확정 0종; 기존 후보 갱신 1종. 신규 탐색 범위 확대(판매처·Keyestudio/Freenove·Arduino Hardware Docs)는 미완료.
+- 갱신: `i2c/sgp40-candidate.md`에 IC 1.7~3.6 V, 7비트 0x59, I²C 100/400 kHz, 16비트 명령과 16비트 데이터+8비트 CRC 구분 추가; `data/module-candidates.csv` 원본 근거 표시 갱신. 원본 문서/도면 재배포 없음; 라이선스·PDF 내부 revision 미확인.
+- 적대적 검증: **P0 미승인**(실제 Grove PCB 풀업 레일·레귤레이터·5V 공급 시 SDA/SCL 레벨 미확인). **P1 미검증**(CRC 다항식·명령/지연·실제 ACK·RTL/AXI/C 시험 미실시). 32차시·기존 정상 소스 변경 없음.
+- 3대 게이트: 시각화 **정적 PASS**(기존 Mermaid SCL/SDA와 실제 센서명 유지; 렌더 미실시); 구조화 **정적 PASS**(IC/모듈 사양 분리·전기 제약·출처); 체계화 **정적 PASS**(후보 CSV와 상위 목차 연결). 실제 렌더/HTML/CI는 **미검증**, 따라서 통합 완료 **FAIL**.
+- 재검증: GitHub 원격 재조회로 CSV 후보 4종·SGP40 중복 없음·문서 필수 항목·상위 링크·정식 목록 미변경 여부를 확인할 것. 게시 여부는 별도 확인 전 미확인.
+
+
+## 2026-11-04 SGP40 v1.2 공식 판본·CRC·측정 명령 검증
+- 조사: Sensirion 공식 SGP40 PDF v1.2 (2022-02), https://sensirion.com/media/documents/296373BB/6203C5DF/Sensirion_Gas_Sensors_Datasheet_SGP40.pdf §4.6~4.7. 신규 후보 0, 기존 후보 갱신 1. 외부 기판·판매처 확대 탐색은 미완료. 라이선스 미확인, 원본 복제 없음.
+- 갱신: `i2c/sgp40-candidate.md` CRC-8(0x31, init 0xFF, BE EF → 92), 측정 명령(26 0F), 보정 미사용 인자(80 00 A2 66 66 93), 응답 3바이트, 최대 30ms, Mermaid 시퀀스 추가. `data/module-candidates.csv` 판본 동기화.
+- 적대적 검증 P0: 실제 Grove PCB 풀업/레벨·전원 미검증 → 실물 연결 승인 불가. P1: 문서값 공식 v1.2 교차확인, RTL/AXI/C 실행·타이밍·ACK/NACK 시험 미실시. 기존 32차시 및 소스 미변경.
+- 게이트: 시각화 정적 PASS(신호 흐름 및 측정 시퀀스 Mermaid), 구조화 정적 PASS(입출력/전기/CRC/근거/미확인), 체계화 정적 PASS(후보 CSV·I²C 상위 목차 연결). Mermaid 실제 렌더·전체 링크·HTML·CI는 미검증이므로 통합 완료 FAIL.
