@@ -25,6 +25,7 @@
 | 19 | CAPSTONE-19 — 터치 모드·온도 연동 개인용 팬 | [설계서](capstone-19-touch-fan.md) | [HTML](capstone-19-touch-fan.html) | 설계안·통합 미구현 |
 | 20 | CAPSTONE-20 — 움직임 감지형 서보 추적 거치대 | [설계서](capstone-20-motion-servo-camera.md) | [HTML](capstone-20-motion-servo-camera.html) | 설계안·통합 미구현 |
 | 21 | CAPSTONE-21 — 온도·조도 복합 환경 알림 | [설계서](capstone-21-ambient-alert.md) | [HTML](capstone-21-ambient-alert.html) | 설계안·통합 미구현 |
+| 22 | CAPSTONE-22 — HC-SR04 초음파·HC-SR501 PIR 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-22-fusion-00-01-00-00-00.md) | [HTML](capstone-22-fusion-00-01-00-00-00.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 

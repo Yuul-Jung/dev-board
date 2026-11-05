@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 355" role="img" aria-label="입력 인터페이스에서 제어기와 출력 구동기로 이어지는 시스템 신호 흐름">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#406b91"/></marker></defs>
+<g fill="none" stroke="#406b91" stroke-width="2.3" marker-end="url(#arrow)">
+<path d="M205 63 H250"/>
+<path d="M205 188 H250"/>
+<path d="M440 63 H465 V133 H490"/>
+<path d="M440 188 H465 V133 H490"/>
+<path d="M680 133 H730"/>
+<path d="M825 171 V265"/>
+<path d="M585 171 V265"/>
+</g>
+<rect x="20" y="30" width="185" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="112" y="54" text-anchor="middle" font-size="13" fill="#315779">입력 A</text>
+<text x="112" y="75" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="167" lengthAdjust="spacingAndGlyphs">HC-SR04 초음파</text>
+<rect x="20" y="155" width="185" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="112" y="179" text-anchor="middle" font-size="13" fill="#315779">입력 B</text>
+<text x="112" y="200" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="167" lengthAdjust="spacingAndGlyphs">HC-SR501 PIR</text>
+<rect x="250" y="30" width="190" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="345" y="54" text-anchor="middle" font-size="13" fill="#315779">입력 인터페이스</text>
+<text x="345" y="75" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">input_a_interface</text>
+<rect x="250" y="155" width="190" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="345" y="179" text-anchor="middle" font-size="13" fill="#315779">입력 인터페이스</text>
+<text x="345" y="200" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">input_b_interface</text>
+<rect x="490" y="95" width="190" height="76" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="585" y="119" text-anchor="middle" font-size="13" fill="#315779">제어기 (제안)</text>
+<text x="585" y="140" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">capstone_controller</text>
+<rect x="730" y="95" width="190" height="76" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="825" y="119" text-anchor="middle" font-size="13" fill="#315779">출력 구동기</text>
+<text x="825" y="140" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">output_driver</text>
+<rect x="730" y="265" width="190" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="825" y="289" text-anchor="middle" font-size="13" fill="#315779">출력</text>
+<text x="825" y="310" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">LED PWM</text>
+<rect x="490" y="265" width="190" height="66" rx="10" fill="#f0f6fc" stroke="#628caf" stroke-width="1.6"/>
+<text x="585" y="289" text-anchor="middle" font-size="13" fill="#315779">SoC 확장 (제안)</text>
+<text x="585" y="310" text-anchor="middle" font-size="13" font-weight="600" fill="#173b58" textLength="172" lengthAdjust="spacingAndGlyphs">status_registers</text>
+</svg>
