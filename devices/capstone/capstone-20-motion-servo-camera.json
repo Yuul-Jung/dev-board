@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "20",
+  "title": "CAPSTONE-20 — 움직임 감지형 서보 추적 거치대",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "HC-SR501 PIR",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "수동 승인 버튼",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "SG90 서보",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-20-motion-servo-camera.md",
+    "html": "capstone-20-motion-servo-camera.html",
+    "diagram_svg": "capstone-20-motion-servo-camera.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
