@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "23",
+  "title": "CAPSTONE-23 — HC-SR04 초음파·DS18B20 온도 융합 능동 부저 제어 (UART 상태 보고)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "HC-SR04 초음파",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "DS18B20 온도",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "능동 부저",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-23-fusion-00-06-01-04-01.md",
+    "html": "capstone-23-fusion-00-06-01-04-01.html",
+    "diagram_svg": "capstone-23-fusion-00-06-01-04-01.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
