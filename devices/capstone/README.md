@@ -31,6 +31,7 @@
 | 25 | CAPSTONE-25 — DHT22 온습도·HC-SR501 PIR 융합 TB6612FNG 모터 제어 (7세그먼트 상태) | [설계서](capstone-25-fusion-02-01-04-04-03.md) | [HTML](capstone-25-fusion-02-01-04-04-03.html) | 설계안·통합 미구현 |
 | 26 | CAPSTONE-26 — BH1750 조도·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-26-fusion-03-00-00-01-00.md) | [HTML](capstone-26-fusion-03-00-00-01-00.html) | 설계안·통합 미구현 |
 | 27 | CAPSTONE-27 — BH1750 조도·DS18B20 온도 융합 능동 부저 제어 (UART 상태 보고) | [설계서](capstone-27-fusion-03-06-01-05-01.md) | [HTML](capstone-27-fusion-03-06-01-05-01.html) | 설계안·통합 미구현 |
+| 28 | CAPSTONE-28 — 로터리 엔코더·BH1750 조도 융합 PWM 팬 제어 (AXI 상태 레지스터) | [설계서](capstone-28-fusion-04-03-03-01-02.md) | [HTML](capstone-28-fusion-04-03-03-01-02.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
