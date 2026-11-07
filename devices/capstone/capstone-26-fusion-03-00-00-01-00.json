@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "26",
+  "title": "CAPSTONE-26 — BH1750 조도·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "BH1750 조도",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "HC-SR04 초음파",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "LED PWM",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-26-fusion-03-00-00-01-00.md",
+    "html": "capstone-26-fusion-03-00-00-01-00.html",
+    "diagram_svg": "capstone-26-fusion-03-00-00-01-00.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
