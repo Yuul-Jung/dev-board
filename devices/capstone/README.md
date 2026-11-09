@@ -36,6 +36,7 @@
 | 30 | CAPSTONE-30 — DS18B20 온도·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-30-fusion-06-00-00-02-00.md) | [HTML](capstone-30-fusion-06-00-00-02-00.html) | 설계안·통합 미구현 |
 | 31 | CAPSTONE-31 — DS18B20 온도·TTP223 터치 융합 능동 부저 제어 (UART 상태 보고) | [설계서](capstone-31-fusion-06-05-01-06-01.md) | [HTML](capstone-31-fusion-06-05-01-06-01.html) | 설계안·통합 미구현 |
 | 32 | CAPSTONE-32 — 수동 승인 버튼·BH1750 조도 융합 PWM 팬 제어 (AXI 상태 레지스터) | [설계서](capstone-32-fusion-07-03-03-02-02.md) | [HTML](capstone-32-fusion-07-03-03-02-02.html) | 설계안·통합 미구현 |
+| 33 | CAPSTONE-33 — HC-SR04 초음파·DHT22 온습도 융합 TB6612FNG 모터 제어 (7세그먼트 상태) | [설계서](capstone-33-fusion-00-02-04-06-03.md) | [HTML](capstone-33-fusion-00-02-04-06-03.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
