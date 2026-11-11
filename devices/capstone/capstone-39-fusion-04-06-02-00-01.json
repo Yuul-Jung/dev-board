@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "39",
+  "title": "CAPSTONE-39 — 로터리 엔코더·DS18B20 온도 융합 SG90 서보 제어 (UART 상태 보고)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "로터리 엔코더",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "DS18B20 온도",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "SG90 서보",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-39-fusion-04-06-02-00-01.md",
+    "html": "capstone-39-fusion-04-06-02-00-01.html",
+    "diagram_svg": "capstone-39-fusion-04-06-02-00-01.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}

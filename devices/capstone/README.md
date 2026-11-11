@@ -42,6 +42,7 @@
 | 36 | CAPSTONE-36 — DHT22 온습도·로터리 엔코더 융합 PWM 팬 제어 (AXI 상태 레지스터) | [설계서](capstone-36-fusion-02-04-03-03-02.md) | [HTML](capstone-36-fusion-02-04-03-03-02.html) | 설계안·통합 미구현 |
 | 37 | CAPSTONE-37 — BH1750 조도·HC-SR501 PIR 융합 TB6612FNG 모터 제어 (7세그먼트 상태) | [설계서](capstone-37-fusion-03-01-04-07-03.md) | [HTML](capstone-37-fusion-03-01-04-07-03.html) | 설계안·통합 미구현 |
 | 38 | CAPSTONE-38 — 로터리 엔코더·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-38-fusion-04-00-00-04-00.md) | [HTML](capstone-38-fusion-04-00-00-04-00.html) | 설계안·통합 미구현 |
+| 39 | CAPSTONE-39 — 로터리 엔코더·DS18B20 온도 융합 SG90 서보 제어 (UART 상태 보고) | [설계서](capstone-39-fusion-04-06-02-00-01.md) | [HTML](capstone-39-fusion-04-06-02-00-01.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
