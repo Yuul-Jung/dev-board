@@ -1,0 +1,23 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPSTONE-41 — DS18B20 온도·HC-SR501 PIR 융합 릴레이 모듈 제어 (7세그먼트 상태)</title><style>:root{font:16px/1.65 system-ui,"Noto Sans KR",sans-serif;color-scheme:light dark}body{margin:0;background:Canvas;color:CanvasText}main{max-width:960px;margin:auto;padding:22px 18px 70px}a{color:#3483b8}h1{line-height:1.3}h2{margin-top:30px;border-bottom:1px solid #8887;padding-bottom:6px}.note{padding:14px;border-left:4px solid #c98e33;background:color-mix(in srgb,CanvasText 5%,Canvas)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.card{border:1px solid #8887;border-radius:10px;padding:12px}table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid #8887;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:color-mix(in srgb,CanvasText 5%,Canvas);padding:14px}</style></head><body><main>
+<nav><a href="../../index.html">메인</a> › <a href="index.html">캡스톤 목록</a> › 41</nav>
+<h1>CAPSTONE-41 — DS18B20 온도·HC-SR501 PIR 융합 릴레이 모듈 제어 (7세그먼트 상태)</h1><p class="note"><strong>새로운 자체 캡스톤 설계서</strong> — 실제 통합 RTL·AXI·합성·보드 시험은 미실시.</p>
+<h2>1. 시스템 구성</h2><div class="grid">
+<div class="card"><b>입력 A</b><p><a href="../1-wire/ds18b20.md">DS18B20 온도</a></p></div>
+<div class="card"><b>입력 B</b><p><a href="../gpio/hc-sr501.md">HC-SR501 PIR</a></p></div>
+<div class="card"><b>제어</b><p>capstone_controller (신규 제안)</p></div>
+<div class="card"><b>출력</b><p><a href="../gpio/relay-srd05.md">릴레이 모듈</a></p></div></div>
+<h2>2. 동작 정책</h2><p>두 입력이 모두 유효할 때만 구동하며 하나라도 오류면 안전 상태로 전환한다.</p>
+<h2>3. 개념 구조 (실제 RTL 포트 아님)</h2><figure class="system-visual"><img class="system-diagram" src="capstone-41-fusion-06-01-05-00-03.svg" alt="입력 A와 B에서 제어기, 출력 구동기, SoC 상태 레지스터까지의 신호 흐름" style="display:block;width:100%;height:auto;max-width:940px;margin:auto"><figcaption>설계 개념도: 제안된 인터페이스·모듈명이며 실제 RTL 포트 확정 전입니다. <a href="capstone-41-fusion-06-01-05-00-03.svg">SVG 원본</a> · <a href="capstone-41-fusion-06-01-05-00-03.json">구조화 데이터(JSON)</a></figcaption></figure><pre>DS18B20 온도 → input_a_interface ─┐
+HC-SR501 PIR → input_b_interface ─┤→ capstone_controller → output_driver → 릴레이 모듈
+                         └→ status_registers (MicroBlaze V 확장)</pre>
+<h2>4. 상태 흐름</h2><table><tr><th>상태</th><th>역할</th></tr>
+<tr><td>IDLE</td><td>안전 출력, 입력 대기</td></tr><tr><td>CHECK</td><td>유효값·순서·타임아웃 검사</td></tr>
+<tr><td>ACTIVE</td><td>정책 조건 성립 시 출력</td></tr><tr><td>HOLD</td><td>유지·재입력 억제</td></tr>
+<tr><td>FAULT</td><td>안전 정지 및 오류 래치</td></tr></table>
+<h2>5. 따라하기 구현 절차</h2><ol><li>데이터시트·전압·핀·구동전류 확인</li><li>입력 유효/Reset/타임아웃 정의</li>
+<li>Controller/Driver 독립 RTL 설계</li><li>Reset·정상·동시·오류 자기검증 TB 작성</li>
+<li>필요시 AXI/소프트웨어 연계</li><li>Vivado 합성·Timing·실물 보드 검증</li></ol>
+<h2>6. 전기적 안전</h2><p>Basys3 GPIO는 3.3V 기준. HC-SR04 일반형 ECHO 5V 직접 연결 금지; XADC 단극성 입력은 0~1V 범위를 지켜야 한다. 서보·모터·릴레이는 FPGA GPIO에서 전력을 공급하지 않고 외부 전원·구동 회로·공통 접지/절연 조건을 확인한다. I²C 모듈은 칩과 브레이크아웃의 전원·풀업 전압을 각각 확인한다.</p>
+<h2>7. 검증 상태</h2><p>설계 문서·HTML 생성 완료. 신규 통합 RTL·C·AXI·시뮬레이션·합성·Timing·보드 시험은 미구현/미실시.</p>
+<p><a href="capstone-41-fusion-06-01-05-00-03.md">전체 Markdown 설계서</a> · <a href="README.md">캡스톤 전체 목록</a></p></main></body></html>
