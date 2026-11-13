@@ -47,6 +47,7 @@
 | 41 | CAPSTONE-41 — DS18B20 온도·HC-SR501 PIR 융합 릴레이 모듈 제어 (7세그먼트 상태) | [설계서](capstone-41-fusion-06-01-05-00-03.md) | [HTML](capstone-41-fusion-06-01-05-00-03.html) | 설계안·통합 미구현 |
 | 42 | CAPSTONE-42 — 수동 승인 버튼·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-42-fusion-07-00-00-05-00.md) | [HTML](capstone-42-fusion-07-00-00-05-00.html) | 설계안·통합 미구현 |
 | 43 | CAPSTONE-43 — 수동 승인 버튼·TTP223 터치 융합 SG90 서보 제어 (UART 상태 보고) | [설계서](capstone-43-fusion-07-05-02-01-01.md) | [HTML](capstone-43-fusion-07-05-02-01-01.html) | 설계안·통합 미구현 |
+| 44 | CAPSTONE-44 — HC-SR04 초음파·로터리 엔코더 융합 PWM 팬 제어 (AXI 상태 레지스터) | [설계서](capstone-44-fusion-00-04-03-05-02.md) | [HTML](capstone-44-fusion-00-04-03-05-02.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 

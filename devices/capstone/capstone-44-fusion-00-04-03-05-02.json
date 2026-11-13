@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "44",
+  "title": "CAPSTONE-44 — HC-SR04 초음파·로터리 엔코더 융합 PWM 팬 제어 (AXI 상태 레지스터)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "HC-SR04 초음파",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "로터리 엔코더",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "PWM 팬",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-44-fusion-00-04-03-05-02.md",
+    "html": "capstone-44-fusion-00-04-03-05-02.html",
+    "diagram_svg": "capstone-44-fusion-00-04-03-05-02.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
