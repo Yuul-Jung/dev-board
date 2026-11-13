@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "45",
+  "title": "CAPSTONE-45 — HC-SR501 PIR·DHT22 온습도 융합 릴레이 모듈 제어 (7세그먼트 상태)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "HC-SR501 PIR",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "DHT22 온습도",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "릴레이 모듈",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-45-fusion-01-02-05-01-03.md",
+    "html": "capstone-45-fusion-01-02-05-01-03.html",
+    "diagram_svg": "capstone-45-fusion-01-02-05-01-03.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
