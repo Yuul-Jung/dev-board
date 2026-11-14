@@ -50,6 +50,7 @@
 | 44 | CAPSTONE-44 — HC-SR04 초음파·로터리 엔코더 융합 PWM 팬 제어 (AXI 상태 레지스터) | [설계서](capstone-44-fusion-00-04-03-05-02.md) | [HTML](capstone-44-fusion-00-04-03-05-02.html) | 설계안·통합 미구현 |
 | 45 | CAPSTONE-45 — HC-SR501 PIR·DHT22 온습도 융합 릴레이 모듈 제어 (7세그먼트 상태) | [설계서](capstone-45-fusion-01-02-05-01-03.md) | [HTML](capstone-45-fusion-01-02-05-01-03.html) | 설계안·통합 미구현 |
 | 46 | CAPSTONE-46 — DHT22 온습도·HC-SR04 초음파 융합 LED PWM 제어 (LED 오류 코드) | [설계서](capstone-46-fusion-02-00-00-06-00.md) | [HTML](capstone-46-fusion-02-00-00-06-00.html) | 설계안·통합 미구현 |
+| 47 | CAPSTONE-47 — DHT22 온습도·DS18B20 온도 융합 SG90 서보 제어 (UART 상태 보고) | [설계서](capstone-47-fusion-02-06-02-02-01.md) | [HTML](capstone-47-fusion-02-06-02-02-01.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
