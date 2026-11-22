@@ -73,6 +73,7 @@
 | 67 | CAPSTONE-67 — HC-SR501 PIR·DS18B20 온도 융합 SG90 서보 제어 (UART 상태 보고) | [설계서](capstone-67-fusion-01-06-02-07-01.md) | [HTML](capstone-67-fusion-01-06-02-07-01.html) | 설계안·통합 미구현 |
 | 68 | CAPSTONE-68 — DHT22 온습도·로터리 엔코더 융합 TB6612FNG 모터 제어 (AXI 상태 레지스터) | [설계서](capstone-68-fusion-02-04-04-03-02.md) | [HTML](capstone-68-fusion-02-04-04-03-02.html) | 설계안·통합 미구현 |
 | 69 | CAPSTONE-69 — BH1750 조도·HC-SR501 PIR 융합 릴레이 모듈 제어 (7세그먼트 상태) | [설계서](capstone-69-fusion-03-01-05-07-03.md) | [HTML](capstone-69-fusion-03-01-05-07-03.html) | 설계안·통합 미구현 |
+| 70 | CAPSTONE-70 — 로터리 엔코더·HC-SR04 초음파 융합 능동 부저 제어 (LED 오류 코드) | [설계서](capstone-70-fusion-04-00-01-04-00.md) | [HTML](capstone-70-fusion-04-00-01-04-00.html) | 설계안·통합 미구현 |
 
 [주변장치 홈](../README.md) · [운영 하네스](../../HARNESS.md) · [RTL 29 센서 통합 경보](../../rtl/rtl29_integration/README.md) · [RTL 32 캡스톤 제어](../../rtl/rtl32_capstone_control/README.md)
 
