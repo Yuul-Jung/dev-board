@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "79",
+  "title": "CAPSTONE-79 — DHT22 온습도·DS18B20 온도 융합 PWM 팬 제어 (UART 상태 보고)",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "input_modules": [
+    {
+      "name": "DHT22 온습도",
+      "interface": "input_a_interface"
+    },
+    {
+      "name": "DS18B20 온도",
+      "interface": "input_b_interface"
+    }
+  ],
+  "controller": "capstone_controller",
+  "output_module": {
+    "name": "PWM 팬",
+    "driver": "output_driver"
+  },
+  "soc_extension": "status_registers",
+  "fsm_states_proposed": [
+    "IDLE",
+    "CHECK",
+    "ACTIVE",
+    "HOLD",
+    "FAULT"
+  ],
+  "assets": {
+    "markdown": "capstone-79-fusion-02-06-03-02-01.md",
+    "html": "capstone-79-fusion-02-06-03-02-01.html",
+    "diagram_svg": "capstone-79-fusion-02-06-03-02-01.svg"
+  },
+  "verification": {
+    "rtl_simulation": "not_run",
+    "synthesis": "not_run",
+    "timing": "not_run",
+    "board_test": "not_run"
+  }
+}
